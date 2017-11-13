@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "./app.scss";
+import Canvas from "./components/Canvas";
 
-ReactDOM.render(<canvas />,
+ReactDOM.render(<Canvas />,
     document.getElementById("root"));
