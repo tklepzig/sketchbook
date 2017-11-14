@@ -76,7 +76,8 @@ const client = {
                 from: "./src/public/assets",
                 to: "assets"
             },
-            { from: "./src/public/manifest.json" }
+            { from: "./src/public/manifest.json" },
+            { from: "./src/public/favicon.ico" }
         ])
     ]
 
