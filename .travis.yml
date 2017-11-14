@@ -1,5 +1,7 @@
 language: node_js
 node_js:
   - 8.90
+before_deploy: "git add -f dist"
 deploy:
   provider: azure_web_apps
+  skip_cleanup: true
