@@ -3,8 +3,6 @@
 echo $DEPLOYMENT_SOURCE
 echo $DEPLOYMENT_TARGET
 
-mv $DEPLOYMENT_SOURCE/package.json $DEPLOYMENT_TARGET
-mv $DEPLOYMENT_SOURCE/yarn.lock $DEPLOYMENT_TARGET
-cp $DEPLOYMENT_SOURCE $DEPLOYMENT_TARGET
+eval npm install -g yarn
 cd $DEPLOYMENT_TARGET
-yarn install --prod
+eval yarn install --prod
