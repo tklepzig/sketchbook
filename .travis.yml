@@ -2,7 +2,9 @@ language: node_js
 node_js:
   - 8.90
 after_success: "npm run build"
-before_deploy: "git add -f dist"
+before_deploy:
+  - git add -f dist
+  - rm -rf node_modules
 deploy:
   provider: azure_web_apps
   skip_cleanup: true
