@@ -5,3 +5,5 @@ after_success: "npm run build"
 before_deploy: "git add -f dist"
 deploy:
   provider: azure_web_apps
+  skip_cleanup: true
+  verbose: true
