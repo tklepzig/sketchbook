@@ -1,16 +1,17 @@
 import * as React from "react";
+import { DrawingHandler } from "../services/DrawingHandler";
 
 export interface CanvasProps {
 }
 
 export default class Canvas extends React.Component<CanvasProps, any> {
+    private drawingHandler: DrawingHandler;
     private getTouchCount: (e: any) => any;
     private getTapPosition: (e: any) => { x: any; y: any; };
     private moveEvent: string;
     private upEvent: string;
     private downEvent: string;
     private canvas: HTMLCanvasElement | null;
-    private canvasContext: CanvasRenderingContext2D | null;
 
     constructor() {
         super();
@@ -37,6 +38,7 @@ export default class Canvas extends React.Component<CanvasProps, any> {
             this.getTouchCount = (e: any) => 1;
         }
 
+        this.drawingHandler = new DrawingHandler();
     }
 
     public render() {
@@ -79,17 +81,30 @@ export default class Canvas extends React.Component<CanvasProps, any> {
 
         context.lineCap = "round";
         context.lineWidth = 20;
+
+        // for black lines
         context.strokeStyle = "#1d1d1d";
+        context.globalCompositeOperation = "source-over";
+
+
+        setTimeout(() => {
+            // for colored lines
+            context.strokeStyle = "rgb(0,120,0)";
+            context.globalCompositeOperation = "destination-over";
+        }, 10000);
     }
 
     private tapDown(e: any) {
 
         const { x, y } = this.getTapPosition(e);
-        this.drawLine(x, y, x + 0.1, y + 0.1);
+        this.drawingHandler.tapDown(this.getCanvasContext(), x, y);
     }
     private tapMove(e: any) {
+        const { x, y } = this.getTapPosition(e);
+        this.drawingHandler.tapMove(this.getCanvasContext(), x, y);
     }
-    private tapUp(e: any) {
+    private tapUp() {
+        this.drawingHandler.tapUp();
     }
 
     private resize() {
@@ -101,24 +116,7 @@ export default class Canvas extends React.Component<CanvasProps, any> {
         this.initializeCanvas();
     }
 
-    private drawLine(x1: number, y1: number, x2: number, y2: number) {
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
 
-        context.beginPath();
-        context.moveTo(x1, y1);
-        context.lineTo(x2, y2);
-        context.stroke();
-        context.closePath();
-
-        // const segment = {
-        //     end: { x: x2, y: y2 },
-        //     start: { x: x1, y: y1 }
-        // };
-        // this.currentLine.segments.push(segment);
-    }
 
     private deviceSupportsTouchEvents() {
         return "ontouchstart" in window;
