@@ -36,8 +36,21 @@ const server = {
     plugins: [
         new CleanWebpackPlugin(["./dist"]),
         new CopyWebpackPlugin([
-            { from: "./package.json", to: ".." },
-            { from: "./yarn.lock", to: ".." }
+            {
+                from: "./package.json",
+                to: "..",
+                transform: (content, path) => {
+                    var packageJson = JSON.parse(content.toString());
+                    packageJson.scripts.start = "node server/index.js";
+                    delete packageJson.devDependencies;
+                    delete packageJson.jest;
+                    return new Buffer(JSON.stringify(packageJson));
+                }
+            },
+            {
+                from: "./yarn.lock",
+                to: ".."
+            }
         ])
     ]
 };
