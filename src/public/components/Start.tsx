@@ -1,25 +1,9 @@
 import * as React from "react";
 import Canvas from "./Canvas";
+import Splash from "./Splash";
 
-export interface StartState {
-    ready: boolean;
-}
-
-export default class Start extends React.Component<any, StartState> {
-    constructor() {
-        super();
-        this.state = { ready: false };
-    }
-
-    public componentWillMount() {
-        setTimeout(() => this.setState({ ready: true }), 1500);
-    }
-
+export default class Start extends React.Component {
     public render() {
-        return (
-            <div>
-                <div id="loading" className={this.state.ready ? "hidden" : ""} />
-                <Canvas />
-            </div>);
+        return ([<Splash key="splash" />, <Canvas key="canvas" />]);
     }
 }
