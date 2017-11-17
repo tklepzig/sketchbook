@@ -50,6 +50,10 @@ const server = {
             {
                 from: "./yarn.lock",
                 to: ".."
+            },
+            {
+                from: "./web.config",
+                to: ".."
             }
         ])
     ]
