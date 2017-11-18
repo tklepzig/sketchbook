@@ -46,10 +46,7 @@ export default class Start extends React.Component<any, StartState> {
                     lineWidth={this.state.lineWidth}
                     key="canvas"
                 />
-            ), <Menu key="menu" />,
-            // <div key="overlay" className="overlay">
-            // <div className="content"></div>
-            // </div>
+            ), <Menu key="menu" />
         ];
     }
 
