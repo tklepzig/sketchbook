@@ -1,5 +1,4 @@
 import * as React from "react";
-import { DrawingHandler } from "../services/DrawingHandler";
 
 export enum DrawMode {
     Above,
@@ -10,10 +9,20 @@ export interface CanvasProps {
     color: string;
     lineWidth: number;
     drawMode: DrawMode;
+    onTapDown: (
+        canvasContext: CanvasRenderingContext2D,
+        tapPosition: { x: number, y: number },
+        touchCount: number) => void;
+
+    onTapMove: (
+        canvasContext: CanvasRenderingContext2D,
+        tapPosition: { x: number, y: number },
+        touchCount: number) => void;
+
+    onTapUp: () => void;
 }
 
 export default class Canvas extends React.Component<CanvasProps> {
-    private drawingHandler: DrawingHandler;
     private getTouchCount: (e: any) => any;
     private getTapPosition: (e: any) => { x: any; y: any; };
     private moveEvent: string;
@@ -45,8 +54,6 @@ export default class Canvas extends React.Component<CanvasProps> {
             });
             this.getTouchCount = (e: any) => 1;
         }
-
-        this.drawingHandler = new DrawingHandler();
     }
 
     public render() {
@@ -93,30 +100,40 @@ export default class Canvas extends React.Component<CanvasProps> {
 
         context.lineCap = "round";
         context.lineWidth = props.lineWidth;
-
-        // for black lines
         context.strokeStyle = props.color;
         context.globalCompositeOperation = props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
-
-
-        // setTimeout(() => {
-        //     // for colored lines
-        //     context.strokeStyle = "rgb(0,120,0)";
-        //     context.globalCompositeOperation = "destination-over";
-        // }, 10000);
     }
 
     private tapDown(e: any) {
+        const canvasContext = this.getCanvasContext();
 
-        const { x, y } = this.getTapPosition(e);
-        this.drawingHandler.tapDown(this.getCanvasContext(), x, y);
+        if (canvasContext === null) {
+            return;
+        }
+
+        const tapPosition = this.getTapPosition(e);
+        const touchCount = this.getTouchCount(e);
+        this.props.onTapDown(canvasContext, tapPosition, touchCount);
     }
     private tapMove(e: any) {
-        const { x, y } = this.getTapPosition(e);
-        this.drawingHandler.tapMove(this.getCanvasContext(), x, y);
+        const canvasContext = this.getCanvasContext();
+
+        if (canvasContext === null) {
+            return;
+        }
+
+        const tapPosition = this.getTapPosition(e);
+        const touchCount = this.getTouchCount(e);
+        this.props.onTapMove(canvasContext, tapPosition, touchCount);
     }
     private tapUp() {
-        this.drawingHandler.tapUp();
+        const canvasContext = this.getCanvasContext();
+
+        if (canvasContext === null) {
+            return;
+        }
+
+        this.props.onTapUp();
     }
 
     private resize() {

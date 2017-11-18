@@ -17,11 +17,7 @@ export class DrawingHandler {
         this.canvasTransform = new CanvasTransform();
     }
 
-    public tapDown(canvasContext: CanvasRenderingContext2D | null, x: number, y: number) {
-        if (canvasContext == null) {
-            return;
-        }
-
+    public tapDown(canvasContext: CanvasRenderingContext2D, x: number, y: number) {
         this.mouseIsDown = true;
 
         const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
@@ -42,12 +38,7 @@ export class DrawingHandler {
         };
     }
 
-    public tapMove(canvasContext: CanvasRenderingContext2D | null, x: number, y: number) {
-
-        if (canvasContext == null) {
-            return;
-        }
-
+    public tapMove(canvasContext: CanvasRenderingContext2D, x: number, y: number) {
         if (!this.mouseIsDown) {
             return;
         }
