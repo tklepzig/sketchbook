@@ -1,10 +1,18 @@
 import * as React from "react";
 import { DrawingHandler } from "../services/DrawingHandler";
 
-export interface CanvasProps {
+export enum DrawMode {
+    Above,
+    Below
 }
 
-export default class Canvas extends React.Component<CanvasProps, any> {
+export interface CanvasProps {
+    color: string;
+    lineWidth: number;
+    drawMode: DrawMode;
+}
+
+export default class Canvas extends React.Component<CanvasProps> {
     private drawingHandler: DrawingHandler;
     private getTouchCount: (e: any) => any;
     private getTapPosition: (e: any) => { x: any; y: any; };
@@ -13,8 +21,8 @@ export default class Canvas extends React.Component<CanvasProps, any> {
     private downEvent: string;
     private canvas: HTMLCanvasElement | null;
 
-    constructor() {
-        super();
+    constructor(props: CanvasProps) {
+        super(props);
 
         this.tapDown = this.tapDown.bind(this);
         this.tapUp = this.tapUp.bind(this);
@@ -65,6 +73,10 @@ export default class Canvas extends React.Component<CanvasProps, any> {
         window.removeEventListener("resize", this.resize);
     }
 
+    public componentWillReceiveProps(newProps: CanvasProps) {
+        this.updateCanvasConfig(newProps);
+    }
+
     private getCanvasContext() {
         if (this.canvas == null) {
             return null;
@@ -73,25 +85,25 @@ export default class Canvas extends React.Component<CanvasProps, any> {
         return context;
     }
 
-    private initializeCanvas() {
+    private updateCanvasConfig(props: CanvasProps) {
         const context = this.getCanvasContext();
         if (context == null) {
             return;
         }
 
         context.lineCap = "round";
-        context.lineWidth = 20;
+        context.lineWidth = props.lineWidth;
 
         // for black lines
-        context.strokeStyle = "#1d1d1d";
-        context.globalCompositeOperation = "source-over";
+        context.strokeStyle = props.color;
+        context.globalCompositeOperation = props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
 
 
-        setTimeout(() => {
-            // for colored lines
-            context.strokeStyle = "rgb(0,120,0)";
-            context.globalCompositeOperation = "destination-over";
-        }, 10000);
+        // setTimeout(() => {
+        //     // for colored lines
+        //     context.strokeStyle = "rgb(0,120,0)";
+        //     context.globalCompositeOperation = "destination-over";
+        // }, 10000);
     }
 
     private tapDown(e: any) {
@@ -113,7 +125,7 @@ export default class Canvas extends React.Component<CanvasProps, any> {
         }
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        this.initializeCanvas();
+        this.updateCanvasConfig(this.props);
     }
 
 

@@ -7,7 +7,7 @@ export class DrawingHandler {
     private currentLine: {
         id: number;
         segments: Array<{ start: { x: number; y: number; }; end: { x: number; y: number; }; }>
-        color: string | CanvasGradient | CanvasPattern;
+        color: string;
         globalCompositeOperation: string,
         width: number;
         visible: boolean;
@@ -27,7 +27,7 @@ export class DrawingHandler {
         const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
 
         this.currentLine = {
-            color: canvasContext.strokeStyle,
+            color: canvasContext.strokeStyle.toString(),
             globalCompositeOperation: canvasContext.globalCompositeOperation,
             id: -1,
             segments: [],

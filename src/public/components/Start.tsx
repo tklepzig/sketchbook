@@ -1,9 +1,10 @@
 import * as React from "react";
-import Canvas from "./Canvas";
+import Canvas, { DrawMode } from "./Canvas";
 import Splash from "./Splash";
 
 export default class Start extends React.Component {
     public render() {
-        return ([<Splash key="splash" />, <Canvas key="canvas" />]);
+        return ([<Splash key="splash" />,
+        <Canvas drawMode={DrawMode.Above} color="red" lineWidth={4} key="canvas" />]);
     }
 }
