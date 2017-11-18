@@ -4,7 +4,6 @@ export interface SplashState {
     ready: boolean;
 }
 
-
 export default class Splash extends React.Component<any, SplashState> {
     constructor() {
         super();

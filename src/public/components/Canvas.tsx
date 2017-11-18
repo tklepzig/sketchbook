@@ -145,8 +145,6 @@ export default class Canvas extends React.Component<CanvasProps> {
         this.updateCanvasConfig(this.props);
     }
 
-
-
     private deviceSupportsTouchEvents() {
         return "ontouchstart" in window;
     }
