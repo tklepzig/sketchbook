@@ -43,9 +43,6 @@ body {
     &:after {
         content: '';
         cursor: pointer;
-    }
-    &.color:after {
-        width: 30px;
         height: 30px;
         border-radius: 15px;
     }
@@ -61,19 +58,13 @@ body {
     &.orange:after {
         background: $orange;
     }
-    &.stroke-width {
-        &:after {
-            height: 40px;
-            border-radius: 15px;
-        }
-        &.s:after {
-            width: 4px;
-        }
-        &.m:after {
-            width: 10px;
-        }
-        &.l:after {
-            width: 20px;
-        }
+    &.s:after {
+        width: 4px;
+    }
+    &.m:after {
+        width: 10px;
+    }
+    &.l:after {
+        width: 20px;
     }
 }

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DrawingHandler } from "../services/DrawingHandler";
+import observer from "../services/Observer";
 import Canvas, { DrawMode } from "./Canvas";
 import Menu from "./Menu";
 import Splash from "./Splash";
@@ -20,9 +21,40 @@ export default class Start extends React.Component<any, StartState> {
         this.mouseOut = this.mouseOut.bind(this);
         this.mouseOut = this.mouseOut.bind(this);
 
-        this.state = { color: "black", drawMode: DrawMode.Above, lineWidth: 4 };
+        this.state = { color: "#1d1d1d", drawMode: DrawMode.Above, lineWidth: 4 };
 
         this.drawingHandler = new DrawingHandler();
+
+        observer.subscribe("color", (color) => {
+            switch (color) {
+                case "black":
+                    this.setState({ color: "#1d1d1d" });
+                    break;
+                case "grey":
+                    this.setState({ color: "#b9afb0" });
+                    break;
+                case "blue":
+                    this.setState({ color: "#4595d8" });
+                    break;
+                case "orange":
+                    this.setState({ color: "#f9a765" });
+                    break;
+            }
+        });
+
+        observer.subscribe("strokeWidth", (strokeWidth) => {
+            switch (strokeWidth) {
+                case "s":
+                    this.setState({ lineWidth: 4 });
+                    break;
+                case "m":
+                    this.setState({ lineWidth: 10 });
+                    break;
+                case "l":
+                    this.setState({ lineWidth: 20 });
+                    break;
+            }
+        });
     }
 
     public componentDidMount() {

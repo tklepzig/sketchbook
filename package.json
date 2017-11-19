@@ -3,6 +3,7 @@
     "dev-client": "webpack --config webpack.dev.js -w --progress --color",
     "dev-server": "nodemon dist/server/index.js",
     "dev": "run-p dev-client dev-server",
+    "lintfix": "tslint --fix src/**/*.ts{,x} -t verbose",
     "build": "webpack --config webpack.prod.js",
     "start": "node dist/server/index.js"
   },
