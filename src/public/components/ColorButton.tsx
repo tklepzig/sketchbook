@@ -21,8 +21,10 @@ export default class ColorButton extends React.Component<ColorButtonProps, any> 
         // TODO: this is definitely the wrong place for that
         if (this.props.color !== "black") {
             observer.publish("strokeWidth", "m");
+            observer.publish("drawMode", "below");
         } else {
             observer.publish("strokeWidth", "s");
+            observer.publish("drawMode", "above");
         }
     }
 }

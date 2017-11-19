@@ -55,6 +55,16 @@ export default class Start extends React.Component<any, StartState> {
                     break;
             }
         });
+        observer.subscribe("drawMode", (drawMode) => {
+            switch (drawMode) {
+                case "above":
+                    this.setState({ drawMode: DrawMode.Above });
+                    break;
+                case "below":
+                    this.setState({ drawMode: DrawMode.Below });
+                    break;
+            }
+        });
     }
 
     public componentDidMount() {
