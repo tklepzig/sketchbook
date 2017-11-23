@@ -1,16 +1,17 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { RootState } from "../models/RootState";
 import { DrawingHandler } from "../services/DrawingHandler";
 import Canvas, { DrawMode } from "./Canvas";
 import { Menu } from "./Menu";
 import Splash from "./Splash";
 
-export interface StartState {
+export interface StartProps {
     color: string;
-    drawMode: DrawMode;
-    strokeWidth: number;
+    strokeWidth: string;
 }
 
-export default class Start extends React.Component<any, StartState> {
+class Start extends React.Component<StartProps> {
     private drawingHandler: DrawingHandler;
     constructor() {
         super();
@@ -19,8 +20,6 @@ export default class Start extends React.Component<any, StartState> {
         this.tapUp = this.tapUp.bind(this);
         this.mouseOut = this.mouseOut.bind(this);
         this.mouseOut = this.mouseOut.bind(this);
-
-        this.state = { color: "#1d1d1d", drawMode: DrawMode.Above, strokeWidth: 4 };
 
         this.drawingHandler = new DrawingHandler();
     }
@@ -41,9 +40,9 @@ export default class Start extends React.Component<any, StartState> {
                     onTapDown={this.tapDown}
                     onTapMove={this.tapMove}
                     onTapUp={this.tapUp}
-                    drawMode={this.state.drawMode}
-                    color={this.state.color}
-                    lineWidth={this.state.strokeWidth}
+                    color={this.props.color}
+                    drawMode={DrawMode.Above}
+                    lineWidth={4}
                     key="canvas"
                 />
             ), <Menu key="menu" />
@@ -72,3 +71,12 @@ export default class Start extends React.Component<any, StartState> {
         this.drawingHandler.tapUp();
     }
 }
+
+function mapStateToProps(state: RootState) {
+    const { color, strokeWidth } = state.pen;
+    return { color, strokeWidth };
+}
+
+export default connect<StartProps, {}, {}, RootState>(
+    mapStateToProps
+)(Start);
