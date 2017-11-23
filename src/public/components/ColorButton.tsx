@@ -7,5 +7,5 @@ export interface ColorButtonProps {
 
 export const ColorButton: React.SFC<ColorButtonProps> = (props) => {
     const onClick = () => props.onClick(props.color);
-    return (<button onClick={onClick}>{props.color}</button>);
+    return <button className={`btn-pen ${props.color}`} onClick={onClick} />;
 };

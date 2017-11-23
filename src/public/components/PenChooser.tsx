@@ -41,15 +41,15 @@ class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchPro
             ),
             (
                 <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup} key="popup">
-                    <h5>Color</h5>
+                    <header>Color</header>
                     <ColorButton onClick={this.colorSelected} color="black" />
                     <ColorButton onClick={this.colorSelected} color="grey" />
                     <ColorButton onClick={this.colorSelected} color="blue" />
                     <ColorButton onClick={this.colorSelected} color="orange" />
-                    <h5>Stroke Width</h5>
-                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="s" />
-                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="m" />
-                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="l" />
+                    <header>Stroke Width</header>
+                    <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="s" />
+                    <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="m" />
+                    <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="l" />
                 </Popup>
             )
         ];
