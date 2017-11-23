@@ -1,49 +1,43 @@
 import * as React from "react";
-import observer from "../services/Observer";
-import ColorButton from "./ColorButton";
-import Popup from "./Popup";
-import StrokeWidthButton from "./StrokeWidthButton";
+import { ColorButton } from "./ColorButton";
+import { Popup } from "./Popup";
+import { StrokeWidthButton } from "./StrokeWidthButton";
 
-export interface PenChooserState {
+export interface PenChooserProps {
     color: string;
     strokeWidth: string;
+    onColorSelected: (color: string) => void;
+    onStrokeWidthSelected: (strokeWidth: string) => void;
+    popupVisible: boolean;
+    onOpen: () => void;
+    onCancel: () => void;
 }
 
-export default class PenChooser extends React.Component<any, PenChooserState> {
-    constructor() {
-        super();
-        this.showPopup = this.showPopup.bind(this);
-        this.state = { color: "black", strokeWidth: "s" };
-
-        observer.subscribe("color", (color) => this.setState({ color }));
-        observer.subscribe("strokeWidth", (strokeWidth) => this.setState({ strokeWidth }));
-    }
+export default class PenChooser extends React.Component<PenChooserProps> {
     public render() {
         return [
             (
                 <button
                     key="button"
-                    onClick={this.showPopup}
-                    className={`btn-pen ${this.state.color} ${this.state.strokeWidth}`}
+                    onClick={this.props.onOpen}
+                    className={`btn-pen ${this.props.color} ${this.props.strokeWidth}`}
                 />
             ),
             (
-                <Popup key="popup">
+                <Popup visible={this.props.popupVisible} onOutsideClick={this.props.onCancel} key="popup">
                     <h5>Color</h5>
-                    <ColorButton color="black" />
-                    <ColorButton color="grey" />
-                    <ColorButton color="blue" />
-                    <ColorButton color="orange" />
+                    <ColorButton onClick={this.props.onColorSelected} color="black" />
+                    <ColorButton onClick={this.props.onColorSelected} color="grey" />
+                    <ColorButton onClick={this.props.onColorSelected} color="blue" />
+                    <ColorButton onClick={this.props.onColorSelected} color="orange" />
                     <h5>Stroke Width</h5>
-                    <StrokeWidthButton strokeWidth="s" />
-                    <StrokeWidthButton strokeWidth="m" />
-                    <StrokeWidthButton strokeWidth="l" />
+                    <StrokeWidthButton onClick={this.props.onStrokeWidthSelected} strokeWidth="s" />
+                    <StrokeWidthButton onClick={this.props.onStrokeWidthSelected} strokeWidth="m" />
+                    <StrokeWidthButton onClick={this.props.onStrokeWidthSelected} strokeWidth="l" />
                 </Popup>
             )
         ];
     }
-
-    private showPopup() {
-        observer.publish("popupVisible", true);
-    }
 }
+
+// TODO: add map functions, connect-call, etc.
