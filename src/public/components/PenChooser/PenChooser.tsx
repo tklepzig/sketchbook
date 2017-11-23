@@ -16,7 +16,7 @@ interface PenChooserDispatchProps {
     onStrokeWidthSelected: (strokeWidth: string) => SetStrokeWidthAction;
 }
 
-export interface PenChooserState {
+interface PenChooserState {
     popupVisible: boolean;
 }
 
@@ -25,6 +25,8 @@ class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchPro
         super();
         this.openPopup = this.openPopup.bind(this);
         this.closePopup = this.closePopup.bind(this);
+        this.colorSelected = this.colorSelected.bind(this);
+        this.strokeWidthSelected = this.strokeWidthSelected.bind(this);
 
         this.state = { popupVisible: false };
     }
@@ -40,17 +42,27 @@ class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchPro
             (
                 <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup} key="popup">
                     <h5>Color</h5>
-                    <ColorButton onClick={this.props.onColorSelected} color="black" />
-                    <ColorButton onClick={this.props.onColorSelected} color="grey" />
-                    <ColorButton onClick={this.props.onColorSelected} color="blue" />
-                    <ColorButton onClick={this.props.onColorSelected} color="orange" />
+                    <ColorButton onClick={this.colorSelected} color="black" />
+                    <ColorButton onClick={this.colorSelected} color="grey" />
+                    <ColorButton onClick={this.colorSelected} color="blue" />
+                    <ColorButton onClick={this.colorSelected} color="orange" />
                     <h5>Stroke Width</h5>
-                    <StrokeWidthButton onClick={this.props.onStrokeWidthSelected} strokeWidth="s" />
-                    <StrokeWidthButton onClick={this.props.onStrokeWidthSelected} strokeWidth="m" />
-                    <StrokeWidthButton onClick={this.props.onStrokeWidthSelected} strokeWidth="l" />
+                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="s" />
+                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="m" />
+                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="l" />
                 </Popup>
             )
         ];
+    }
+
+    private colorSelected(color: string) {
+        this.closePopup();
+        this.props.onColorSelected(color);
+    }
+
+    private strokeWidthSelected(strokeWidth: string) {
+        this.closePopup();
+        this.props.onStrokeWidthSelected(strokeWidth);
     }
 
     private openPopup() {
