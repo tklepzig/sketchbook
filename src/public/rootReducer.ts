@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { pen } from "./components/PenChooser/reducers";
 import { RootState } from "./models/RootState";
+import { pen } from "./reducers";
 
 export const rootReducer = combineReducers<RootState>({ pen });

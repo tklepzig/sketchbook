@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { Actions } from "../../models/Actions";
+import { Actions } from "./models/Actions";
 
 export interface SetColorAction extends Action {
     color: string;

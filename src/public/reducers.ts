@@ -1,7 +1,7 @@
 import { AnyAction, Reducer } from "redux";
-import { Actions } from "../../models/Actions";
 import { SetColorAction } from "./actions";
-import { PenChooserProps } from "./PenChooser";
+import { PenChooserProps } from "./components/PenChooser";
+import { Actions } from "./models/Actions";
 
 export const pen: Reducer<PenChooserProps> =
     (state = { color: "black", strokeWidth: "s" }, action: AnyAction): PenChooserProps => {
