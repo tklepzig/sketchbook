@@ -1,17 +1,18 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { RootState } from "../models/RootState";
 import { DrawingHandler } from "../services/DrawingHandler";
-import observer from "../services/Observer";
 import Canvas, { DrawMode } from "./Canvas";
-import Menu from "./Menu";
+import { Menu } from "./Menu";
 import Splash from "./Splash";
 
-export interface StartState {
+export interface StartProps {
     color: string;
-    drawMode: DrawMode;
     lineWidth: number;
+    drawMode: DrawMode;
 }
 
-export default class Start extends React.Component<any, StartState> {
+class Start extends React.Component<StartProps> {
     private drawingHandler: DrawingHandler;
     constructor() {
         super();
@@ -21,50 +22,7 @@ export default class Start extends React.Component<any, StartState> {
         this.mouseOut = this.mouseOut.bind(this);
         this.mouseOut = this.mouseOut.bind(this);
 
-        this.state = { color: "#1d1d1d", drawMode: DrawMode.Above, lineWidth: 4 };
-
         this.drawingHandler = new DrawingHandler();
-
-        observer.subscribe("color", (color) => {
-            switch (color) {
-                case "black":
-                    this.setState({ color: "#1d1d1d" });
-                    break;
-                case "grey":
-                    this.setState({ color: "#b9afb0" });
-                    break;
-                case "blue":
-                    this.setState({ color: "#4595d8" });
-                    break;
-                case "orange":
-                    this.setState({ color: "#f9a765" });
-                    break;
-            }
-        });
-
-        observer.subscribe("strokeWidth", (strokeWidth) => {
-            switch (strokeWidth) {
-                case "s":
-                    this.setState({ lineWidth: 4 });
-                    break;
-                case "m":
-                    this.setState({ lineWidth: 10 });
-                    break;
-                case "l":
-                    this.setState({ lineWidth: 20 });
-                    break;
-            }
-        });
-        observer.subscribe("drawMode", (drawMode) => {
-            switch (drawMode) {
-                case "above":
-                    this.setState({ drawMode: DrawMode.Above });
-                    break;
-                case "below":
-                    this.setState({ drawMode: DrawMode.Below });
-                    break;
-            }
-        });
     }
 
     public componentDidMount() {
@@ -83,9 +41,9 @@ export default class Start extends React.Component<any, StartState> {
                     onTapDown={this.tapDown}
                     onTapMove={this.tapMove}
                     onTapUp={this.tapUp}
-                    drawMode={this.state.drawMode}
-                    color={this.state.color}
-                    lineWidth={this.state.lineWidth}
+                    color={this.props.color}
+                    drawMode={this.props.drawMode}
+                    lineWidth={this.props.lineWidth}
                     key="canvas"
                 />
             ), <Menu key="menu" />
@@ -114,3 +72,54 @@ export default class Start extends React.Component<any, StartState> {
         this.drawingHandler.tapUp();
     }
 }
+
+function mapStateToProps(state: RootState): StartProps {
+    const { color, strokeWidth } = state.pen;
+    let colorHexCode: string;
+    let lineWidth: number;
+    let drawMode = DrawMode.Above;
+
+    switch (color) {
+        case "black":
+            colorHexCode = "#1d1d1d";
+            break;
+        case "grey":
+            colorHexCode = "#b9afb0";
+            drawMode = DrawMode.Below;
+            break;
+        case "blue":
+            colorHexCode = "#4595d8";
+            drawMode = DrawMode.Below;
+            break;
+        case "orange":
+            colorHexCode = "#f9a765";
+            drawMode = DrawMode.Below;
+            break;
+        // TODO: redundant defintion of default value for color
+        default:
+            colorHexCode = "#1d1d1d";
+            break;
+    }
+
+    switch (strokeWidth) {
+        case "s":
+            lineWidth = 4;
+            break;
+        case "m":
+            lineWidth = 10;
+            break;
+        case "l":
+            lineWidth = 20;
+            break;
+        // TODO: redundant defintion of default value for lineWidth
+        default:
+            lineWidth = 4;
+            break;
+    }
+
+    return { color: colorHexCode, lineWidth, drawMode };
+}
+
+export default connect<StartProps, {}, {}, RootState>(
+    mapStateToProps
+)(Start);

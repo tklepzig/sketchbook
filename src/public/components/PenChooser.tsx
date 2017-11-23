@@ -1,49 +1,92 @@
 import * as React from "react";
-import observer from "../services/Observer";
-import ColorButton from "./ColorButton";
-import Popup from "./Popup";
-import StrokeWidthButton from "./StrokeWidthButton";
+import { connect, Dispatch } from "react-redux";
+import { setColor, SetColorAction, setStrokeWidth, SetStrokeWidthAction } from "../actions";
+import { RootState } from "../models/RootState";
+import { ColorButton } from "./ColorButton";
+import { Popup } from "./Popup";
+import { StrokeWidthButton } from "./StrokeWidthButton";
 
-export interface PenChooserState {
+export interface PenChooserProps {
     color: string;
     strokeWidth: string;
 }
 
-export default class PenChooser extends React.Component<any, PenChooserState> {
+interface PenChooserDispatchProps {
+    onColorSelected: (color: string) => SetColorAction;
+    onStrokeWidthSelected: (strokeWidth: string) => SetStrokeWidthAction;
+}
+
+interface PenChooserState {
+    popupVisible: boolean;
+}
+
+class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchProps, PenChooserState> {
     constructor() {
         super();
-        this.showPopup = this.showPopup.bind(this);
-        this.state = { color: "black", strokeWidth: "s" };
+        this.openPopup = this.openPopup.bind(this);
+        this.closePopup = this.closePopup.bind(this);
+        this.colorSelected = this.colorSelected.bind(this);
+        this.strokeWidthSelected = this.strokeWidthSelected.bind(this);
 
-        observer.subscribe("color", (color) => this.setState({ color }));
-        observer.subscribe("strokeWidth", (strokeWidth) => this.setState({ strokeWidth }));
+        this.state = { popupVisible: false };
     }
     public render() {
         return [
             (
                 <button
                     key="button"
-                    onClick={this.showPopup}
-                    className={`btn-pen ${this.state.color} ${this.state.strokeWidth}`}
+                    onClick={this.openPopup}
+                    className={`btn-pen ${this.props.color} ${this.props.strokeWidth}`}
                 />
             ),
             (
-                <Popup key="popup">
+                <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup} key="popup">
                     <h5>Color</h5>
-                    <ColorButton color="black" />
-                    <ColorButton color="grey" />
-                    <ColorButton color="blue" />
-                    <ColorButton color="orange" />
+                    <ColorButton onClick={this.colorSelected} color="black" />
+                    <ColorButton onClick={this.colorSelected} color="grey" />
+                    <ColorButton onClick={this.colorSelected} color="blue" />
+                    <ColorButton onClick={this.colorSelected} color="orange" />
                     <h5>Stroke Width</h5>
-                    <StrokeWidthButton strokeWidth="s" />
-                    <StrokeWidthButton strokeWidth="m" />
-                    <StrokeWidthButton strokeWidth="l" />
+                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="s" />
+                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="m" />
+                    <StrokeWidthButton onClick={this.strokeWidthSelected} strokeWidth="l" />
                 </Popup>
             )
         ];
     }
 
-    private showPopup() {
-        observer.publish("popupVisible", true);
+    private colorSelected(color: string) {
+        this.closePopup();
+        this.props.onColorSelected(color);
+    }
+
+    private strokeWidthSelected(strokeWidth: string) {
+        this.closePopup();
+        this.props.onStrokeWidthSelected(strokeWidth);
+    }
+
+    private openPopup() {
+        this.setState({ popupVisible: true });
+    }
+
+    private closePopup() {
+        this.setState({ popupVisible: false });
     }
 }
+
+function mapStateToProps(state: RootState) {
+    const { color, strokeWidth } = state.pen;
+    return { color, strokeWidth };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<RootState>) {
+    return {
+        onColorSelected: (color: string) => dispatch(setColor(color)),
+        onStrokeWidthSelected: (strokeWidth: string) => dispatch(setStrokeWidth(strokeWidth)),
+    };
+}
+
+export default connect<PenChooserProps, PenChooserDispatchProps, {}, RootState>(
+    mapStateToProps,
+    mapDispatchToProps
+)(PenChooser);

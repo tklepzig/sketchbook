@@ -1,16 +1,8 @@
 import * as React from "react";
 import PenChooser from "./PenChooser";
-import Popup from "./Popup";
 
-export interface MenuProps {
-}
-
-export default class Menu extends React.Component<MenuProps, any> {
-
-    public render() {
-        return (
-            <div className="menu">
-                <PenChooser />
-            </div>);
-    }
-}
+// TODO: all props of PenChhoser have to set by redux
+export const Menu: React.SFC = () => (
+    <div className="menu">
+        <PenChooser />
+    </div>);
