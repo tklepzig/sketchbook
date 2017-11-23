@@ -9,6 +9,7 @@ import Splash from "./Splash";
 export interface StartProps {
     color: string;
     lineWidth: number;
+    drawMode: DrawMode;
 }
 
 class Start extends React.Component<StartProps> {
@@ -41,7 +42,7 @@ class Start extends React.Component<StartProps> {
                     onTapMove={this.tapMove}
                     onTapUp={this.tapUp}
                     color={this.props.color}
-                    drawMode={DrawMode.Above}
+                    drawMode={this.props.drawMode}
                     lineWidth={this.props.lineWidth}
                     key="canvas"
                 />
@@ -76,6 +77,7 @@ function mapStateToProps(state: RootState): StartProps {
     const { color, strokeWidth } = state.pen;
     let colorHexCode: string;
     let lineWidth: number;
+    let drawMode = DrawMode.Above;
 
     switch (color) {
         case "black":
@@ -83,12 +85,15 @@ function mapStateToProps(state: RootState): StartProps {
             break;
         case "grey":
             colorHexCode = "#b9afb0";
+            drawMode = DrawMode.Below;
             break;
         case "blue":
             colorHexCode = "#4595d8";
+            drawMode = DrawMode.Below;
             break;
         case "orange":
             colorHexCode = "#f9a765";
+            drawMode = DrawMode.Below;
             break;
         // TODO: redundant defintion of default value for color
         default:
@@ -112,7 +117,7 @@ function mapStateToProps(state: RootState): StartProps {
             break;
     }
 
-    return { color: colorHexCode, lineWidth };
+    return { color: colorHexCode, lineWidth, drawMode };
 }
 
 export default connect<StartProps, {}, {}, RootState>(
