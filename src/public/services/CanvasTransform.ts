@@ -1,6 +1,6 @@
 export class CanvasTransform {
     private svgPoint: SVGPoint;
-    private savedTransforms: any[];
+    private savedTransforms: any[] = [];
     private transformMatrix: SVGMatrix;
     private svg: SVGSVGElement;
 

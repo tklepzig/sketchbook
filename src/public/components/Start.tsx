@@ -1,5 +1,8 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Dispatch } from "redux";
+import { addLine } from "../actions";
+import { Line } from "../models/Line";
 import { RootState } from "../models/RootState";
 import Canvas, { DrawMode } from "./Canvas";
 import { Menu } from "./Menu";
@@ -9,9 +12,14 @@ export interface StartProps {
     color: string;
     lineWidth: number;
     drawMode: DrawMode;
+    lines: Line[];
 }
 
-class Start extends React.Component<StartProps> {
+interface StartDispatchProps {
+    onLineAdded: (line: Line) => void;
+}
+
+class Start extends React.Component<StartProps & StartDispatchProps> {
     public render() {
         return [
             <Splash key="splash" />,
@@ -21,6 +29,8 @@ class Start extends React.Component<StartProps> {
                     drawMode={this.props.drawMode}
                     lineWidth={this.props.lineWidth}
                     key="canvas"
+                    lines={this.props.lines}
+                    onLineAdded={this.props.onLineAdded}
                 />
             ), <Menu key="menu" />
         ];
@@ -28,7 +38,7 @@ class Start extends React.Component<StartProps> {
 }
 
 function mapStateToProps(state: RootState): StartProps {
-    const { color, strokeWidth } = state.pen;
+    const { lines, pen: { color, strokeWidth } } = state;
     let colorHexCode: string;
     let lineWidth: number;
     let drawMode = DrawMode.Above;
@@ -71,9 +81,16 @@ function mapStateToProps(state: RootState): StartProps {
             break;
     }
 
-    return { color: colorHexCode, lineWidth, drawMode };
+    return { color: colorHexCode, lineWidth, drawMode, lines };
 }
 
-export default connect<StartProps, {}, {}, RootState>(
-    mapStateToProps
+function mapDispatchToProps(dispatch: Dispatch<RootState>) {
+    return {
+        onLineAdded: (line: Line) => dispatch(addLine(line))
+    };
+}
+
+export default connect<StartProps, StartDispatchProps, {}, RootState>(
+    mapStateToProps,
+    mapDispatchToProps
 )(Start);
