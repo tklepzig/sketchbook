@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Line } from "../models/Line";
+import { CanvasTransform } from "../services/CanvasTransform";
 
 export enum DrawMode {
     Above,
@@ -9,17 +11,6 @@ export interface CanvasProps {
     color: string;
     lineWidth: number;
     drawMode: DrawMode;
-    onTapDown: (
-        canvasContext: CanvasRenderingContext2D,
-        tapPosition: { x: number, y: number },
-        touchCount: number) => void;
-
-    onTapMove: (
-        canvasContext: CanvasRenderingContext2D,
-        tapPosition: { x: number, y: number },
-        touchCount: number) => void;
-
-    onTapUp: () => void;
 }
 
 export default class Canvas extends React.Component<CanvasProps> {
@@ -29,14 +20,20 @@ export default class Canvas extends React.Component<CanvasProps> {
     private upEvent: string;
     private downEvent: string;
     private canvas: HTMLCanvasElement | null;
+    private canvasTransform: CanvasTransform;
+    private mouseIsDown: boolean;
+    private tapDownPoint: { x: number; y: number; };
+    private currentLine: Line;
 
-    constructor(props: CanvasProps) {
-        super(props);
+    constructor() {
+        super();
+        this.canvasTransform = new CanvasTransform();
 
         this.tapDown = this.tapDown.bind(this);
         this.tapUp = this.tapUp.bind(this);
         this.tapMove = this.tapMove.bind(this);
         this.resize = this.resize.bind(this);
+        this.mouseOut = this.mouseOut.bind(this);
 
         this.downEvent = this.deviceSupportsTouchEvents() ? "onTouchStart" : "onMouseDown";
         this.upEvent = this.deviceSupportsTouchEvents() ? "onTouchEnd" : "onMouseUp";
@@ -74,14 +71,20 @@ export default class Canvas extends React.Component<CanvasProps> {
     public componentDidMount() {
         this.resize();
         window.addEventListener("resize", this.resize);
+        window.addEventListener("mouseout", this.mouseOut);
     }
 
     public componentWillUnmount() {
         window.removeEventListener("resize", this.resize);
+        window.removeEventListener("mouseout", this.mouseOut);
     }
 
     public componentWillReceiveProps(newProps: CanvasProps) {
         this.updateCanvasConfig(newProps);
+    }
+
+    private mouseOut() {
+        this.completeLine();
     }
 
     private getCanvasContext() {
@@ -113,7 +116,9 @@ export default class Canvas extends React.Component<CanvasProps> {
 
         const tapPosition = this.getTapPosition(e);
         const touchCount = this.getTouchCount(e);
-        this.props.onTapDown(canvasContext, tapPosition, touchCount);
+        const { x, y } = tapPosition;
+
+        this.startLine(canvasContext, x, y);
     }
     private tapMove(e: any) {
         const canvasContext = this.getCanvasContext();
@@ -124,16 +129,12 @@ export default class Canvas extends React.Component<CanvasProps> {
 
         const tapPosition = this.getTapPosition(e);
         const touchCount = this.getTouchCount(e);
-        this.props.onTapMove(canvasContext, tapPosition, touchCount);
+        const { x, y } = tapPosition;
+
+        this.addSegmentToLine(canvasContext, x, y);
     }
     private tapUp() {
-        const canvasContext = this.getCanvasContext();
-
-        if (canvasContext === null) {
-            return;
-        }
-
-        this.props.onTapUp();
+        this.completeLine();
     }
 
     private resize() {
@@ -147,5 +148,61 @@ export default class Canvas extends React.Component<CanvasProps> {
 
     private deviceSupportsTouchEvents() {
         return "ontouchstart" in window;
+    }
+
+    private startLine(canvasContext: CanvasRenderingContext2D, x: number, y: number) {
+        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+
+        this.currentLine = {
+            color: canvasContext.strokeStyle.toString(),
+            globalCompositeOperation: canvasContext.globalCompositeOperation,
+            lineWidth: canvasContext.lineWidth,
+            segments: []
+        };
+        this.drawLine(canvasContext, pt.x, pt.y, pt.x + 0.1, pt.y + 0.1);
+
+        this.mouseIsDown = true;
+        this.tapDownPoint = {
+            x: pt.x,
+            y: pt.y
+        };
+    }
+
+    private addSegmentToLine(canvasContext: CanvasRenderingContext2D, x: number, y: number) {
+        if (!this.mouseIsDown) {
+            return;
+        }
+
+        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+
+        this.drawLine(canvasContext, this.tapDownPoint.x, this.tapDownPoint.y, pt.x, pt.y);
+
+        const segment = {
+            end: { x: pt.x, y: pt.y },
+            start: { x: this.tapDownPoint.x, y: this.tapDownPoint.y }
+        };
+        this.currentLine.segments.push(segment);
+
+        this.tapDownPoint = {
+            x: pt.x,
+            y: pt.y
+        };
+    }
+
+    private completeLine() {
+        if (!this.mouseIsDown) {
+            return;
+        }
+
+        this.mouseIsDown = false;
+        // add currentLine to lines[]
+    }
+
+    private drawLine(canvasContext: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number) {
+        canvasContext.beginPath();
+        canvasContext.moveTo(x1, y1);
+        canvasContext.lineTo(x2, y2);
+        canvasContext.stroke();
+        canvasContext.closePath();
     }
 }
