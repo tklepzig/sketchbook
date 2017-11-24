@@ -1,17 +1,11 @@
+import { Line } from "../models/Line";
 import { CanvasTransform } from "./CanvasTransform";
 
 export class DrawingHandler {
     private canvasTransform: CanvasTransform;
     private mouseIsDown: boolean;
     private tapDownPoint: { x: number; y: number; };
-    private currentLine: {
-        id: number;
-        segments: Array<{ start: { x: number; y: number; }; end: { x: number; y: number; }; }>
-        color: string;
-        globalCompositeOperation: string,
-        width: number;
-        visible: boolean;
-    };
+    private currentLine: Line;
 
     constructor() {
         this.canvasTransform = new CanvasTransform();
@@ -25,10 +19,8 @@ export class DrawingHandler {
         this.currentLine = {
             color: canvasContext.strokeStyle.toString(),
             globalCompositeOperation: canvasContext.globalCompositeOperation,
-            id: -1,
-            segments: [],
-            visible: true,
-            width: canvasContext.lineWidth
+            lineWidth: canvasContext.lineWidth,
+            segments: []
         };
         this.drawLine(canvasContext, pt.x, pt.y, pt.x + 0.1, pt.y + 0.1);
 
