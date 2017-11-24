@@ -16,6 +16,7 @@ export interface CanvasProps {
 }
 
 export default class Canvas extends React.Component<CanvasProps> {
+    private translate: boolean;
     private linesGroupedByColorAndWidth: Line[][];
     private getTouchCount: (e: any) => any;
     private getTapPosition: (e: any) => { x: any; y: any; };
@@ -165,7 +166,17 @@ export default class Canvas extends React.Component<CanvasProps> {
         const touchCount = this.getTouchCount(e);
         const { x, y } = tapPosition;
 
-        this.startLine(canvasContext, x, y);
+        if (touchCount === 2 || e.ctrlKey) {
+            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+            this.tapDownPoint = {
+                x: pt.x,
+                y: pt.y
+            };
+            this.translate = true;
+            this.repaint();
+        } else {
+            this.startLine(canvasContext, x, y);
+        }
     }
     private tapMove(e: any) {
         const canvasContext = this.getCanvasContext();
@@ -178,9 +189,16 @@ export default class Canvas extends React.Component<CanvasProps> {
         const touchCount = this.getTouchCount(e);
         const { x, y } = tapPosition;
 
-        this.addSegmentToLine(canvasContext, x, y);
+        if (this.translate) {
+            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+            this.canvasTransform.translate(canvasContext, pt.x - this.tapDownPoint.x, pt.y - this.tapDownPoint.y);
+            this.repaint();
+        } else {
+            this.addSegmentToLine(canvasContext, x, y);
+        }
     }
     private tapUp() {
+        this.translate = false;
         this.completeLine();
     }
 
@@ -188,8 +206,23 @@ export default class Canvas extends React.Component<CanvasProps> {
         if (this.canvas == null) {
             return;
         }
+
+        const canvasContext = this.getCanvasContext();
+
+        if (canvasContext === null) {
+            return;
+        }
+
+        // TODO
+        const currentTransform = this.canvasTransform.getTransform();
+
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+
+        const { a, b, c, d, e, f } = currentTransform;
+        this.canvasTransform.setTransform(canvasContext, a, b, c, d, e, f);
+        // --
+        
         this.update(this.props, true);
     }
 
