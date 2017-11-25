@@ -84,46 +84,7 @@ export default class Canvas extends React.Component<CanvasProps> {
     }
 
     public componentWillReceiveProps(newProps: CanvasProps) {
-        this.update(newProps, false);
-    }
-
-    public repaint() {
-        if (this.canvas == null) {
-            return null;
-        }
-
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
-
-        this.canvasTransform.save(context);
-        this.canvasTransform.setTransform(context, 1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvasTransform.restore(context);
-
-        // limit redrawing area to increase performance
-        let left = -this.canvasTransform.getTranslateX();
-        let top = -this.canvasTransform.getTranslateY();
-        let right = left + this.canvas.width;
-        let bottom = top + this.canvas.height;
-
-        // offset
-        left -= 40;
-        top -= 40;
-        right += 40;
-        bottom += 40;
-
-        // if (this.props.lines.length > 4) {
-        // faster, bot wrong detail (lines are not in the right order)
-        // this.drawLinesSortedAndGrouped(context, { left, top, right, bottom });
-        // } else {
-        this.drawLines(context, { left, top, right, bottom });
-        // }
-
-        context.lineWidth = this.props.lineWidth;
-        context.strokeStyle = this.props.color;
-        context.globalCompositeOperation = this.props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
+        this.updateCanvasConfig(newProps);
     }
 
     private mouseOut() {
@@ -136,23 +97,6 @@ export default class Canvas extends React.Component<CanvasProps> {
         }
         const context = this.canvas.getContext("2d");
         return context;
-    }
-
-    private update(props: CanvasProps, repaint: boolean) {
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
-
-        context.lineCap = "round";
-
-        if (repaint) {
-            this.repaint();
-        }
-
-        context.lineWidth = props.lineWidth;
-        context.strokeStyle = props.color;
-        context.globalCompositeOperation = props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
     }
 
     private tapDown(e: any) {
@@ -213,17 +157,79 @@ export default class Canvas extends React.Component<CanvasProps> {
             return;
         }
 
-        // TODO
+        this.setCanvasSize(window.innerWidth, window.innerHeight);
+        this.updateCanvasConfig(this.props);
+        this.repaint();
+    }
+
+    private updateCanvasConfig(props: CanvasProps) {
+        const context = this.getCanvasContext();
+        if (context == null) {
+            return;
+        }
+
+        context.lineCap = "round";
+        context.lineWidth = props.lineWidth;
+        context.strokeStyle = props.color;
+        context.globalCompositeOperation = props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
+    }
+
+    private setCanvasSize(width: number, height: number) {
+        if (this.canvas == null) {
+            return;
+        }
+
+        const context = this.getCanvasContext();
+        if (context == null) {
+            return;
+        }
+
         const currentTransform = this.canvasTransform.getTransform();
 
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
 
         const { a, b, c, d, e, f } = currentTransform;
-        this.canvasTransform.setTransform(canvasContext, a, b, c, d, e, f);
-        // --
-        
-        this.update(this.props, true);
+        this.canvasTransform.setTransform(context, a, b, c, d, e, f);
+    }
+
+    private repaint() {
+        if (this.canvas == null) {
+            return null;
+        }
+
+        const context = this.getCanvasContext();
+        if (context == null) {
+            return;
+        }
+
+        this.canvasTransform.save(context);
+        this.canvasTransform.setTransform(context, 1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvasTransform.restore(context);
+
+        // limit redrawing area to increase performance
+        let left = -this.canvasTransform.getTranslateX();
+        let top = -this.canvasTransform.getTranslateY();
+        let right = left + this.canvas.width;
+        let bottom = top + this.canvas.height;
+
+        // offset
+        left -= 40;
+        top -= 40;
+        right += 40;
+        bottom += 40;
+
+        // if (this.props.lines.length > 4) {
+        // faster, bot wrong detail (lines are not in the right order)
+        // this.drawLinesSortedAndGrouped(context, { left, top, right, bottom });
+        // } else {
+        this.drawLines(context, { left, top, right, bottom });
+        // }
+
+        context.lineWidth = this.props.lineWidth;
+        context.strokeStyle = this.props.color;
+        context.globalCompositeOperation = this.props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
     }
 
     private deviceSupportsTouchEvents() {
