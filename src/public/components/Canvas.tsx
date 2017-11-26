@@ -7,6 +7,11 @@ export enum DrawMode {
     Below
 }
 
+export enum PenMode {
+    Draw,
+    Translate
+}
+
 export interface CanvasProps {
     color: string;
     lineWidth: number;
@@ -16,7 +21,6 @@ export interface CanvasProps {
 }
 
 export default class Canvas extends React.Component<CanvasProps> {
-    private translate: boolean;
     private linesGroupedByColorAndWidth: Line[][];
     private getTouchCount: (e: any) => any;
     private getTapPosition: (e: any) => { x: any; y: any; };
@@ -25,9 +29,12 @@ export default class Canvas extends React.Component<CanvasProps> {
     private downEvent: string;
     private canvas: HTMLCanvasElement | null;
     private canvasTransform: CanvasTransform;
+
     private mouseIsDown: boolean;
+    private currentPenMode: PenMode = PenMode.Draw;
     private tapDownPoint: { x: number; y: number; };
     private currentLine: Line;
+    private translate: boolean;
 
     constructor() {
         super();
@@ -102,34 +109,32 @@ export default class Canvas extends React.Component<CanvasProps> {
             return;
         }
 
-        const tapPosition = this.getTapPosition(e);
+        const { x, y } = this.getTapPosition(e);
         const touchCount = this.getTouchCount(e);
-        const { x, y } = tapPosition;
+        this.mouseIsDown = true;
+        this.currentPenMode = (touchCount === 2 || e.ctrlKey) ? PenMode.Translate : PenMode.Draw;
 
-        if (touchCount === 2 || e.ctrlKey) {
-            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
-            this.tapDownPoint = {
-                x: pt.x,
-                y: pt.y
-            };
-            this.translate = true;
-            this.repaint();
-        } else {
-            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+        this.tapDownPoint = {
+            x: pt.x,
+            y: pt.y
+        };
 
-            this.currentLine = {
-                color: canvasContext.strokeStyle.toString(),
-                globalCompositeOperation: canvasContext.globalCompositeOperation,
-                lineWidth: canvasContext.lineWidth,
-                segments: []
-            };
-            this.drawLine(canvasContext, pt.x, pt.y, pt.x + 0.1, pt.y + 0.1);
+        switch (this.currentPenMode) {
+            case PenMode.Draw:
 
-            this.mouseIsDown = true;
-            this.tapDownPoint = {
-                x: pt.x,
-                y: pt.y
-            };
+                this.currentLine = {
+                    color: canvasContext.strokeStyle.toString(),
+                    globalCompositeOperation: canvasContext.globalCompositeOperation,
+                    lineWidth: canvasContext.lineWidth,
+                    segments: []
+                };
+                this.drawLine(canvasContext, pt.x, pt.y, pt.x + 0.1, pt.y + 0.1);
+
+                break;
+            case PenMode.Translate:
+                this.repaint();
+                break;
         }
     }
     private tapMove(e: any) {
@@ -139,57 +144,52 @@ export default class Canvas extends React.Component<CanvasProps> {
             return;
         }
 
-        const tapPosition = this.getTapPosition(e);
+        if (!this.mouseIsDown) {
+            return;
+        }
+
+        const { x, y } = this.getTapPosition(e);
         const touchCount = this.getTouchCount(e);
-        const { x, y } = tapPosition;
 
-        if (this.translate) {
-            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
-            this.canvasTransform.translate(canvasContext, pt.x - this.tapDownPoint.x, pt.y - this.tapDownPoint.y);
-            this.repaint();
-        } else {
-            if (!this.mouseIsDown) {
-                return;
-            }
+        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
 
-            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+        switch (this.currentPenMode) {
+            case PenMode.Draw:
+                this.drawLine(canvasContext, this.tapDownPoint.x, this.tapDownPoint.y, pt.x, pt.y);
 
-            this.drawLine(canvasContext, this.tapDownPoint.x, this.tapDownPoint.y, pt.x, pt.y);
+                const segment = {
+                    end: { x: pt.x, y: pt.y },
+                    start: { x: this.tapDownPoint.x, y: this.tapDownPoint.y }
+                };
+                this.currentLine.segments.push(segment);
 
-            const segment = {
-                end: { x: pt.x, y: pt.y },
-                start: { x: this.tapDownPoint.x, y: this.tapDownPoint.y }
-            };
-            this.currentLine.segments.push(segment);
+                this.tapDownPoint = {
+                    x: pt.x,
+                    y: pt.y
+                };
 
-            this.tapDownPoint = {
-                x: pt.x,
-                y: pt.y
-            };
+                break;
+            case PenMode.Translate:
+                this.canvasTransform.translate(canvasContext, pt.x - this.tapDownPoint.x, pt.y - this.tapDownPoint.y);
+                this.repaint();
+                break;
         }
     }
     private tapUp() {
-        this.translate = false;
-
         if (!this.mouseIsDown) {
             return;
         }
 
         this.mouseIsDown = false;
 
-        // this.refreshLinesGroupedByColorAndWidth();
-        this.props.onLineAdded(this.currentLine);
+        if (this.currentPenMode === PenMode.Draw) {
+            // this.refreshLinesGroupedByColorAndWidth();
+            this.props.onLineAdded(this.currentLine);
+        }
     }
 
     private mouseOut() {
-        if (!this.mouseIsDown) {
-            return;
-        }
-
-        this.mouseIsDown = false;
-
-        // this.refreshLinesGroupedByColorAndWidth();
-        this.props.onLineAdded(this.currentLine);
+        this.tapUp();
     }
 
     private resize() {
