@@ -34,7 +34,6 @@ export default class Canvas extends React.Component<CanvasProps> {
     private currentPenMode: PenMode = PenMode.Draw;
     private tapDownPoint: { x: number; y: number; };
     private currentLine: Line;
-    private translate: boolean;
 
     constructor() {
         super();
@@ -46,22 +45,7 @@ export default class Canvas extends React.Component<CanvasProps> {
         this.resize = this.resize.bind(this);
         this.mouseOut = this.mouseOut.bind(this);
 
-        this.downEvent = this.deviceSupportsTouchEvents() ? "onTouchStart" : "onMouseDown";
-        this.upEvent = this.deviceSupportsTouchEvents() ? "onTouchEnd" : "onMouseUp";
-        this.moveEvent = this.deviceSupportsTouchEvents() ? "onTouchMove" : "onMouseMove";
-
-        if (this.deviceSupportsTouchEvents()) {
-            this.getTapPosition = (e: any) => ({
-                x: e.targetTouches[0].pageX,
-                y: e.targetTouches[0].pageY
-            });
-            this.getTouchCount = (e: any) => e.touches.length;
-        } else {
-            this.getTapPosition = (e: any) => ({
-                x: e.pageX, y: e.pageY
-            });
-            this.getTouchCount = (e: any) => 1;
-        }
+        this.initInputEvents();
     }
 
     public render() {
@@ -92,6 +76,25 @@ export default class Canvas extends React.Component<CanvasProps> {
 
     public componentWillReceiveProps(newProps: CanvasProps) {
         this.updateCanvasConfig(newProps);
+    }
+
+    private initInputEvents() {
+        this.downEvent = this.deviceSupportsTouchEvents() ? "onTouchStart" : "onMouseDown";
+        this.upEvent = this.deviceSupportsTouchEvents() ? "onTouchEnd" : "onMouseUp";
+        this.moveEvent = this.deviceSupportsTouchEvents() ? "onTouchMove" : "onMouseMove";
+
+        if (this.deviceSupportsTouchEvents()) {
+            this.getTapPosition = (e: any) => ({
+                x: e.targetTouches[0].pageX,
+                y: e.targetTouches[0].pageY
+            });
+            this.getTouchCount = (e: any) => e.touches.length;
+        } else {
+            this.getTapPosition = (e: any) => ({
+                x: e.pageX, y: e.pageY
+            });
+            this.getTouchCount = (e: any) => 1;
+        }
     }
 
     private getCanvasContext() {
@@ -187,11 +190,9 @@ export default class Canvas extends React.Component<CanvasProps> {
             this.props.onLineAdded(this.currentLine);
         }
     }
-
     private mouseOut() {
         this.tapUp();
     }
-
     private resize() {
         if (this.canvas == null) {
             return;
@@ -219,7 +220,6 @@ export default class Canvas extends React.Component<CanvasProps> {
         context.strokeStyle = props.color;
         context.globalCompositeOperation = props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
     }
-
     private setCanvasSize(width: number, height: number) {
         if (this.canvas == null) {
             return;
@@ -238,7 +238,6 @@ export default class Canvas extends React.Component<CanvasProps> {
         const { a, b, c, d, e, f } = currentTransform;
         this.canvasTransform.setTransform(context, a, b, c, d, e, f);
     }
-
     private repaint() {
         if (this.canvas == null) {
             return null;
