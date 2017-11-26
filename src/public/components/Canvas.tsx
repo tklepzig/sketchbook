@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Line } from "../models/Line";
 import { CanvasTransform } from "../services/CanvasTransform";
+import { tapEvents } from "../services/TapEvents";
 
 export enum DrawMode {
     Above,
@@ -22,11 +23,6 @@ export interface CanvasProps {
 
 export default class Canvas extends React.Component<CanvasProps> {
     private linesGroupedByColorAndWidth: Line[][];
-    private getTouchCount: (e: any) => any;
-    private getTapPosition: (e: any) => { x: any; y: any; };
-    private moveEvent: string;
-    private upEvent: string;
-    private downEvent: string;
     private canvas: HTMLCanvasElement | null;
     private canvasTransform: CanvasTransform;
 
@@ -44,22 +40,15 @@ export default class Canvas extends React.Component<CanvasProps> {
         this.tapMove = this.tapMove.bind(this);
         this.resize = this.resize.bind(this);
         this.mouseOut = this.mouseOut.bind(this);
-
-        this.initInputEvents();
     }
 
     public render() {
-
-        const downEventAttribute = { [this.downEvent]: this.tapDown };
-        const upEventAttribute = { [this.upEvent]: this.tapUp };
-        const moveEventAttribute = { [this.moveEvent]: this.tapMove };
-
         return (
             <canvas
                 ref={(canvas) => { this.canvas = canvas; }}
-                {...downEventAttribute}
-                {...upEventAttribute}
-                {...moveEventAttribute}
+                {...{ [tapEvents.tapDown]: this.tapDown }}
+                {...{ [tapEvents.tapUp]: this.tapUp }}
+                {...{ [tapEvents.tapMove]: this.tapMove }}
             />);
     }
 
@@ -78,25 +67,6 @@ export default class Canvas extends React.Component<CanvasProps> {
         this.updateCanvasConfig(newProps);
     }
 
-    private initInputEvents() {
-        this.downEvent = this.deviceSupportsTouchEvents() ? "onTouchStart" : "onMouseDown";
-        this.upEvent = this.deviceSupportsTouchEvents() ? "onTouchEnd" : "onMouseUp";
-        this.moveEvent = this.deviceSupportsTouchEvents() ? "onTouchMove" : "onMouseMove";
-
-        if (this.deviceSupportsTouchEvents()) {
-            this.getTapPosition = (e: any) => ({
-                x: e.targetTouches[0].pageX,
-                y: e.targetTouches[0].pageY
-            });
-            this.getTouchCount = (e: any) => e.touches.length;
-        } else {
-            this.getTapPosition = (e: any) => ({
-                x: e.pageX, y: e.pageY
-            });
-            this.getTouchCount = (e: any) => 1;
-        }
-    }
-
     private getCanvasContext() {
         if (this.canvas == null) {
             return null;
@@ -112,8 +82,8 @@ export default class Canvas extends React.Component<CanvasProps> {
             return;
         }
 
-        const { x, y } = this.getTapPosition(e);
-        const touchCount = this.getTouchCount(e);
+        const { x, y } = tapEvents.getTapPosition(e);
+        const touchCount = tapEvents.getTouchCount(e);
         this.mouseIsDown = true;
         this.currentPenMode = (touchCount === 2 || e.ctrlKey) ? PenMode.Translate : PenMode.Draw;
 
@@ -151,8 +121,8 @@ export default class Canvas extends React.Component<CanvasProps> {
             return;
         }
 
-        const { x, y } = this.getTapPosition(e);
-        const touchCount = this.getTouchCount(e);
+        const { x, y } = tapEvents.getTapPosition(e);
+        const touchCount = tapEvents.getTouchCount(e);
 
         const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
 
@@ -275,10 +245,6 @@ export default class Canvas extends React.Component<CanvasProps> {
         context.lineWidth = this.props.lineWidth;
         context.strokeStyle = this.props.color;
         context.globalCompositeOperation = this.props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
-    }
-
-    private deviceSupportsTouchEvents() {
-        return "ontouchstart" in window;
     }
 
     private drawLine(canvasContext: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number) {
