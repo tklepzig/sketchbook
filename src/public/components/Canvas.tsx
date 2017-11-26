@@ -87,10 +87,6 @@ export default class Canvas extends React.Component<CanvasProps> {
         this.updateCanvasConfig(newProps);
     }
 
-    private mouseOut() {
-        this.completeLine();
-    }
-
     private getCanvasContext() {
         if (this.canvas == null) {
             return null;
@@ -119,7 +115,21 @@ export default class Canvas extends React.Component<CanvasProps> {
             this.translate = true;
             this.repaint();
         } else {
-            this.startLine(canvasContext, x, y);
+            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+
+            this.currentLine = {
+                color: canvasContext.strokeStyle.toString(),
+                globalCompositeOperation: canvasContext.globalCompositeOperation,
+                lineWidth: canvasContext.lineWidth,
+                segments: []
+            };
+            this.drawLine(canvasContext, pt.x, pt.y, pt.x + 0.1, pt.y + 0.1);
+
+            this.mouseIsDown = true;
+            this.tapDownPoint = {
+                x: pt.x,
+                y: pt.y
+            };
         }
     }
     private tapMove(e: any) {
@@ -138,12 +148,48 @@ export default class Canvas extends React.Component<CanvasProps> {
             this.canvasTransform.translate(canvasContext, pt.x - this.tapDownPoint.x, pt.y - this.tapDownPoint.y);
             this.repaint();
         } else {
-            this.addSegmentToLine(canvasContext, x, y);
+            if (!this.mouseIsDown) {
+                return;
+            }
+
+            const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
+
+            this.drawLine(canvasContext, this.tapDownPoint.x, this.tapDownPoint.y, pt.x, pt.y);
+
+            const segment = {
+                end: { x: pt.x, y: pt.y },
+                start: { x: this.tapDownPoint.x, y: this.tapDownPoint.y }
+            };
+            this.currentLine.segments.push(segment);
+
+            this.tapDownPoint = {
+                x: pt.x,
+                y: pt.y
+            };
         }
     }
     private tapUp() {
         this.translate = false;
-        this.completeLine();
+
+        if (!this.mouseIsDown) {
+            return;
+        }
+
+        this.mouseIsDown = false;
+
+        // this.refreshLinesGroupedByColorAndWidth();
+        this.props.onLineAdded(this.currentLine);
+    }
+
+    private mouseOut() {
+        if (!this.mouseIsDown) {
+            return;
+        }
+
+        this.mouseIsDown = false;
+
+        // this.refreshLinesGroupedByColorAndWidth();
+        this.props.onLineAdded(this.currentLine);
     }
 
     private resize() {
@@ -234,56 +280,6 @@ export default class Canvas extends React.Component<CanvasProps> {
 
     private deviceSupportsTouchEvents() {
         return "ontouchstart" in window;
-    }
-
-    private startLine(canvasContext: CanvasRenderingContext2D, x: number, y: number) {
-        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
-
-        this.currentLine = {
-            color: canvasContext.strokeStyle.toString(),
-            globalCompositeOperation: canvasContext.globalCompositeOperation,
-            lineWidth: canvasContext.lineWidth,
-            segments: []
-        };
-        this.drawLine(canvasContext, pt.x, pt.y, pt.x + 0.1, pt.y + 0.1);
-
-        this.mouseIsDown = true;
-        this.tapDownPoint = {
-            x: pt.x,
-            y: pt.y
-        };
-    }
-
-    private addSegmentToLine(canvasContext: CanvasRenderingContext2D, x: number, y: number) {
-        if (!this.mouseIsDown) {
-            return;
-        }
-
-        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
-
-        this.drawLine(canvasContext, this.tapDownPoint.x, this.tapDownPoint.y, pt.x, pt.y);
-
-        const segment = {
-            end: { x: pt.x, y: pt.y },
-            start: { x: this.tapDownPoint.x, y: this.tapDownPoint.y }
-        };
-        this.currentLine.segments.push(segment);
-
-        this.tapDownPoint = {
-            x: pt.x,
-            y: pt.y
-        };
-    }
-
-    private completeLine() {
-        if (!this.mouseIsDown) {
-            return;
-        }
-
-        this.mouseIsDown = false;
-
-        // this.refreshLinesGroupedByColorAndWidth();
-        this.props.onLineAdded(this.currentLine);
     }
 
     private drawLine(canvasContext: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number) {
