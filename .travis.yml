@@ -6,9 +6,9 @@ node_js:
   - 8.90
 after_success:
   - npm run build
-  - docker build . -t tklepzig/sketchbook
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - docker push tklepzig/sketchbook
+#  - docker build . -t tklepzig/sketchbook
+#  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+#  - docker push tklepzig/sketchbook
 before_deploy:
   - git add -f dist
   - rm -rf node_modules
