@@ -31,10 +31,11 @@ const client = {
         ]
     },
     plugins: [
-        new UglifyJSPlugin(),
         new webpack.DefinePlugin({
             "process.env": { "NODE_ENV": JSON.stringify("production") }
-        }),]
+        }),
+        new UglifyJSPlugin()
+    ]
 };
 
 var prod = { server, client };
