@@ -1,5 +1,10 @@
 FROM alpine
-COPY ./dist /app
+COPY . /app
 WORKDIR /app
-RUN apk add --no-cache nodejs yarn && yarn
-CMD npm run start
+RUN apk add --no-cache nodejs yarn \
+    && yarn \
+    && npm run build \
+    && cd dist \
+    && yarn
+WORKDIR /app/dist
+CMD npm start

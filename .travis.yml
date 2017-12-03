@@ -5,11 +5,11 @@ services:
 node_js:
   - 8.90
 after_success:
-  - npm run build
-  - docker build . -t tklepzig/sketchbook
+  - docker build -t tklepzig/sketchbook .
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker push tklepzig/sketchbook
   - docker logout
+  - npm run build # Still necessary to deploy to azure. When the whole docker container is used for deploying, this is not anymore needed.
 before_deploy:
   - git add -f dist
   - rm -rf node_modules
