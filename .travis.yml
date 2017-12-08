@@ -9,15 +9,7 @@ addons:
 node_js:
   - 8.90
 after_success:
-  - docker build -t tklepzig/sketchbook .
+  - docker build -t $DOCKER_IMAGE --build-arg azure_user="$AZURE_WA_USERNAME"  --build-arg azure_pwd="$AZURE_WA_PASSWORD"  --build-arg azure_site="$AZURE_WA_SITE" .
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - docker push tklepzig/sketchbook
+  - docker push $DOCKER_IMAGE
   - docker logout
-  - npm run build # Still necessary to deploy to azure. When the whole docker container is used for deploying, this is not anymore needed.
-before_deploy:
-  - git add -f dist
-  - rm -rf node_modules
-deploy:
-  provider: azure_web_apps
-  skip_cleanup: true
-  verbose: true

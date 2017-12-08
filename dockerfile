@@ -4,15 +4,10 @@ ARG azure_pwd
 ARG azure_site
 COPY . /app
 WORKDIR /app
-RUN apk add --no-cache nodejs yarn git \
-    && yarn \
-    && npm run build \
-    && ls -l dist \
-    && git config user.email "tmp@mail.com" \
-    && git config user.name "tmp" \
-    && git add -f dist \
-    && git commit -m tmp \
-    && git push -f "https://${azure_user}:${azure_pwd}@${azure_site}.scm.azurewebsites.net:443/${azure_site}.git"
+RUN apk add --no-cache nodejs yarn git
+RUN yarn && npm run build
+RUN git config user.email "deploy@docker" && git config user.name "deploy from docker"
+RUN git add -f dist && git commit -m tmp && git push -f "https://${azure_user}:${azure_pwd}@${azure_site}.scm.azurewebsites.net:443/${azure_site}.git"
 
 FROM alpine
 COPY --from=builder /app/dist/ /app
