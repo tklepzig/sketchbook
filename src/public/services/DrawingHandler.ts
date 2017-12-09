@@ -18,15 +18,12 @@ export class DrawingHandler {
     public drawLines(
         canvasContext: CanvasRenderingContext2D,
         lines: Line[],
-        boundary: {
+        boundary?: {
             left: number,
             top: number,
             right: number,
             bottom: number
         }) {
-
-        const { top, left, right, bottom } = boundary;
-
         lines.forEach((line) => {
             canvasContext.beginPath();
             canvasContext.strokeStyle = line.color;
@@ -34,16 +31,7 @@ export class DrawingHandler {
             canvasContext.globalCompositeOperation = line.globalCompositeOperation;
 
             line.segments.forEach((segment) => {
-                if (
-                    (segment.start.x > left
-                        && segment.start.x < right
-                        && segment.start.y > top
-                        && segment.start.y < bottom)
-                    ||
-                    (segment.end.x > left
-                        && segment.end.x < right
-                        && segment.end.y > top
-                        && segment.end.y < bottom)) {
+                if (this.isSegmentInBoundary(segment, boundary)) {
                     canvasContext.moveTo(segment.start.x, segment.start.y);
                     canvasContext.lineTo(segment.end.x, segment.end.y);
                 }
@@ -52,6 +40,36 @@ export class DrawingHandler {
             canvasContext.stroke();
             canvasContext.closePath();
         });
+    }
+
+    private isSegmentInBoundary(
+        segment: { start: Point, end: Point },
+        boundary?: {
+            left: number,
+            top: number,
+            right: number,
+            bottom: number
+        }): boolean {
+        if (boundary) {
+            const { top, left, right, bottom } = boundary;
+
+            if (
+                (segment.start.x > left
+                    && segment.start.x < right
+                    && segment.start.y > top
+                    && segment.start.y < bottom)
+                ||
+                (segment.end.x > left
+                    && segment.end.x < right
+                    && segment.end.y > top
+                    && segment.end.y < bottom)) {
+                return true;
+            }
+        } else {
+            return true;
+        }
+
+        return false;
     }
 
     // private refreshLinesGroupedByColorAndWidth() {
