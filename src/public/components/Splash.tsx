@@ -5,8 +5,8 @@ export interface SplashState {
 }
 
 export default class Splash extends React.Component<any, SplashState> {
-    constructor() {
-        super();
+    constructor(props: any) {
+        super(props);
         this.state = { ready: false };
     }
 

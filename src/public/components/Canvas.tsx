@@ -34,8 +34,8 @@ export default class Canvas extends React.Component<CanvasProps> {
     private tapDownPoint: Point;
     private currentLine: Line;
 
-    constructor() {
-        super();
+    constructor(props: CanvasProps) {
+        super(props);
         this.canvasTransform = new CanvasTransform();
         this.drawingHandler = new DrawingHandler();
 

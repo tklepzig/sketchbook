@@ -14,8 +14,8 @@ export default class Overview extends React.Component<OverviewProps> {
 
     private canvasTransform: CanvasTransform;
 
-    constructor() {
-        super();
+    constructor(props: OverviewProps) {
+        super(props);
         this.canvasTransform = new CanvasTransform();
         this.drawingHandler = new DrawingHandler();
 

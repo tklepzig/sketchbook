@@ -21,8 +21,8 @@ interface PenChooserState {
 }
 
 class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchProps, PenChooserState> {
-    constructor() {
-        super();
+    constructor(props: PenChooserProps & PenChooserDispatchProps) {
+        super(props);
         this.openPopup = this.openPopup.bind(this);
         this.closePopup = this.closePopup.bind(this);
         this.colorSelected = this.colorSelected.bind(this);
@@ -31,16 +31,13 @@ class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchPro
         this.state = { popupVisible: false };
     }
     public render() {
-        return [
-            (
+        return (
+            <React.Fragment>
                 <button
-                    key="button"
                     onClick={this.openPopup}
                     className={`btn-pen ${this.props.color} ${this.props.strokeWidth}`}
                 />
-            ),
-            (
-                <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup} key="popup">
+                <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup}>
                     <header>Color</header>
                     <ColorButton onClick={this.colorSelected} color="black" />
                     <ColorButton onClick={this.colorSelected} color="grey" />
@@ -51,8 +48,8 @@ class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchPro
                     <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="m" />
                     <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="l" />
                 </Popup>
-            )
-        ];
+            </React.Fragment>
+        );
     }
 
     private colorSelected(color: string) {

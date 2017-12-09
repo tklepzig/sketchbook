@@ -21,19 +21,19 @@ interface StartDispatchProps {
 
 class Start extends React.Component<StartProps & StartDispatchProps> {
     public render() {
-        return [
-            <Splash key="splash" />,
-            (
+        return (
+            <React.Fragment>
+                <Splash />
                 <Canvas
                     color={this.props.color}
                     drawMode={this.props.drawMode}
                     lineWidth={this.props.lineWidth}
-                    key="canvas"
                     lines={this.props.lines}
                     onLineAdded={this.props.onLineAdded}
                 />
-            ), <Menu key="menu" />
-        ];
+                <Menu />
+            </React.Fragment>
+        );
     }
 }
 
