@@ -1,5 +1,7 @@
+import { Point } from "./Point";
+
 export interface Line {
-    segments: Array<{ start: { x: number; y: number; }; end: { x: number; y: number; }; }>;
+    segments: Array<{ start: Point, end: Point }>;
     color: string;
     globalCompositeOperation: string;
     lineWidth: number;

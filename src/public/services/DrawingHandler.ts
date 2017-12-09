@@ -1,11 +1,12 @@
 import { Line } from "../models/Line";
+import { Point } from "../models/Point";
 
 export class DrawingHandler {
     public drawSegment(
         canvasContext: CanvasRenderingContext2D,
         segment: {
-            start: { x: number, y: number },
-            end: { x: number, y: number }
+            start: Point,
+            end: Point
         }) {
         canvasContext.beginPath();
         canvasContext.moveTo(segment.start.x, segment.start.y);

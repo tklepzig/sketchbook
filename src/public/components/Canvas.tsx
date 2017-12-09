@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Line } from "../models/Line";
+import { Point } from "../models/Point";
 import { CanvasTransform } from "../services/CanvasTransform";
 import { DrawingHandler } from "../services/DrawingHandler";
 import { tapEvents } from "../services/TapEvents";
@@ -30,7 +31,7 @@ export default class Canvas extends React.Component<CanvasProps> {
 
     private mouseIsDown: boolean;
     private currentPenMode: PenMode = PenMode.Draw;
-    private tapDownPoint: { x: number; y: number; };
+    private tapDownPoint: Point;
     private currentLine: Line;
 
     constructor() {
@@ -91,10 +92,7 @@ export default class Canvas extends React.Component<CanvasProps> {
         this.currentPenMode = (touchCount === 2 || e.ctrlKey) ? PenMode.Translate : PenMode.Draw;
 
         const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
-        this.tapDownPoint = {
-            x: pt.x,
-            y: pt.y
-        };
+        this.tapDownPoint = pt;
 
         switch (this.currentPenMode) {
             case PenMode.Draw:
