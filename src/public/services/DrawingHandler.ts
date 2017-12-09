@@ -3,11 +3,13 @@ import { Line } from "../models/Line";
 export class DrawingHandler {
     public drawSegment(
         canvasContext: CanvasRenderingContext2D,
-        start: { x: number, y: number },
-        end: { x: number, y: number }) {
+        segment: {
+            start: { x: number, y: number },
+            end: { x: number, y: number }
+        }) {
         canvasContext.beginPath();
-        canvasContext.moveTo(start.x, start.y);
-        canvasContext.lineTo(end.x, end.y);
+        canvasContext.moveTo(segment.start.x, segment.start.y);
+        canvasContext.lineTo(segment.end.x, segment.end.y);
         canvasContext.stroke();
         canvasContext.closePath();
     }

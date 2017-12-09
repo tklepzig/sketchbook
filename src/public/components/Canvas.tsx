@@ -105,11 +105,10 @@ export default class Canvas extends React.Component<CanvasProps> {
                     lineWidth: canvasContext.lineWidth,
                     segments: []
                 };
-                this.drawingHandler.drawSegment(
-                    canvasContext,
-                    { x: pt.x, y: pt.y },
-                    { x: pt.x + 0.1, y: pt.y + 0.1 });
 
+                const segment = { start: pt, end: pt };
+                this.drawingHandler.drawSegment(canvasContext, segment);
+                this.currentLine.segments.push(segment);
                 break;
             case PenMode.Translate:
                 this.repaint();
@@ -134,22 +133,10 @@ export default class Canvas extends React.Component<CanvasProps> {
 
         switch (this.currentPenMode) {
             case PenMode.Draw:
-                this.drawingHandler.drawSegment(
-                    canvasContext,
-                    this.tapDownPoint,
-                    pt);
-
-                const segment = {
-                    end: { x: pt.x, y: pt.y },
-                    start: { x: this.tapDownPoint.x, y: this.tapDownPoint.y }
-                };
+                const segment = { start: this.tapDownPoint, end: pt };
+                this.drawingHandler.drawSegment(canvasContext, segment);
                 this.currentLine.segments.push(segment);
-
-                this.tapDownPoint = {
-                    x: pt.x,
-                    y: pt.y
-                };
-
+                this.tapDownPoint = pt;
                 break;
             case PenMode.Translate:
                 this.canvasTransform.translate(canvasContext, pt.x - this.tapDownPoint.x, pt.y - this.tapDownPoint.y);
