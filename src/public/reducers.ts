@@ -3,6 +3,7 @@ import { AddLineAction, SetColorAction } from "./actions";
 import { PenChooserProps } from "./components/PenChooser";
 import { Actions } from "./models/Actions";
 import { Line } from "./models/Line";
+import { Page } from "./models/Page";
 
 export const pen: Reducer<PenChooserProps> =
     (state = { color: "black", strokeWidth: "s" }, action: AnyAction): PenChooserProps => {
@@ -23,12 +24,13 @@ export const pen: Reducer<PenChooserProps> =
         }
     };
 
-export const lines: Reducer<Line[]> =
-    (state = [], action: AnyAction): Line[] => {
+// TODO: empty page list as default
+export const pages: Reducer<Page[]> =
+    (state = [{ id: "0", lines: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddLine:
                 const { line } = action as AddLineAction;
-                return [...state, line];
+                return [...state, { id: (state.length + 1).toString(), lines: [] }];
             default:
                 return state;
         }

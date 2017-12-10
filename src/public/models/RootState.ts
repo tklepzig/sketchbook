@@ -1,9 +1,9 @@
-import { Line } from "./Line";
+import { Page } from "./Page";
 
 export interface RootState {
     pen: {
         color: string,
         strokeWidth: string
     };
-    lines: Line[];
+    pages: Page[];
 }
