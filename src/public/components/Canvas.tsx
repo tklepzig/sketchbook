@@ -1,14 +1,8 @@
 import * as React from "react";
-import { Line } from "../models/Line";
-import { Point } from "../models/Point";
+import { DrawMode, Line, Point } from "../models/RootState";
 import { CanvasTransform } from "../services/CanvasTransform";
 import { DrawingHandler } from "../services/DrawingHandler";
 import { tapEvents } from "../services/TapEvents";
-
-export enum DrawMode {
-    Above,
-    Below
-}
 
 export enum PenMode {
     Draw,

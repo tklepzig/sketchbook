@@ -3,11 +3,7 @@ import { connect } from "react-redux";
 import { NavLink, RouteComponentProps } from "react-router-dom";
 import { Dispatch } from "redux";
 import { addLine } from "../actions";
-import { DrawMode } from "../models/DrawMode";
-import { Line } from "../models/Line";
-import { Page as PageModel } from "../models/Page";
-import { Point } from "../models/Point";
-import { RootState } from "../models/RootState";
+import { DrawMode, Line, Page as PageModel, Point, RootState } from "../models/RootState";
 import { Overview } from "./Overview";
 import { SketchArea } from "./SketchArea";
 

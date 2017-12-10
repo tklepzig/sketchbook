@@ -2,8 +2,7 @@ import { AnyAction, Reducer } from "redux";
 import { AddLineAction, SetColorAction } from "./actions";
 import { PenChooserProps } from "./components/PenChooser";
 import { Actions } from "./models/Actions";
-import { Line } from "./models/Line";
-import { Page } from "./models/Page";
+import { Page } from "./models/RootState";
 
 export const pen: Reducer<PenChooserProps> =
     (state = { color: "black", strokeWidth: "s" }, action: AnyAction): PenChooserProps => {

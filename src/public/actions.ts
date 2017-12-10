@@ -1,6 +1,6 @@
 import { Action } from "redux";
 import { Actions } from "./models/Actions";
-import { Line } from "./models/Line";
+import { Line } from "./models/RootState";
 
 export interface SetColorAction extends Action {
     color: string;

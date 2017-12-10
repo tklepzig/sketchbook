@@ -1,8 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { Page } from "../models/Page";
-import { RootState } from "../models/RootState";
+import { Page, RootState } from "../models/RootState";
 import Splash from "./Splash";
 
 export interface StartProps {

@@ -1,8 +1,6 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
-import { DrawMode } from "../models/DrawMode";
-import { Line } from "../models/Line";
-import { Point } from "../models/Point";
+import { DrawMode, Line, Point } from "../models/RootState";
 import Canvas from "./Canvas";
 import { Menu } from "./Menu";
 

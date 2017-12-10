@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
-import { Line } from "../models/Line";
+import { Line } from "../models/RootState";
 
 export interface OverviewProps {
     lines: Line[];

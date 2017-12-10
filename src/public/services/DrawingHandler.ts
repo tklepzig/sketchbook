@@ -1,5 +1,4 @@
-import { Line } from "../models/Line";
-import { Point } from "../models/Point";
+import { Line, Point } from "../models/RootState";
 
 export class DrawingHandler {
     public drawSegment(
