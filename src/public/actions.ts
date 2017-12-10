@@ -16,6 +16,7 @@ export const setStrokeWidth =
 
 export interface AddLineAction extends Action {
     line: Line;
+    pageId: string;
 }
 export const addLine =
-    (line: Line): AddLineAction => ({ type: Actions.AddLine, line });
+    (pageId: string, line: Line): AddLineAction => ({ type: Actions.AddLine, line, pageId });

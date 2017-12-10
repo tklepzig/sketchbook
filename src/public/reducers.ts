@@ -29,8 +29,13 @@ export const pages: Reducer<Page[]> =
     (state = [{ id: "0", lines: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddLine:
-                const { line } = action as AddLineAction;
-                return [...state, { id: (state.length + 1).toString(), lines: [] }];
+                const { pageId, line } = action as AddLineAction;
+                return state.map((page) => (page.id === pageId)
+                    ? { ...page, lines: [...page.lines, line] }
+                    : page
+                );
+            case Actions.AddPage:
+                return state;
             default:
                 return state;
         }

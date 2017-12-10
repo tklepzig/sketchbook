@@ -5,6 +5,7 @@ import { Dispatch } from "redux";
 import { addLine } from "../actions";
 import { DrawMode } from "../models/DrawMode";
 import { Line } from "../models/Line";
+import { Page as PageModel } from "../models/Page";
 import { Point } from "../models/Point";
 import { RootState } from "../models/RootState";
 import { Overview } from "./Overview";
@@ -21,7 +22,7 @@ export interface PageProps {
     color: string;
     lineWidth: number;
     drawMode: DrawMode;
-    lines: Line[];
+    page: PageModel;
 }
 
 interface PageDispatchProps {
@@ -42,14 +43,14 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
 
     public render() {
         const content = this.state.isOverview
-            ? <Overview lines={this.props.lines} onClick={this.onOverviewClick} />
+            ? <Overview lines={this.props.page.lines} onClick={this.onOverviewClick} />
             : (
                 <SketchArea
                     center={this.state.sketchAreaCenter}
                     color={this.props.color}
                     drawMode={this.props.drawMode}
                     lineWidth={this.props.lineWidth}
-                    lines={this.props.lines}
+                    lines={this.props.page.lines}
                     onLineAdded={this.props.onLineAdded}
                 />);
 
@@ -67,11 +68,11 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
 
 function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
     const { pen: { color, strokeWidth } } = state;
-    const page = state.pages.find((p) => p.id === ownProps.match.params.id);
+    let page = state.pages.find((p) => p.id === ownProps.match.params.id);
 
-    let lines: Line[] = [];
-    if (page) {
-        lines = page.lines;
+    if (!page) {
+        // TODO: redundant defintion of default value for page
+        page = { id: (state.pages.length + 1).toString(), lines: [] };
     }
 
     let colorHexCode: string;
@@ -116,12 +117,12 @@ function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
             break;
     }
 
-    return { color: colorHexCode, lineWidth, drawMode, lines };
+    return { color: colorHexCode, lineWidth, drawMode, page };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<RootState>) {
+function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: PageOwnProps) {
     return {
-        onLineAdded: (line: Line) => dispatch(addLine(line))
+        onLineAdded: (line: Line) => dispatch(addLine(ownProps.match.params.id, line))
     };
 }
 
