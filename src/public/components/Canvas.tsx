@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DrawMode, Line, Point } from "../models/RootState";
+import { CompositeOperation, Line, Point } from "../models/RootState";
 import { CanvasTransform } from "../services/CanvasTransform";
 import { DrawingHandler } from "../services/DrawingHandler";
 import { tapEvents } from "../services/TapEvents";
@@ -12,7 +12,7 @@ export enum PenMode {
 export interface CanvasProps {
     color: string;
     lineWidth: number;
-    drawMode: DrawMode;
+    compositeOperation: CompositeOperation;
     lines: Line[];
     onLineAdded: (line: Line) => void;
 }
@@ -176,7 +176,7 @@ export default class Canvas extends React.Component<CanvasProps> {
         context.lineCap = "round";
         context.lineWidth = props.lineWidth;
         context.strokeStyle = props.color;
-        context.globalCompositeOperation = props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
+        context.globalCompositeOperation = props.compositeOperation;
     }
     private setCanvasSize(width: number, height: number) {
         if (this.canvas == null) {
@@ -235,6 +235,6 @@ export default class Canvas extends React.Component<CanvasProps> {
 
         context.lineWidth = this.props.lineWidth;
         context.strokeStyle = this.props.color;
-        context.globalCompositeOperation = this.props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
+        context.globalCompositeOperation = this.props.compositeOperation;
     }
 }

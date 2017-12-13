@@ -1,9 +1,3 @@
-
-export enum DrawMode {
-    Above,
-    Below
-}
-
 export interface Line {
     segments: Array<{ start: Point, end: Point }>;
     color: string;
@@ -21,10 +15,16 @@ export interface Point {
     y: number;
 }
 
+export type CompositeOperation = "source-over" | "destination-over";
+export type InputMode = "pen" | "text";
+export type FontSize = "small" | "medium" | "large";
+
 export interface RootState {
     pen: {
         color: string,
         strokeWidth: string
     };
+    fontSize: FontSize;
+    inputMode: InputMode;
     pages: Page[];
 }

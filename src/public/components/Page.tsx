@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { NavLink, RouteComponentProps } from "react-router-dom";
 import { Dispatch } from "redux";
 import { addLine } from "../actions";
-import { DrawMode, Line, Page as PageModel, Point, RootState } from "../models/RootState";
+import { CompositeOperation, Line, Page as PageModel, Point, RootState } from "../models/RootState";
 import { Overview } from "./Overview";
 import { SketchArea } from "./SketchArea";
 
@@ -17,7 +17,7 @@ export interface PageOwnProps extends RouteComponentProps<PageRouteProps> {
 export interface PageProps {
     color: string;
     lineWidth: number;
-    drawMode: DrawMode;
+    compositeOperation: CompositeOperation;
     page: PageModel;
 }
 
@@ -44,7 +44,7 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
                 <SketchArea
                     center={this.state.sketchAreaCenter}
                     color={this.props.color}
-                    drawMode={this.props.drawMode}
+                    compositeOperation={this.props.compositeOperation}
                     lineWidth={this.props.lineWidth}
                     lines={this.props.page.lines}
                     onLineAdded={this.props.onLineAdded}
@@ -73,7 +73,7 @@ function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
 
     let colorHexCode: string;
     let lineWidth: number;
-    let drawMode = DrawMode.Above;
+    let compositeOperation: CompositeOperation = "source-over";
 
     switch (color) {
         case "black":
@@ -81,15 +81,15 @@ function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
             break;
         case "grey":
             colorHexCode = "#b9afb0";
-            drawMode = DrawMode.Below;
+            compositeOperation = "destination-over";
             break;
         case "blue":
             colorHexCode = "#4595d8";
-            drawMode = DrawMode.Below;
+            compositeOperation = "destination-over";
             break;
         case "orange":
             colorHexCode = "#f9a765";
-            drawMode = DrawMode.Below;
+            compositeOperation = "destination-over";
             break;
         // TODO: redundant defintion of default value for color
         default:
@@ -113,7 +113,7 @@ function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
             break;
     }
 
-    return { color: colorHexCode, lineWidth, drawMode, page };
+    return { color: colorHexCode, lineWidth, compositeOperation, page };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: PageOwnProps) {
