@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
 import { RootState } from "./models/RootState";
-import { pages, pen } from "./reducers";
+import { fontSize, inputMode, pages, pen } from "./reducers";
 
-export const rootReducer = combineReducers<RootState>({ pen, pages });
+export const rootReducer = combineReducers<RootState>({ pen, pages, fontSize, inputMode });

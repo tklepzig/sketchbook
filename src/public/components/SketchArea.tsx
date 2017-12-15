@@ -1,10 +1,11 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
-import { CompositeOperation, Line, PageElement, Point } from "../models/RootState";
+import { CompositeOperation, InputMode, Line, PageElement, Point } from "../models/RootState";
 import Canvas from "./Canvas";
 import { Menu } from "./Menu";
 
 export interface SketchAreaProps {
+    inputMode: InputMode;
     center: Point;
     color: string;
     lineWidth: number;
@@ -22,6 +23,6 @@ export const SketchArea: React.SFC<SketchAreaProps> = (props) => (
             elements={props.elements}
             onLineAdded={props.onLineAdded}
         />
-        <Menu />
+        <Menu inputMode={props.inputMode} />
     </React.Fragment>
 );
