@@ -29,11 +29,13 @@ export interface Point {
     y: number;
 }
 
+export interface Pen {
+    color: string;
+    strokeWidth: string;
+}
+
 export interface RootState {
-    pen: {
-        color: string,
-        strokeWidth: string
-    };
+    pen: Pen;
     fontSize: FontSize;
     inputMode: InputMode;
     pages: Page[];

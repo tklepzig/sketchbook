@@ -2,10 +2,10 @@ import { AnyAction, Reducer } from "redux";
 import { AddLineAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "./actions";
 import { PenChooserProps } from "./components/PenChooser";
 import { Actions } from "./models/Actions";
-import { FontSize, InputMode, Page } from "./models/RootState";
+import { FontSize, InputMode, Page, Pen } from "./models/RootState";
 
-export const pen: Reducer<PenChooserProps> =
-    (state = { color: "black", strokeWidth: "s" }, action: AnyAction): PenChooserProps => {
+export const pen: Reducer<Pen> =
+    (state = { color: "black", strokeWidth: "s" }, action: AnyAction): Pen => {
         switch (action.type) {
             case Actions.SetColor:
                 const { color } = action as SetColorAction;

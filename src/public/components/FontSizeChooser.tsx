@@ -7,19 +7,16 @@ import { Popup } from "./Popup";
 
 export interface FontSizeChooserProps {
     fontSize: FontSize;
-}
-
-interface FontSizeChooserDispatchProps {
-    onFontSizeSelected: (fontSize: FontSize) => SetFontSizeAction;
+    onFontSizeSelected: (fontSize: FontSize) => void;
 }
 
 interface FontSizeChooserState {
     popupVisible: boolean;
 }
 
-class FontSizeChooser
-    extends React.Component<FontSizeChooserProps & FontSizeChooserDispatchProps, FontSizeChooserState> {
-    constructor(props: FontSizeChooserProps & FontSizeChooserDispatchProps) {
+export class FontSizeChooser
+    extends React.Component<FontSizeChooserProps, FontSizeChooserState> {
+    constructor(props: FontSizeChooserProps) {
         super(props);
         this.openPopup = this.openPopup.bind(this);
         this.closePopup = this.closePopup.bind(this);
@@ -54,19 +51,3 @@ class FontSizeChooser
         this.setState({ popupVisible: false });
     }
 }
-
-function mapStateToProps(state: RootState) {
-    const { fontSize } = state;
-    return { fontSize };
-}
-
-function mapDispatchToProps(dispatch: Dispatch<RootState>) {
-    return {
-        onFontSizeSelected: (fontSize: FontSize) => dispatch(setFontSize(fontSize))
-    };
-}
-
-export default connect<FontSizeChooserProps, FontSizeChooserDispatchProps, {}, RootState>(
-    mapStateToProps,
-    mapDispatchToProps
-)(FontSizeChooser);

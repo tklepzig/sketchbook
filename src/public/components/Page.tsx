@@ -19,7 +19,6 @@ export interface PageProps {
     lineWidth: number;
     compositeOperation: CompositeOperation;
     page: PageModel;
-    inputMode: InputMode;
 }
 
 interface PageDispatchProps {
@@ -43,7 +42,6 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
             ? <Overview elements={this.props.page.elements} onClick={this.onOverviewClick} />
             : (
                 <SketchArea
-                    inputMode={this.props.inputMode}
                     center={this.state.sketchAreaCenter}
                     color={this.props.color}
                     compositeOperation={this.props.compositeOperation}
@@ -65,7 +63,7 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
 }
 
 function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
-    const { pen: { color, strokeWidth }, inputMode } = state;
+    const { color, strokeWidth } = state.pen;
     let page = state.pages.find((p) => p.id === ownProps.match.params.id);
 
     if (!page) {
@@ -115,7 +113,7 @@ function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
             break;
     }
 
-    return { color: colorHexCode, lineWidth, compositeOperation, page, inputMode };
+    return { color: colorHexCode, lineWidth, compositeOperation, page };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: PageOwnProps) {
