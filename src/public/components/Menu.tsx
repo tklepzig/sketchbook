@@ -5,11 +5,14 @@ import {
     SetColorAction,
     setFontSize,
     SetFontSizeAction,
+    setInputMode,
+    SetInputModeAction,
     setStrokeWidth,
     SetStrokeWidthAction
 } from "../actions";
 import { FontSize, InputMode, RootState } from "../models/RootState";
 import { FontSizeChooser } from "./FontSizeChooser";
+import { InputModeButton } from "./InputModeButton";
 import { PenChooser } from "./PenChooser";
 
 export interface MenuProps {
@@ -24,7 +27,7 @@ interface MenuDispatchProps {
     onColorSelected: (color: string) => SetColorAction;
     onStrokeWidthSelected: (strokeWidth: string) => SetStrokeWidthAction;
     onFontSizeSelected: (fontSize: FontSize) => SetFontSizeAction;
-
+    onInputModeSelected: (inputMode: InputMode) => SetInputModeAction;
 }
 
 // TODO: redux state handling from pen/fontsize-chooser to menu
@@ -37,7 +40,7 @@ const Menu: React.SFC<MenuProps & MenuDispatchProps> = (props) => {
                 onColorSelected={props.onColorSelected}
                 onStrokeWidthSelected={props.onStrokeWidthSelected}
             />)
-        : <div>Switch to Pen</div>;
+        : <InputModeButton inputMode="pen" onClick={props.onInputModeSelected} />;
 
     const text = props.inputMode === "text"
         ? (
@@ -45,7 +48,7 @@ const Menu: React.SFC<MenuProps & MenuDispatchProps> = (props) => {
                 fontSize={props.fontSize}
                 onFontSizeSelected={props.onFontSizeSelected}
             />)
-        : <div>Switch to Text</div>;
+        : <InputModeButton inputMode="text" onClick={props.onInputModeSelected} />;
 
     return (
         <div className="menu">
@@ -63,7 +66,8 @@ function mapDispatchToProps(dispatch: Dispatch<RootState>) {
     return {
         onColorSelected: (color: string) => dispatch(setColor(color)),
         onFontSizeSelected: (fontSize: FontSize) => dispatch(setFontSize(fontSize)),
-        onStrokeWidthSelected: (strokeWidth: string) => dispatch(setStrokeWidth(strokeWidth))
+        onStrokeWidthSelected: (strokeWidth: string) => dispatch(setStrokeWidth(strokeWidth)),
+        onInputModeSelected: (inputMode: InputMode) => dispatch(setInputMode(inputMode))
     };
 }
 
