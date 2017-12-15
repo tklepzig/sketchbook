@@ -1,0 +1,72 @@
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
+import { setFontSize, SetFontSizeAction } from "../actions";
+import { FontSize, RootState } from "../models/RootState";
+import { FontSizeButton } from "./FontSizeButton";
+import { Popup } from "./Popup";
+
+export interface FontSizeChooserProps {
+    fontSize: FontSize;
+}
+
+interface FontSizeChooserDispatchProps {
+    onFontSizeSelected: (fontSize: FontSize) => SetFontSizeAction;
+}
+
+interface FontSizeChooserState {
+    popupVisible: boolean;
+}
+
+class FontSizeChooser
+    extends React.Component<FontSizeChooserProps & FontSizeChooserDispatchProps, FontSizeChooserState> {
+    constructor(props: FontSizeChooserProps & FontSizeChooserDispatchProps) {
+        super(props);
+        this.openPopup = this.openPopup.bind(this);
+        this.closePopup = this.closePopup.bind(this);
+        this.fontSizeSelected = this.fontSizeSelected.bind(this);
+
+        this.state = { popupVisible: false };
+    }
+    public render() {
+        return (
+            <React.Fragment>
+                <button onClick={this.openPopup}>a</button>
+                <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup}>
+                    <header>Font Size</header>
+                    <FontSizeButton fontSize="small" onClick={this.fontSizeSelected} />
+                    <FontSizeButton fontSize="medium" onClick={this.fontSizeSelected} />
+                    <FontSizeButton fontSize="large" onClick={this.fontSizeSelected} />
+                </Popup>
+            </React.Fragment>
+        );
+    }
+
+    private fontSizeSelected(fontSize: FontSize) {
+        this.closePopup();
+        this.props.onFontSizeSelected(fontSize);
+    }
+
+    private openPopup() {
+        this.setState({ popupVisible: true });
+    }
+
+    private closePopup() {
+        this.setState({ popupVisible: false });
+    }
+}
+
+function mapStateToProps(state: RootState) {
+    const { fontSize } = state;
+    return { fontSize };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<RootState>) {
+    return {
+        onFontSizeSelected: (fontSize: FontSize) => dispatch(setFontSize(fontSize))
+    };
+}
+
+export default connect<FontSizeChooserProps, FontSizeChooserDispatchProps, {}, RootState>(
+    mapStateToProps,
+    mapDispatchToProps
+)(FontSizeChooser);
