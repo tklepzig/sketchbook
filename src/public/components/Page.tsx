@@ -3,7 +3,15 @@ import { connect } from "react-redux";
 import { NavLink, RouteComponentProps } from "react-router-dom";
 import { Dispatch } from "redux";
 import { addLine } from "../actions";
-import { CompositeOperation, InputMode, Line, Page as PageModel, Point, RootState } from "../models/RootState";
+import {
+    CompositeOperation,
+    FontSize,
+    InputMode,
+    Line,
+    Page as PageModel,
+    Point,
+    RootState
+} from "../models/RootState";
 import { Overview } from "./Overview";
 import { SketchArea } from "./SketchArea";
 
@@ -15,6 +23,8 @@ export interface PageOwnProps extends RouteComponentProps<PageRouteProps> {
 }
 
 export interface PageProps {
+    inputMode: InputMode;
+    fontSize: FontSize;
     color: string;
     lineWidth: number;
     compositeOperation: CompositeOperation;
@@ -42,6 +52,8 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
             ? <Overview elements={this.props.page.elements} onClick={this.onOverviewClick} />
             : (
                 <SketchArea
+                    inputMode={this.props.inputMode}
+                    fontSize={this.props.fontSize}
                     center={this.state.sketchAreaCenter}
                     color={this.props.color}
                     compositeOperation={this.props.compositeOperation}
@@ -63,7 +75,7 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
 }
 
 function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
-    const { color, strokeWidth } = state.pen;
+    const { inputMode, fontSize, pen: { color, strokeWidth } } = state;
     let page = state.pages.find((p) => p.id === ownProps.match.params.id);
 
     if (!page) {
@@ -113,7 +125,7 @@ function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
             break;
     }
 
-    return { color: colorHexCode, lineWidth, compositeOperation, page };
+    return { color: colorHexCode, lineWidth, compositeOperation, page, inputMode, fontSize };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: PageOwnProps) {

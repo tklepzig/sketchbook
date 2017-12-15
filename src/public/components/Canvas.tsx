@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CompositeOperation, Line, PageElement, Point } from "../models/RootState";
+import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point } from "../models/RootState";
 import { CanvasTransform } from "../services/CanvasTransform";
 import { DrawingHandler } from "../services/DrawingHandler";
 import { tapEvents } from "../services/TapEvents";
@@ -10,6 +10,8 @@ export enum PenMode {
 }
 
 export interface CanvasProps {
+    inputMode: InputMode;
+    fontSize: FontSize;
     color: string;
     lineWidth: number;
     compositeOperation: CompositeOperation;
