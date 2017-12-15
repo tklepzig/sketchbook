@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
-import { CompositeOperation, Line, Point } from "../models/RootState";
+import { CompositeOperation, Line, PageElement, Point } from "../models/RootState";
 import Canvas from "./Canvas";
 import { Menu } from "./Menu";
 
@@ -9,7 +9,7 @@ export interface SketchAreaProps {
     color: string;
     lineWidth: number;
     compositeOperation: CompositeOperation;
-    lines: Line[];
+    elements: PageElement[];
     onLineAdded: (line: Line) => void;
 }
 
@@ -19,7 +19,7 @@ export const SketchArea: React.SFC<SketchAreaProps> = (props) => (
             color={props.color}
             compositeOperation={props.compositeOperation}
             lineWidth={props.lineWidth}
-            lines={props.lines}
+            elements={props.elements}
             onLineAdded={props.onLineAdded}
         />
         <Menu />

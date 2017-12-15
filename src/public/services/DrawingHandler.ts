@@ -1,4 +1,5 @@
-import { Line, Point } from "../models/RootState";
+import { Line, PageElement, PageElementKind, Point } from "../models/RootState";
+import pageElementHelper from "./PageElementHelper";
 
 export class DrawingHandler {
     public drawSegment(
@@ -14,30 +15,32 @@ export class DrawingHandler {
         canvasContext.closePath();
     }
 
-    public drawLines(
+    public drawPageElements(
         canvasContext: CanvasRenderingContext2D,
-        lines: Line[],
+        elements: PageElement[],
         boundary?: {
             left: number,
             top: number,
             right: number,
             bottom: number
         }) {
-        lines.forEach((line) => {
-            canvasContext.beginPath();
-            canvasContext.strokeStyle = line.color;
-            canvasContext.lineWidth = line.lineWidth;
-            canvasContext.globalCompositeOperation = line.globalCompositeOperation;
+        elements.forEach((element) => {
+            if (pageElementHelper.elementIsLine(element)) {
+                canvasContext.beginPath();
+                canvasContext.strokeStyle = element.color;
+                canvasContext.lineWidth = element.lineWidth;
+                canvasContext.globalCompositeOperation = element.globalCompositeOperation;
 
-            line.segments.forEach((segment) => {
-                if (this.isSegmentInBoundary(segment, boundary)) {
-                    canvasContext.moveTo(segment.start.x, segment.start.y);
-                    canvasContext.lineTo(segment.end.x, segment.end.y);
-                }
-            });
+                element.segments.forEach((segment) => {
+                    if (this.isSegmentInBoundary(segment, boundary)) {
+                        canvasContext.moveTo(segment.start.x, segment.start.y);
+                        canvasContext.lineTo(segment.end.x, segment.end.y);
+                    }
+                });
 
-            canvasContext.stroke();
-            canvasContext.closePath();
+                canvasContext.stroke();
+                canvasContext.closePath();
+            }
         });
     }
 

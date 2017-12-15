@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CompositeOperation, Line, Point } from "../models/RootState";
+import { CompositeOperation, Line, PageElement, Point } from "../models/RootState";
 import { CanvasTransform } from "../services/CanvasTransform";
 import { DrawingHandler } from "../services/DrawingHandler";
 import { tapEvents } from "../services/TapEvents";
@@ -13,7 +13,7 @@ export interface CanvasProps {
     color: string;
     lineWidth: number;
     compositeOperation: CompositeOperation;
-    lines: Line[];
+    elements: PageElement[];
     onLineAdded: (line: Line) => void;
 }
 
@@ -94,6 +94,7 @@ export default class Canvas extends React.Component<CanvasProps> {
                 this.currentLine = {
                     color: canvasContext.strokeStyle.toString(),
                     globalCompositeOperation: canvasContext.globalCompositeOperation,
+                    kind: "line",
                     lineWidth: canvasContext.lineWidth,
                     segments: []
                 };
@@ -227,9 +228,9 @@ export default class Canvas extends React.Component<CanvasProps> {
         // faster, bot wrong detail (lines are not in the right order)
         // this.drawLinesSortedAndGrouped(context, { left, top, right, bottom });
         // } else {
-        this.drawingHandler.drawLines(
+        this.drawingHandler.drawPageElements(
             context,
-            this.props.lines,
+            this.props.elements,
             { left, top, right, bottom });
         // }
 

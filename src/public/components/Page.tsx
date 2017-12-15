@@ -39,14 +39,14 @@ class Page extends React.Component<PageProps & PageDispatchProps & PageOwnProps,
 
     public render() {
         const content = this.state.isOverview
-            ? <Overview lines={this.props.page.lines} onClick={this.onOverviewClick} />
+            ? <Overview elements={this.props.page.elements} onClick={this.onOverviewClick} />
             : (
                 <SketchArea
                     center={this.state.sketchAreaCenter}
                     color={this.props.color}
                     compositeOperation={this.props.compositeOperation}
                     lineWidth={this.props.lineWidth}
-                    lines={this.props.page.lines}
+                    elements={this.props.page.elements}
                     onLineAdded={this.props.onLineAdded}
                 />);
 
@@ -68,7 +68,7 @@ function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
 
     if (!page) {
         // TODO: redundant defintion of default value for page
-        page = { id: (state.pages.length + 1).toString(), lines: [] };
+        page = { id: (state.pages.length + 1).toString(), elements: [] };
     }
 
     let colorHexCode: string;

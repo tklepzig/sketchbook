@@ -1,8 +1,8 @@
 import { AnyAction, Reducer } from "redux";
-import { AddLineAction, SetColorAction } from "./actions";
+import { AddLineAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "./actions";
 import { PenChooserProps } from "./components/PenChooser";
 import { Actions } from "./models/Actions";
-import { Page } from "./models/RootState";
+import { FontSize, InputMode, Page } from "./models/RootState";
 
 export const pen: Reducer<PenChooserProps> =
     (state = { color: "black", strokeWidth: "s" }, action: AnyAction): PenChooserProps => {
@@ -25,16 +25,38 @@ export const pen: Reducer<PenChooserProps> =
 
 // TODO: empty page list as default
 export const pages: Reducer<Page[]> =
-    (state = [{ id: "0", lines: [] }], action: AnyAction): Page[] => {
+    (state = [{ id: "0", elements: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddLine:
                 const { pageId, line } = action as AddLineAction;
                 return state.map((page) => (page.id === pageId)
-                    ? { ...page, lines: [...page.lines, line] }
+                    ? { ...page, elements: [...page.elements, line] }
                     : page
                 );
+            case Actions.AddText:
+                return state;
             case Actions.AddPage:
                 return state;
+            default:
+                return state;
+        }
+    };
+
+export const fontSize: Reducer<FontSize> =
+    (state = "medium", action: AnyAction): FontSize => {
+        switch (action.type) {
+            case Actions.SetFontSize:
+                return (action as SetFontSizeAction).fontSize;
+            default:
+                return state;
+        }
+    };
+
+export const inputMode: Reducer<InputMode> =
+    (state = "pen", action: AnyAction): InputMode => {
+        switch (action.type) {
+            case Actions.SetInputMode:
+                return (action as SetInputModeAction).inputMode;
             default:
                 return state;
         }
