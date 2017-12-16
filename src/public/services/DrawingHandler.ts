@@ -1,5 +1,6 @@
 import { Line, PageElement, PageElementKind, Point } from "../models/RootState";
 import pageElementHelper from "./PageElementHelper";
+import { CanvasTransform } from "./CanvasTransform";
 
 export class DrawingHandler {
     public drawSegment(
@@ -43,6 +44,58 @@ export class DrawingHandler {
             }
         });
     }
+
+    public repaint(context: CanvasRenderingContext2D, canvasTransform: CanvasTransform, elements: PageElement[]) {
+        const savedLineWidth = context.lineWidth;
+        const savedStrokeStyle = context.strokeStyle;
+        const savedGlobalCompositeOperation = context.globalCompositeOperation;
+
+        canvasTransform.save(context);
+        canvasTransform.setTransform(context, 1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        canvasTransform.restore(context);
+
+        // limit redrawing area to increase performance
+        let left = -canvasTransform.getTranslateX();
+        let top = -canvasTransform.getTranslateY();
+        let right = left + context.canvas.width;
+        let bottom = top + context.canvas.height;
+
+        // offset
+        left -= 40;
+        top -= 40;
+        right += 40;
+        bottom += 40;
+
+        // if (props.lines.length > 4) {
+        // faster, bot wrong detail (lines are not in the right order)
+        // drawLinesSortedAndGrouped(context, { left, top, right, bottom });
+        // } else {
+        this.drawPageElements(
+            context,
+            elements,
+            { left, top, right, bottom });
+        // }
+
+        context.lineWidth = savedLineWidth;
+        context.strokeStyle = savedStrokeStyle;
+        context.globalCompositeOperation = savedGlobalCompositeOperation;
+    }
+
+    public setCanvasSize(
+        context: CanvasRenderingContext2D,
+        canvasTransform: CanvasTransform,
+        width: number,
+        height: number) {
+        const currentTransform = canvasTransform.getTransform();
+
+        context.canvas.width = window.innerWidth;
+        context.canvas.height = window.innerHeight;
+
+        const { a, b, c, d, e, f } = currentTransform;
+        canvasTransform.setTransform(context, a, b, c, d, e, f);
+    }
+
 
     private isSegmentInBoundary(
         segment: { start: Point, end: Point },

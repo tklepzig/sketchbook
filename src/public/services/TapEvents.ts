@@ -1,9 +1,11 @@
+import { Point } from "../models/RootState";
+
 class TapEvents {
     public tapDown: string;
     public tapMove: string;
     public tapUp: string;
-    public getTouchCount: (e: any) => any;
-    public getTapPosition: (e: any) => { x: any; y: any; };
+    public getTouchCount: (e: any) => number;
+    public getTapPosition: (e: any) => Point;
 
     constructor() {
         this.tapDown = this.deviceSupportsTouchEvents() ? "onTouchStart" : "onMouseDown";

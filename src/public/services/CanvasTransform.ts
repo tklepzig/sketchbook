@@ -1,3 +1,5 @@
+import { Point } from "../models/RootState";
+
 export class CanvasTransform {
     private svgPoint: SVGPoint;
     private savedTransforms: any[] = [];
@@ -98,11 +100,12 @@ export class CanvasTransform {
         return canvasContext.setTransform(a, b, c, d, e, f);
     }
 
-    public getTransformedPoint(canvasContext: CanvasRenderingContext2D | null, x: number, y: number) {
+    public getTransformedPoint(canvasContext: CanvasRenderingContext2D | null, point: Point): Point {
+        const { x, y } = point;
         this.svgPoint.x = x;
         this.svgPoint.y = y;
 
-        return this.svgPoint.matrixTransform(this.transformMatrix.inverse());
+        return this.svgPoint.matrixTransform(this.transformMatrix.inverse()) as Point;
     }
 
     public getTranslateX() {
