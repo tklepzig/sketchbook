@@ -1,5 +1,5 @@
 import { AnyAction, Reducer } from "redux";
-import { AddLineAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "./actions";
+import { AddLineAction, AddTextAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "./actions";
 import { PenChooserProps } from "./components/PenChooser";
 import { Actions } from "./models/Actions";
 import { FontSize, InputMode, Page, Pen } from "./models/RootState";
@@ -28,13 +28,21 @@ export const pages: Reducer<Page[]> =
     (state = [{ id: "0", elements: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddLine:
-                const { pageId, line } = action as AddLineAction;
-                return state.map((page) => (page.id === pageId)
-                    ? { ...page, elements: [...page.elements, line] }
-                    : page
-                );
+                {
+                    const { pageId, line } = action as AddLineAction;
+                    return state.map((page) => (page.id === pageId)
+                        ? { ...page, elements: [...page.elements, line] }
+                        : page
+                    );
+                }
             case Actions.AddText:
-                return state;
+                {
+                    const { pageId, text } = action as AddTextAction;
+                    return state.map((page) => (page.id === pageId)
+                        ? { ...page, elements: [...page.elements, text] }
+                        : page
+                    );
+                }
             case Actions.AddPage:
                 return state;
             default:
