@@ -4,12 +4,12 @@ import { CanvasTransform } from "../services/CanvasTransform";
 import { DrawingHandler } from "../services/DrawingHandler";
 import { tapEvents } from "../services/TapEvents";
 
-export enum PenMode {
+enum PenMode {
     Draw,
     Translate
 }
 
-export interface CanvasProps {
+interface CanvasProps {
     inputMode: InputMode;
     fontSize: FontSize;
     color: string;
@@ -19,10 +19,17 @@ export interface CanvasProps {
     onLineAdded: (line: Line) => void;
 }
 
-export default class Canvas extends React.Component<CanvasProps> {
+interface CanvasState {
+    textareaPosition: Point;
+    textareaVisible: boolean;
+    textAreaText: string;
+}
+
+export default class Canvas extends React.Component<CanvasProps, CanvasState> {
     private drawingHandler: DrawingHandler;
     private linesGroupedByColorAndWidth: Line[][];
     private canvas: HTMLCanvasElement | null;
+    private textarea: HTMLTextAreaElement | null;
     private canvasTransform: CanvasTransform;
 
     private mouseIsDown: boolean;
@@ -32,24 +39,54 @@ export default class Canvas extends React.Component<CanvasProps> {
 
     constructor(props: CanvasProps) {
         super(props);
+        this.state = { textareaPosition: { x: 0, y: 0 }, textareaVisible: false, textAreaText: "" };
+
         this.canvasTransform = new CanvasTransform();
         this.drawingHandler = new DrawingHandler();
 
         this.tapDown = this.tapDown.bind(this);
         this.tapUp = this.tapUp.bind(this);
         this.tapMove = this.tapMove.bind(this);
+        this.textAreaTextChanged = this.textAreaTextChanged.bind(this);
         this.resize = this.resize.bind(this);
         this.mouseOut = this.mouseOut.bind(this);
     }
 
     public render() {
+        const textareaStyle: React.CSSProperties = {
+            position: "absolute",
+            background: "transparent",
+            fontFamily: "Arial",
+            fontSize: "20pt",
+            padding: 0,
+            margin: 0,
+            border: "1px solid #aaa",
+            outline: "none",
+            lineHeight: 1.2,
+            left: this.state.textareaPosition.x,
+            top: this.state.textareaPosition.y
+        };
+
+        const textarea = this.state.textareaVisible
+            ? (
+                <textarea
+                    style={textareaStyle}
+                    ref={(ta) => { this.textarea = ta; }}
+                    value={this.state.textAreaText}
+                    onChange={this.textAreaTextChanged}
+                />)
+            : null;
+
         return (
-            <canvas
-                ref={(canvas) => { this.canvas = canvas; }}
-                {...{ [tapEvents.tapDown]: this.tapDown }}
-                {...{ [tapEvents.tapUp]: this.tapUp }}
-                {...{ [tapEvents.tapMove]: this.tapMove }}
-            />);
+            <React.Fragment>
+                <canvas
+                    ref={(canvas) => { this.canvas = canvas; }}
+                    {...{ [tapEvents.tapDown]: this.tapDown }}
+                    {...{ [tapEvents.tapUp]: this.tapUp }}
+                    {...{ [tapEvents.tapMove]: this.tapMove }}
+                />
+                {textarea}
+            </React.Fragment>);
     }
 
     public componentDidMount() {
@@ -64,7 +101,14 @@ export default class Canvas extends React.Component<CanvasProps> {
     }
 
     public componentWillReceiveProps(newProps: CanvasProps) {
+        if (newProps.inputMode !== "text") {
+            this.setState({ textareaVisible: false, textAreaText: "" });
+        }
         this.updateCanvasConfig(newProps);
+    }
+
+    private textAreaTextChanged(e: React.ChangeEvent<HTMLTextAreaElement>) {
+        this.setState({ textAreaText: e.target.value });
     }
 
     private getCanvasContext() {
@@ -84,11 +128,33 @@ export default class Canvas extends React.Component<CanvasProps> {
 
         const { x, y } = tapEvents.getTapPosition(e);
         const touchCount = tapEvents.getTouchCount(e);
-        this.mouseIsDown = true;
-        this.currentPenMode = (touchCount === 2 || e.ctrlKey) ? PenMode.Translate : PenMode.Draw;
-
         const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
         this.tapDownPoint = pt;
+
+        if (this.props.inputMode === "text") {
+            if (this.state.textAreaText.length > 0) {
+                let top = this.state.textareaPosition.y;
+                for (const line of this.state.textAreaText.split("\n")) {
+                    canvasContext.fillText(line,
+                        this.state.textareaPosition.x,
+                        top);
+                    top += (20 + 6) * 1.2;
+                }
+                this.setState({ textAreaText: "", textareaVisible: false });
+            } else {
+                this.setState({ textAreaText: "", textareaPosition: pt, textareaVisible: true }, () => {
+                    setTimeout(() => {
+                        if (this.textarea !== null) {
+                            this.textarea.focus();
+                        }
+                    });
+                });
+            }
+            return;
+        }
+
+        this.mouseIsDown = true;
+        this.currentPenMode = (touchCount === 2 || e.ctrlKey) ? PenMode.Translate : PenMode.Draw;
 
         switch (this.currentPenMode) {
             case PenMode.Draw:
@@ -111,6 +177,10 @@ export default class Canvas extends React.Component<CanvasProps> {
         }
     }
     private tapMove(e: any) {
+        if (this.props.inputMode === "text") {
+            return;
+        }
+
         const canvasContext = this.getCanvasContext();
 
         if (canvasContext === null) {
@@ -140,6 +210,9 @@ export default class Canvas extends React.Component<CanvasProps> {
         }
     }
     private tapUp() {
+        if (this.props.inputMode === "text") {
+            return;
+        }
         if (!this.mouseIsDown) {
             return;
         }
@@ -176,6 +249,8 @@ export default class Canvas extends React.Component<CanvasProps> {
             return;
         }
 
+        context.font = "20pt Arial";
+        context.textBaseline = "hanging";
         context.lineCap = "round";
         context.lineWidth = props.lineWidth;
         context.strokeStyle = props.color;
