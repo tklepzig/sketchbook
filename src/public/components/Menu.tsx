@@ -30,7 +30,6 @@ interface MenuDispatchProps {
     onInputModeSelected: (inputMode: InputMode) => SetInputModeAction;
 }
 
-// TODO: redux state handling from pen/fontsize-chooser to menu
 const Menu: React.SFC<MenuProps & MenuDispatchProps> = (props) => {
     const pen = props.inputMode === "pen"
         ? (

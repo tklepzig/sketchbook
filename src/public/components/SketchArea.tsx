@@ -61,10 +61,8 @@ function mapStateToProps(state: RootState): SketchAreaProps {
             colorHexCode = "#f9a765";
             compositeOperation = "destination-over";
             break;
-        // TODO: redundant defintion of default value for color
         default:
-            colorHexCode = "#1d1d1d";
-            break;
+            throw new Error(`Unknown line color: ${color}`);
     }
 
     switch (strokeWidth) {
@@ -77,10 +75,8 @@ function mapStateToProps(state: RootState): SketchAreaProps {
         case "l":
             lineWidth = 20;
             break;
-        // TODO: redundant defintion of default value for lineWidth
         default:
-            lineWidth = 4;
-            break;
+            throw new Error(`Unknown stroke width: ${strokeWidth}`);
     }
 
     return { color: colorHexCode, lineWidth, compositeOperation, inputMode, fontSize };
