@@ -2,9 +2,9 @@ import * as React from "react";
 import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point } from "../models/RootState";
 import { CanvasContext } from "../services/CanvasContext";
 import { CanvasDrawing } from "../services/CanvasDrawing";
+import canvasHelper from "../services/CanvasHelper";
 import { CanvasTexting } from "../services/CanvasTexting";
 import { CanvasTranslate } from "../services/CanvasTranslate";
-import { DrawingHandler } from "../services/DrawingHandler";
 import { tapEvents } from "../services/TapEvents";
 
 interface CanvasProps {
@@ -31,7 +31,6 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     private isTranslateMode = false;
     private tapIsDown: boolean;
-    private drawingHandler: DrawingHandler;
     private canvasContext: CanvasContext;
     private canvasTranslate: CanvasTranslate;
     private canvasDrawing: CanvasDrawing;
@@ -50,7 +49,6 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
 
         // TODO: maybe singletons (so use export default new ...())
-        this.drawingHandler = new DrawingHandler();
         this.canvasTranslate = new CanvasTranslate();
         this.canvasDrawing = new CanvasDrawing();
         this.canvasTexting = new CanvasTexting();
@@ -144,7 +142,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
     }
 
     private resize() {
-        this.drawingHandler.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
+        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
         this.updateCanvasConfig(this.props);
         this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
     }
