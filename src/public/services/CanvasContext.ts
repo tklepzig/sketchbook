@@ -1,71 +1,78 @@
 import { Point } from "../models/RootState";
 
-export class CanvasTransform {
+export class CanvasContext {
+    private getContext: () => CanvasRenderingContext2D | null;
     private svgPoint: SVGPoint;
     private savedTransforms: any[] = [];
     private transformMatrix: SVGMatrix;
     private svg: SVGSVGElement;
 
-    constructor() {
+    constructor(getContext: () => CanvasRenderingContext2D | null) {
+        this.getContext = getContext;
+
         this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.transformMatrix = this.svg.createSVGMatrix();
         this.svgPoint = this.svg.createSVGPoint();
 
     }
 
-    public save(canvasContext: CanvasRenderingContext2D | null) {
-        if (canvasContext == null) {
+    public save() {
+        const context = this.getContext();
+        if (context == null) {
             return;
         }
 
         this.savedTransforms.push(this.transformMatrix.translate(0, 0));
-        return canvasContext.save();
+        return context.save();
     }
 
-    public restore(canvasContext: CanvasRenderingContext2D | null) {
-        if (canvasContext == null) {
+    public restore() {
+        const context = this.getContext();
+        if (context == null) {
             return;
         }
 
         this.transformMatrix = this.savedTransforms.pop();
-        return canvasContext.restore();
+        return context.restore();
     }
 
-    public scale(canvasContext: CanvasRenderingContext2D | null, sx: number, sy: number) {
-        if (canvasContext == null) {
+    public scale(sx: number, sy: number) {
+        const context = this.getContext();
+        if (context == null) {
             return;
         }
 
         this.transformMatrix = this.transformMatrix.scaleNonUniform(sx, sy);
-        return canvasContext.scale(sx, sy);
+        return context.scale(sx, sy);
     }
 
-    public rotate(canvasContext: CanvasRenderingContext2D | null, angle: number) {
-        if (canvasContext == null) {
+    public rotate(angle: number) {
+        const context = this.getContext();
+        if (context == null) {
             return;
         }
 
         this.transformMatrix = this.transformMatrix.rotate(angle);
-        return canvasContext.rotate(angle * Math.PI / 180);
+        return context.rotate(angle * Math.PI / 180);
     }
 
-    public translate(canvasContext: CanvasRenderingContext2D | null, dx: number, dy: number) {
-        if (canvasContext == null) {
+    public translate(dx: number, dy: number) {
+        const context = this.getContext();
+        if (context == null) {
             return;
         }
 
         this.transformMatrix = this.transformMatrix.translate(dx, dy);
-        return canvasContext.translate(dx, dy);
+        return context.translate(dx, dy);
     }
 
     public transform(
-        canvasContext: CanvasRenderingContext2D | null,
         a: number, b: number, c: number,
         d: number, e: number, f: number) {
-        if (canvasContext == null) {
+        const context = this.getContext();
+        if (context == null) {
             return;
         }
-
         const svgMatrix = this.svg.createSVGMatrix();
         svgMatrix.a = a;
         svgMatrix.b = b;
@@ -75,7 +82,7 @@ export class CanvasTransform {
         svgMatrix.f = f;
 
         this.transformMatrix = this.transformMatrix.multiply(svgMatrix);
-        return canvasContext.transform(a, b, c, d, e, f);
+        return context.transform(a, b, c, d, e, f);
     }
 
     public getTransform() {
@@ -83,10 +90,10 @@ export class CanvasTransform {
     }
 
     public setTransform(
-        canvasContext: CanvasRenderingContext2D | null,
         a: number, b: number, c: number,
         d: number, e: number, f: number) {
-        if (canvasContext == null) {
+        const context = this.getContext();
+        if (context == null) {
             return;
         }
 
@@ -97,10 +104,10 @@ export class CanvasTransform {
         this.transformMatrix.e = e;
         this.transformMatrix.f = f;
 
-        return canvasContext.setTransform(a, b, c, d, e, f);
+        return context.setTransform(a, b, c, d, e, f);
     }
 
-    public getTransformedPoint(canvasContext: CanvasRenderingContext2D | null, point: Point): Point {
+    public getTransformedPoint(point: Point): Point {
         const { x, y } = point;
         this.svgPoint.x = x;
         this.svgPoint.y = y;
@@ -122,5 +129,14 @@ export class CanvasTransform {
 
     public getScaleY() {
         return this.transformMatrix.d;
+    }
+
+    public doCanvasAction(action: (context: CanvasRenderingContext2D) => void) {
+        const context = this.getContext();
+        if (context == null) {
+            return;
+        }
+
+        action(context);
     }
 }
