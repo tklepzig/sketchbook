@@ -12,7 +12,7 @@ import {
 } from "../actions";
 import { FontSize, InputMode, RootState } from "../models/RootState";
 import { FontSizeChooser } from "./FontSizeChooser";
-import { InputModeButton } from "./InputModeButton";
+import { InputModeToggle } from "./InputModeToggle";
 import { PenChooser } from "./PenChooser";
 
 export interface MenuProps {
@@ -31,7 +31,7 @@ interface MenuDispatchProps {
 }
 
 const Menu: React.SFC<MenuProps & MenuDispatchProps> = (props) => {
-    const pen = props.inputMode === "pen"
+    const content = props.inputMode === "pen"
         ? (
             <PenChooser
                 color={props.color}
@@ -39,20 +39,18 @@ const Menu: React.SFC<MenuProps & MenuDispatchProps> = (props) => {
                 onColorSelected={props.onColorSelected}
                 onStrokeWidthSelected={props.onStrokeWidthSelected}
             />)
-        : <InputModeButton inputMode="pen" onClick={props.onInputModeSelected} />;
-
-    const text = props.inputMode === "text"
-        ? (
+        : (
             <FontSizeChooser
                 fontSize={props.fontSize}
                 onFontSizeSelected={props.onFontSizeSelected}
-            />)
-        : <InputModeButton inputMode="text" onClick={props.onInputModeSelected} />;
+            />);
 
     return (
         <div className="menu">
-            {pen}
-            {text}
+            <InputModeToggle inputMode={props.inputMode} inputModeChanged={props.onInputModeSelected} />
+            <div style={{ flex: 1 }} />
+            {content}
+            <div style={{ flex: 1 }} />
         </div>);
 };
 

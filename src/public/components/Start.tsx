@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { Page, RootState } from "../models/RootState";
+import { InputModeToggle } from "./InputModeToggle";
 import { PageList } from "./PageList";
 import Splash from "./Splash";
 
