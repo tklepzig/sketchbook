@@ -27,7 +27,7 @@ export class FontSizeChooser
     public render() {
         return (
             <React.Fragment>
-                <button onClick={this.openPopup}>a</button>
+                <button className={`btn-font-size ${this.props.fontSize}`} onClick={this.openPopup}>a</button>
                 <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup}>
                     <header>Font Size</header>
                     <FontSizeButton fontSize="small" onClick={this.fontSizeSelected} />
