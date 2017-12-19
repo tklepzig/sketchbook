@@ -78,6 +78,8 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
                     ref={(ta) => { this.textarea = ta; }}
                     value={this.state.textareaState.text}
                     onChange={this.textAreaTextChanged}
+                    cols={30}
+                    rows={4}
                     className={`fs-${this.props.fontSize.toString()}`}
                 />)
             : null;

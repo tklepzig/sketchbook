@@ -17,7 +17,9 @@ textarea {
     font-family: Handlee;
     padding: 0;
     margin: 0;
-    border: 1px solid #aaa;
+    border: 1px solid darken($background, 30%);
+    box-shadow: 0 0 4px 0 darken($background, 20%);
+    background: rgba($background, 0.4);
     outline: none;
     line-height: 1.2;
     &.fs-12 {
