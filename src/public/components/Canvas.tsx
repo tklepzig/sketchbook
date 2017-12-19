@@ -3,7 +3,6 @@ import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text
 import { CanvasContext } from "../services/CanvasContext";
 import { CanvasDrawing } from "../services/CanvasDrawing";
 import canvasHelper from "../services/CanvasHelper";
-import { CanvasTexting } from "../services/CanvasTexting";
 import { CanvasTranslate } from "../services/CanvasTranslate";
 import { tapEvents } from "../services/TapEvents";
 
@@ -34,7 +33,6 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
     private canvasContext: CanvasContext;
     private canvasTranslate: CanvasTranslate;
     private canvasDrawing: CanvasDrawing;
-    private canvasTexting: CanvasTexting;
 
     constructor(props: CanvasProps) {
         super(props);
@@ -51,7 +49,6 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         // TODO: maybe singletons (so use export default new ...())
         this.canvasTranslate = new CanvasTranslate();
         this.canvasDrawing = new CanvasDrawing();
-        this.canvasTexting = new CanvasTexting();
     }
 
     public componentDidMount() {
@@ -156,7 +153,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     private updateCanvasConfig(props: CanvasProps) {
         this.canvasContext.doCanvasAction((context) => {
-            context.font = `${props.fontSize}pt Handlee`;
+            context.font = `bold ${props.fontSize}pt Handlee`;
             context.textBaseline = "hanging";
             context.lineCap = "round";
             context.lineWidth = props.lineWidth;
@@ -165,7 +162,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         });
     }
     private addCurrentTextToCanvas() {
-        const text = this.canvasTexting.addText(
+        const text = this.canvasDrawing.addText(
             this.canvasContext,
             this.state.textareaState.text,
             this.state.textareaState.position,

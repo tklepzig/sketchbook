@@ -1,4 +1,4 @@
-import { Line, PageElement, Point } from "../models/RootState";
+import { Line, PageElement, Point, Text } from "../models/RootState";
 import { CanvasContext } from "./CanvasContext";
 import pageElementHelper from "./PageElementHelper";
 
@@ -35,6 +35,14 @@ export class CanvasDrawing {
 
     public endLine() {
         return this.currentLine;
+    }
+
+    public addText(canvasContext: CanvasContext, text: string, position: Point, fontSize: number): Text {
+        canvasContext.doCanvasAction((context) => {
+            this.drawText(context, position, text);
+        });
+
+        return { kind: "text", fontSize, position, text };
     }
 
     public repaint(canvasContext: CanvasContext, elements: PageElement[]) {
@@ -79,16 +87,16 @@ export class CanvasDrawing {
     }
 
     private drawSegment(
-        canvasContext: CanvasRenderingContext2D,
+        context: CanvasRenderingContext2D,
         segment: {
             start: Point,
             end: Point
         }) {
-        canvasContext.beginPath();
-        canvasContext.moveTo(segment.start.x, segment.start.y);
-        canvasContext.lineTo(segment.end.x, segment.end.y);
-        canvasContext.stroke();
-        canvasContext.closePath();
+        context.beginPath();
+        context.moveTo(segment.start.x, segment.start.y);
+        context.lineTo(segment.end.x, segment.end.y);
+        context.stroke();
+        context.closePath();
     }
 
     private drawPageElements(
@@ -117,8 +125,8 @@ export class CanvasDrawing {
                 context.stroke();
                 context.closePath();
             } else if (pageElementHelper.elementIsText(element)) {
-                context.font = `${element.fontSize}pt Handlee`;
-                // TODO: draw text, is currently in CanvasTexting
+                context.font = `bold ${element.fontSize}pt Handlee`;
+                this.drawText(context, element.position, element.text);
             }
         });
     }
@@ -151,6 +159,13 @@ export class CanvasDrawing {
         }
 
         return false;
+    }
+    private drawText(context: CanvasRenderingContext2D, position: Point, text: string) {
+        let top = position.y;
+        for (const line of text.split("\n")) {
+            context.fillText(line, position.x, top);
+            top += (20 + 6) * 1.2;
+        }
     }
 
     // private refreshLinesGroupedByColorAndWidth() {

@@ -33,6 +33,7 @@
 .btn-font-size {
     @extend %button;
     font-family: Handlee;
+    font-weight: bold;
     line-height: 1;
     &.small {
         font-size: 12pt;
