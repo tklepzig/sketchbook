@@ -39,7 +39,7 @@ export class CanvasDrawing {
 
     public addText(canvasContext: CanvasContext, text: string, position: Point, fontSize: number): Text {
         canvasContext.doCanvasAction((context) => {
-            this.drawText(context, position, text);
+            this.drawText(context, position, text, fontSize);
         });
 
         return { kind: "text", fontSize, position, text };
@@ -125,8 +125,7 @@ export class CanvasDrawing {
                 context.stroke();
                 context.closePath();
             } else if (pageElementHelper.elementIsText(element)) {
-                context.font = `bold ${element.fontSize}pt Handlee`;
-                this.drawText(context, element.position, element.text);
+                this.drawText(context, element.position, element.text, element.fontSize);
             }
         });
     }
@@ -160,7 +159,9 @@ export class CanvasDrawing {
 
         return false;
     }
-    private drawText(context: CanvasRenderingContext2D, position: Point, text: string) {
+    private drawText(context: CanvasRenderingContext2D, position: Point, text: string, fontSize: number) {
+        context.globalCompositeOperation = "source-over";
+        context.font = `bold ${fontSize}pt Handlee`;
         let top = position.y;
         for (const line of text.split("\n")) {
             context.fillText(line, position.x, top);
