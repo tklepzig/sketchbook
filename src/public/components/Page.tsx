@@ -26,13 +26,19 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
     constructor(props: any) {
         super(props);
         this.onOverviewClick = this.onOverviewClick.bind(this);
+        this.onNavigateBack = this.onNavigateBack.bind(this);
         this.state = { isOverview: true, sketchAreaCenter: { x: 0, y: 0 } };
     }
 
     public render() {
         const content = this.state.isOverview
             ? <Overview elements={this.props.page.elements} onClick={this.onOverviewClick} />
-            : <SketchArea page={this.props.page} center={this.state.sketchAreaCenter} />;
+            : (
+                <SketchArea
+                    page={this.props.page}
+                    center={this.state.sketchAreaCenter}
+                    onNavigateBack={this.onNavigateBack}
+                />);
 
         return (
             < React.Fragment >
@@ -41,8 +47,12 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
         );
     }
 
-    private onOverviewClick() {
-        this.setState({ isOverview: false, sketchAreaCenter: { x: 0, y: 0 } });
+    private onOverviewClick(position: Point) {
+        this.setState({ isOverview: false, sketchAreaCenter: position });
+    }
+
+    private onNavigateBack() {
+        this.setState({ isOverview: true });
     }
 }
 

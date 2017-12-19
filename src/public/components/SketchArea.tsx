@@ -17,6 +17,7 @@ export interface SketchAreaProps {
 export interface SketchAreaOwnProps {
     page: Page;
     center: Point;
+    onNavigateBack: () => void;
 }
 
 interface SketchAreaDispatchProps {
@@ -37,6 +38,7 @@ const SketchArea: React.SFC<SketchAreaProps & SketchAreaDispatchProps & SketchAr
             onTextAdded={props.onTextAdded}
         />
         <Menu />
+        <button style={{ position: "absolute" }} onClick={props.onNavigateBack}>Back</button>
     </React.Fragment>
 );
 

@@ -45,7 +45,7 @@ export class CanvasDrawing {
         return { kind: "text", fontSize, position, text };
     }
 
-    public repaint(canvasContext: CanvasContext, elements: PageElement[]) {
+    public repaint(canvasContext: CanvasContext, elements: PageElement[], limitToVisibleArea: boolean = true) {
 
         canvasContext.doCanvasAction((context) => {
 
@@ -74,10 +74,14 @@ export class CanvasDrawing {
             // faster, bot wrong detail (lines are not in the right order)
             // drawLinesSortedAndGrouped(context, { left, top, right, bottom });
             // } else {
-            this.drawPageElements(
-                context,
-                elements,
-                { left, top, right, bottom });
+            if (limitToVisibleArea) {
+                this.drawPageElements(
+                    context,
+                    elements,
+                    { left, top, right, bottom });
+            } else {
+                this.drawPageElements(context, elements);
+            }
             // }
 
             context.lineWidth = savedLineWidth;
