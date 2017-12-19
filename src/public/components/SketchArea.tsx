@@ -1,8 +1,8 @@
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { addLine } from "../actions";
-import { CompositeOperation, FontSize, InputMode, Line, Page, Point, RootState } from "../models/RootState";
+import { addLine, addText } from "../actions";
+import { CompositeOperation, FontSize, InputMode, Line, Page, Point, RootState, Text } from "../models/RootState";
 import Canvas from "./Canvas";
 import Menu from "./Menu";
 
@@ -21,6 +21,7 @@ export interface SketchAreaOwnProps {
 
 interface SketchAreaDispatchProps {
     onLineAdded: (line: Line) => void;
+    onTextAdded: (text: Text) => void;
 }
 
 const SketchArea: React.SFC<SketchAreaProps & SketchAreaDispatchProps & SketchAreaOwnProps> = (props) => (
@@ -33,6 +34,7 @@ const SketchArea: React.SFC<SketchAreaProps & SketchAreaDispatchProps & SketchAr
             lineWidth={props.lineWidth}
             elements={props.page.elements}
             onLineAdded={props.onLineAdded}
+            onTextAdded={props.onTextAdded}
         />
         <Menu />
     </React.Fragment>
@@ -99,7 +101,8 @@ function mapStateToProps(state: RootState): SketchAreaProps {
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: SketchAreaOwnProps) {
     return {
-        onLineAdded: (line: Line) => dispatch(addLine(ownProps.page.id, line))
+        onLineAdded: (line: Line) => dispatch(addLine(ownProps.page.id, line)),
+        onTextAdded: (text: Text) => dispatch(addText(ownProps.page.id, text))
     };
 }
 

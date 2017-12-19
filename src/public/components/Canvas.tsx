@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point } from "../models/RootState";
+import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "../models/RootState";
 import { CanvasContext } from "../services/CanvasContext";
 import { CanvasDrawing } from "../services/CanvasDrawing";
 import canvasHelper from "../services/CanvasHelper";
@@ -15,6 +15,7 @@ interface CanvasProps {
     compositeOperation: CompositeOperation;
     elements: PageElement[];
     onLineAdded: (line: Line) => void;
+    onTextAdded: (text: Text) => void;
 }
 
 interface CanvasState {
@@ -164,11 +165,12 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         });
     }
     private addCurrentTextToCanvas() {
-        this.canvasTexting.addText(
+        const text = this.canvasTexting.addText(
             this.canvasContext,
             this.state.textareaState.text,
-            this.state.textareaState.position);
-
+            this.state.textareaState.position,
+            this.props.fontSize);
+        this.props.onTextAdded(text);
         this.setState({ textareaState: { ...this.state.textareaState, text: "", isVisible: false } });
     }
     private showTextarea(position: Point) {

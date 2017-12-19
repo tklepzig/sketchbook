@@ -116,6 +116,9 @@ export class CanvasDrawing {
 
                 context.stroke();
                 context.closePath();
+            } else if (pageElementHelper.elementIsText(element)) {
+                context.font = `${element.fontSize}pt Handlee`;
+                // TODO: draw text, is currently in CanvasTexting
             }
         });
     }

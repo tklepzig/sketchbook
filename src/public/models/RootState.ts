@@ -7,6 +7,7 @@ export interface Text {
     kind: PageElementKind;
     text: string;
     position: Point;
+    fontSize: number;
 
 }
 export interface Line {
