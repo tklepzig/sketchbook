@@ -102,7 +102,6 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
         if (this.isTranslateMode) {
             this.canvasTranslate.startTranslate(tapDownPoint);
-            this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
         } else if (this.props.inputMode === "pen") {
             this.canvasDrawing.startLine(this.canvasContext, tapDownPoint);
         } else if (this.props.inputMode === "text") {
@@ -136,7 +135,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         }
         this.tapIsDown = false;
 
-        if (this.props.inputMode === "pen") {
+        if (!this.isTranslateMode && this.props.inputMode === "pen") {
             this.props.onLineAdded(this.canvasDrawing.endLine());
         }
     }
