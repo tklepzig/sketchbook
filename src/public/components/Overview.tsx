@@ -39,6 +39,7 @@ export class Overview extends React.Component<OverviewProps> {
     public render() {
         return (
             <canvas
+                style={{ cursor: "default" }}
                 ref={(canvas) => { this.canvas = canvas; }}
                 {...{ [tapEvents.tapDown]: this.tapDown }}
             />);
