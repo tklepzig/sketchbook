@@ -9,7 +9,7 @@ import { tapEvents } from "../services/TapEvents";
 
 interface CanvasProps {
     inputMode: InputMode;
-    fontSize: FontSize;
+    fontSize: number;
     color: string;
     lineWidth: number;
     compositeOperation: CompositeOperation;
@@ -26,11 +26,10 @@ interface CanvasState {
 }
 
 export default class Canvas extends React.Component<CanvasProps, CanvasState> {
-    private canvas: HTMLCanvasElement | null;
-    private textarea: HTMLTextAreaElement | null;
-
+    private canvas: HTMLCanvasElement | null = null;
+    private textarea: HTMLTextAreaElement | null = null;
     private isTranslateMode = false;
-    private tapIsDown: boolean;
+    private tapIsDown: boolean = false;
     private canvasContext: CanvasContext;
     private canvasTranslate: CanvasTranslate;
     private canvasDrawing: CanvasDrawing;
@@ -79,6 +78,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
                     ref={(ta) => { this.textarea = ta; }}
                     value={this.state.textareaState.text}
                     onChange={this.textAreaTextChanged}
+                    className={`fs-${this.props.fontSize.toString()}`}
                 />)
             : null;
 
@@ -153,7 +153,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     private updateCanvasConfig(props: CanvasProps) {
         this.canvasContext.doCanvasAction((context) => {
-            context.font = "20pt Arial";
+            context.font = `${props.fontSize}pt Handlee`;
             context.textBaseline = "hanging";
             context.lineCap = "round";
             context.lineWidth = props.lineWidth;

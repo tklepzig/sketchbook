@@ -8,7 +8,7 @@ import Menu from "./Menu";
 
 export interface SketchAreaProps {
     inputMode: InputMode;
-    fontSize: FontSize;
+    fontSize: number;
     color: string;
     lineWidth: number;
     compositeOperation: CompositeOperation;
@@ -44,6 +44,7 @@ function mapStateToProps(state: RootState): SketchAreaProps {
     let colorHexCode: string;
     let lineWidth: number;
     let compositeOperation: CompositeOperation = "source-over";
+    let fontSizeNumber: number;
 
     switch (color) {
         case "black":
@@ -79,7 +80,21 @@ function mapStateToProps(state: RootState): SketchAreaProps {
             throw new Error(`Unknown stroke width: ${strokeWidth}`);
     }
 
-    return { color: colorHexCode, lineWidth, compositeOperation, inputMode, fontSize };
+    switch (fontSize) {
+        case "small":
+            fontSizeNumber = 12;
+            break;
+        case "medium":
+            fontSizeNumber = 20;
+            break;
+        case "large":
+            fontSizeNumber = 30;
+            break;
+        default:
+            throw new Error(`Unknown font size: ${fontSize}`);
+    }
+
+    return { color: colorHexCode, lineWidth, compositeOperation, inputMode, fontSize: fontSizeNumber };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: SketchAreaOwnProps) {

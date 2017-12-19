@@ -10,3 +10,23 @@ canvas {
     overflow: hidden;
     cursor: pointer;
 }
+
+textarea {
+    position: absolute;
+    background: transparent;
+    font-family: Handlee;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #aaa;
+    outline: none;
+    line-height: 1.2;
+    &.fs-12 {
+        font-size: 12pt;
+    }
+    &.fs-20 {
+        font-size: 20pt;
+    }
+    &.fs-30 {
+        font-size: 30pt;
+    }
+}
