@@ -1,5 +1,7 @@
+@import "../variables";
+
 #loading {
-    background: #ededed;
+    background: $background;
     background-image: url("assets/logo.png");
     background-repeat: no-repeat;
     background-position: center;
