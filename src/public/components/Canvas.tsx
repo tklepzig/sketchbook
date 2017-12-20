@@ -98,7 +98,8 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         this.tapIsDown = true;
         const touchCount = tapEvents.getTouchCount(e);
         this.isTranslateMode = touchCount === 2 || e.ctrlKey;
-        const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
+        const originalTapDownPoint = tapEvents.getTapPosition(e);
+        const tapDownPoint = this.canvasContext.getTransformedPoint(originalTapDownPoint);
 
         if (this.isTranslateMode) {
             this.canvasTranslate.startTranslate(tapDownPoint);
@@ -109,7 +110,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
             if (this.state.textareaState.text.length > 0) {
                 this.addCurrentTextToCanvas();
             } else {
-                this.showTextarea(tapDownPoint);
+                this.showTextarea(originalTapDownPoint);
             }
         }
     }
@@ -164,7 +165,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         const text = this.canvasDrawing.addText(
             this.canvasContext,
             this.state.textareaState.text,
-            this.state.textareaState.position,
+            this.canvasContext.getTransformedPoint(this.state.textareaState.position),
             this.props.fontSize);
         this.props.onTextAdded(text);
         this.setState({ textareaState: { ...this.state.textareaState, text: "", isVisible: false } });
