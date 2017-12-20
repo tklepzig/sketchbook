@@ -9,12 +9,7 @@ interface StartProps {
     pages: Page[];
 }
 
-const Start: React.SFC<StartProps> = (props) => (
-    <React.Fragment>
-        <Splash />
-        <PageList pages={props.pages} />
-    </React.Fragment>
-);
+const Start: React.SFC<StartProps> = (props) => <PageList pages={props.pages} />;
 
 function mapStateToProps(state: RootState): StartProps {
     const { pages } = state;
