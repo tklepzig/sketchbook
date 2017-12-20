@@ -7,12 +7,17 @@ import canvasHelper from "../services/CanvasHelper";
 import pageElementHelper from "../services/PageElementHelper";
 import { tapEvents } from "../services/TapEvents";
 
-export interface OverviewProps {
+interface OverviewProps {
     elements: PageElement[];
     onClick: (position: Point) => void;
 }
 
-export class Overview extends React.Component<OverviewProps> {
+interface OverviewState {
+    translation: { dx: number, dy: number };
+    scale: number;
+}
+
+export class Overview extends React.Component<OverviewProps, OverviewState> {
     private canvas: HTMLCanvasElement | null = null;
 
     private canvasContext: CanvasContext;
@@ -23,6 +28,7 @@ export class Overview extends React.Component<OverviewProps> {
         this.tapDown = this.tapDown.bind(this);
         this.resize = this.resize.bind(this);
 
+        this.state = { scale: 1, translation: { dx: 0, dy: 0 } };
         this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
         this.canvasDrawing = new CanvasDrawing();
     }
@@ -46,16 +52,16 @@ export class Overview extends React.Component<OverviewProps> {
     }
 
     private tapDown(e: any) {
-        const tapDownPoint = tapEvents.getTapPosition(e);
+        const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
         this.props.onClick(tapDownPoint);
     }
 
     private resize() {
         canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
-        this.generateOverview(window.innerWidth, window.innerHeight);
+        this.generateOverview();
     }
 
-    private generateOverview(width: number, height: number) {
+    private generateOverview() {
         this.canvasContext.doCanvasAction((context) => {
             const spacingFactor = 0.01;
 
@@ -137,28 +143,29 @@ export class Overview extends React.Component<OverviewProps> {
             canvasWidth += canvasWidth * spacingFactor * 2;
             canvasHeight += canvasHeight * spacingFactor * 2;
 
-            const scale = { x: width / canvasWidth, y: height / canvasHeight };
-            let newscale = 1;
+            const scaleX = context.canvas.width / canvasWidth;
+            const scaleY = context.canvas.height / canvasHeight;
+            let scale = 1;
 
-            newscale = scale.x < scale.y ? scale.x : scale.y;
+            scale = scaleX < scaleY ? scaleX : scaleY;
 
-            if (newscale > 1) {
-                newscale = 1;
+            if (scale > 1) {
+                scale = 1;
             }
 
-            const translation: { x: number, y: number } = { x: 0, y: 0 };
+            const translation: { dx: number, dy: number } = { dx: 0, dy: 0 };
 
-            translation.x = Math.abs(min.x) + (canvasWidth * spacingFactor);
-            translation.y = Math.abs(min.y) + (canvasHeight * spacingFactor);
+            translation.dx = Math.abs(min.x) + (canvasWidth * spacingFactor);
+            translation.dy = Math.abs(min.y) + (canvasHeight * spacingFactor);
 
-            context.canvas.width = width;
-            context.canvas.height = height;
             context.lineCap = "round";
             context.textBaseline = "top";
-            context.scale(newscale, newscale);
-            context.translate(translation.x, translation.y);
+            this.canvasContext.scale(scale, scale);
+            this.canvasContext.translate(translation.dx, translation.dy);
 
-            this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
+            this.setState({ scale, translation }, () => {
+                this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
+            });
 
             // context.strokeStyle = "red";
             // context.strokeRect(min.x, min.y, max.x - min.x, max.y - min.y);

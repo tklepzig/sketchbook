@@ -13,6 +13,7 @@ interface CanvasProps {
     lineWidth: number;
     compositeOperation: CompositeOperation;
     elements: PageElement[];
+    center: Point;
     onLineAdded: (line: Line) => void;
     onTextAdded: (text: Text) => void;
 }
@@ -23,6 +24,7 @@ interface CanvasState {
         isVisible: boolean,
         text: string
     };
+    center: Point;
 }
 
 export default class Canvas extends React.Component<CanvasProps, CanvasState> {
@@ -42,7 +44,14 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         this.resize = this.resize.bind(this);
         this.textAreaTextChanged = this.textAreaTextChanged.bind(this);
 
-        this.state = { textareaState: { position: { x: 0, y: 0 }, isVisible: false, text: "" } };
+        this.state = {
+            textareaState: {
+                position: { x: 0, y: 0 },
+                isVisible: false,
+                text: ""
+            },
+            center: { x: 0, y: 0 }
+        };
 
         this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
 
@@ -160,7 +169,14 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
             context.strokeStyle = props.color;
             context.globalCompositeOperation = props.compositeOperation;
         });
+
+        if (props.center !== this.state.center) {
+            this.setState({ center: props.center }, () => {
+                this.setCenter();
+            });
+        }
     }
+
     private addCurrentTextToCanvas() {
         const text = this.canvasDrawing.addText(
             this.canvasContext,
@@ -183,6 +199,19 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
                     this.textarea.focus();
                 }
             });
+        });
+    }
+
+    private setCenter() {
+        this.canvasContext.doCanvasAction((context) => {
+            let { x, y } = this.state.center;
+            x -= context.canvas.width / 2;
+            y -= context.canvas.height / 2;
+
+            this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+            this.canvasContext.translate(-x, -y);
+            this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
         });
     }
 }

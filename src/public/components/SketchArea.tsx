@@ -34,6 +34,7 @@ const SketchArea: React.SFC<SketchAreaProps & SketchAreaDispatchProps & SketchAr
             compositeOperation={props.compositeOperation}
             lineWidth={props.lineWidth}
             elements={props.page.elements}
+            center={props.center}
             onLineAdded={props.onLineAdded}
             onTextAdded={props.onTextAdded}
         />
