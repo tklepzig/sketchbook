@@ -23,11 +23,11 @@ export interface PageState {
 }
 
 class Page extends React.Component<PageProps & PageOwnProps, PageState> {
-    constructor(props: any) {
+    constructor(props: PageProps & PageOwnProps) {
         super(props);
         this.onOverviewClick = this.onOverviewClick.bind(this);
         this.onNavigateBack = this.onNavigateBack.bind(this);
-        this.state = { isOverview: true, sketchAreaCenter: { x: 0, y: 0 } };
+        this.state = { isOverview: props.page.elements.length > 0, sketchAreaCenter: { x: 0, y: 0 } };
     }
 
     public render() {
