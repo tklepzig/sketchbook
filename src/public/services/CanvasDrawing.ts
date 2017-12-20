@@ -169,7 +169,7 @@ export class CanvasDrawing {
         let top = position.y;
         for (const line of text.split("\n")) {
             context.fillText(line, position.x, top);
-            top += (20 + 6) * 1.2;
+            top += (fontSize + 6) * 1.2;
         }
     }
 

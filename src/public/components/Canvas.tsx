@@ -154,7 +154,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
     private updateCanvasConfig(props: CanvasProps) {
         this.canvasContext.doCanvasAction((context) => {
             context.font = `bold ${props.fontSize}pt Handlee`;
-            context.textBaseline = "hanging";
+            context.textBaseline = "top";
             context.lineCap = "round";
             context.lineWidth = props.lineWidth;
             context.strokeStyle = props.color;
