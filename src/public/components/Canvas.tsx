@@ -1,246 +1,217 @@
 import * as React from "react";
-import { Line } from "../models/Line";
-import { Point } from "../models/Point";
-import { CanvasTransform } from "../services/CanvasTransform";
-import { DrawingHandler } from "../services/DrawingHandler";
+import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "../models/RootState";
+import { CanvasContext } from "../services/CanvasContext";
+import { CanvasDrawing } from "../services/CanvasDrawing";
+import canvasHelper from "../services/CanvasHelper";
+import { CanvasTranslate } from "../services/CanvasTranslate";
 import { tapEvents } from "../services/TapEvents";
 
-export enum DrawMode {
-    Above,
-    Below
-}
-
-export enum PenMode {
-    Draw,
-    Translate
-}
-
-export interface CanvasProps {
+interface CanvasProps {
+    inputMode: InputMode;
+    fontSize: number;
     color: string;
     lineWidth: number;
-    drawMode: DrawMode;
-    lines: Line[];
+    compositeOperation: CompositeOperation;
+    elements: PageElement[];
+    center: Point;
     onLineAdded: (line: Line) => void;
+    onTextAdded: (text: Text) => void;
 }
 
-export default class Canvas extends React.Component<CanvasProps> {
-    private drawingHandler: DrawingHandler;
-    private linesGroupedByColorAndWidth: Line[][];
-    private canvas: HTMLCanvasElement | null;
-    private canvasTransform: CanvasTransform;
+interface CanvasState {
+    textareaState: {
+        position: Point,
+        isVisible: boolean,
+        text: string
+    };
+    center: Point;
+}
 
-    private mouseIsDown: boolean;
-    private currentPenMode: PenMode = PenMode.Draw;
-    private tapDownPoint: Point;
-    private currentLine: Line;
+export default class Canvas extends React.Component<CanvasProps, CanvasState> {
+    private canvas: HTMLCanvasElement | null = null;
+    private textarea: HTMLTextAreaElement | null = null;
+    private isTranslateMode = false;
+    private tapIsDown: boolean = false;
+    private canvasContext: CanvasContext;
+    private canvasTranslate: CanvasTranslate;
+    private canvasDrawing: CanvasDrawing;
 
     constructor(props: CanvasProps) {
         super(props);
-        this.canvasTransform = new CanvasTransform();
-        this.drawingHandler = new DrawingHandler();
-
         this.tapDown = this.tapDown.bind(this);
         this.tapUp = this.tapUp.bind(this);
         this.tapMove = this.tapMove.bind(this);
         this.resize = this.resize.bind(this);
-        this.mouseOut = this.mouseOut.bind(this);
-    }
+        this.textAreaTextChanged = this.textAreaTextChanged.bind(this);
 
-    public render() {
-        return (
-            <canvas
-                ref={(canvas) => { this.canvas = canvas; }}
-                {...{ [tapEvents.tapDown]: this.tapDown }}
-                {...{ [tapEvents.tapUp]: this.tapUp }}
-                {...{ [tapEvents.tapMove]: this.tapMove }}
-            />);
+        this.state = {
+            textareaState: {
+                position: { x: 0, y: 0 },
+                isVisible: false,
+                text: ""
+            },
+            center: { x: 0, y: 0 }
+        };
+
+        this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
+
+        // TODO: maybe singletons (so use export default new ...())
+        this.canvasTranslate = new CanvasTranslate();
+        this.canvasDrawing = new CanvasDrawing();
     }
 
     public componentDidMount() {
         this.resize();
         window.addEventListener("resize", this.resize);
-        window.addEventListener("mouseout", this.mouseOut);
     }
 
     public componentWillUnmount() {
         window.removeEventListener("resize", this.resize);
-        window.removeEventListener("mouseout", this.mouseOut);
     }
 
     public componentWillReceiveProps(newProps: CanvasProps) {
+        if (newProps.inputMode !== "text") {
+            this.setState({ textareaState: { ...this.state.textareaState, isVisible: false, text: "" } });
+        }
         this.updateCanvasConfig(newProps);
     }
 
-    private getCanvasContext() {
-        if (this.canvas == null) {
-            return null;
-        }
-        const context = this.canvas.getContext("2d");
-        return context;
+    public render() {
+        const { x, y } = this.state.textareaState.position;
+        const textarea = this.state.textareaState.isVisible
+            ? (
+                <textarea
+                    style={{ left: x, top: y }}
+                    ref={(ta) => { this.textarea = ta; }}
+                    value={this.state.textareaState.text}
+                    onChange={this.textAreaTextChanged}
+                    cols={30}
+                    rows={4}
+                    className={`fs-${this.props.fontSize.toString()}`}
+                />)
+            : null;
+
+        return (
+            <React.Fragment>
+                <canvas
+                    ref={(canvas) => { this.canvas = canvas; }}
+                    {...{ [tapEvents.tapDown]: this.tapDown }}
+                    {...{ [tapEvents.tapUp]: this.tapUp }}
+                    {...{ [tapEvents.tapMove]: this.tapMove }}
+                />
+                {textarea}
+            </React.Fragment>);
     }
 
     private tapDown(e: any) {
-        const canvasContext = this.getCanvasContext();
-
-        if (canvasContext === null) {
-            return;
-        }
-
-        const { x, y } = tapEvents.getTapPosition(e);
+        this.tapIsDown = true;
         const touchCount = tapEvents.getTouchCount(e);
-        this.mouseIsDown = true;
-        this.currentPenMode = (touchCount === 2 || e.ctrlKey) ? PenMode.Translate : PenMode.Draw;
+        this.isTranslateMode = touchCount === 2 || e.ctrlKey;
+        const originalTapDownPoint = tapEvents.getTapPosition(e);
+        const tapDownPoint = this.canvasContext.getTransformedPoint(originalTapDownPoint);
 
-        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
-        this.tapDownPoint = pt;
+        if (this.isTranslateMode) {
+            this.canvasTranslate.startTranslate(tapDownPoint);
+        } else if (this.props.inputMode === "pen") {
+            this.canvasDrawing.startLine(this.canvasContext, tapDownPoint);
+        } else if (this.props.inputMode === "text") {
 
-        switch (this.currentPenMode) {
-            case PenMode.Draw:
-
-                this.currentLine = {
-                    color: canvasContext.strokeStyle.toString(),
-                    globalCompositeOperation: canvasContext.globalCompositeOperation,
-                    lineWidth: canvasContext.lineWidth,
-                    segments: []
-                };
-
-                const segment = { start: pt, end: pt };
-                this.drawingHandler.drawSegment(canvasContext, segment);
-                this.currentLine.segments.push(segment);
-                break;
-            case PenMode.Translate:
-                this.repaint();
-                break;
+            if (this.state.textareaState.text.length > 0) {
+                this.addCurrentTextToCanvas();
+            } else {
+                this.showTextarea(originalTapDownPoint);
+            }
         }
     }
+
     private tapMove(e: any) {
-        const canvasContext = this.getCanvasContext();
-
-        if (canvasContext === null) {
+        if (!this.tapIsDown) {
             return;
         }
 
-        if (!this.mouseIsDown) {
-            return;
-        }
+        const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
 
-        const { x, y } = tapEvents.getTapPosition(e);
-        const touchCount = tapEvents.getTouchCount(e);
-
-        const pt = this.canvasTransform.getTransformedPoint(canvasContext, x, y);
-
-        switch (this.currentPenMode) {
-            case PenMode.Draw:
-                const segment = { start: this.tapDownPoint, end: pt };
-                this.drawingHandler.drawSegment(canvasContext, segment);
-                this.currentLine.segments.push(segment);
-                this.tapDownPoint = pt;
-                break;
-            case PenMode.Translate:
-                this.canvasTransform.translate(canvasContext, pt.x - this.tapDownPoint.x, pt.y - this.tapDownPoint.y);
-                this.repaint();
-                break;
+        if (this.isTranslateMode) {
+            this.canvasTranslate.translate(this.canvasContext, tapDownPoint);
+            this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
+        } else if (this.props.inputMode === "pen") {
+            this.canvasDrawing.addSegmentToLine(this.canvasContext, tapDownPoint);
         }
     }
+
     private tapUp() {
-        if (!this.mouseIsDown) {
+        if (!this.tapIsDown) {
             return;
         }
+        this.tapIsDown = false;
 
-        this.mouseIsDown = false;
-
-        if (this.currentPenMode === PenMode.Draw) {
-            // this.refreshLinesGroupedByColorAndWidth();
-            this.props.onLineAdded(this.currentLine);
+        if (!this.isTranslateMode && this.props.inputMode === "pen") {
+            this.props.onLineAdded(this.canvasDrawing.endLine());
         }
     }
-    private mouseOut() {
-        this.tapUp();
-    }
+
     private resize() {
-        if (this.canvas == null) {
-            return;
-        }
-
-        const canvasContext = this.getCanvasContext();
-
-        if (canvasContext === null) {
-            return;
-        }
-
-        this.setCanvasSize(window.innerWidth, window.innerHeight);
+        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
         this.updateCanvasConfig(this.props);
-        this.repaint();
+        this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
+    }
+
+    private textAreaTextChanged(e: React.ChangeEvent<HTMLTextAreaElement>) {
+        this.setState({ textareaState: { ...this.state.textareaState, text: e.target.value } });
     }
 
     private updateCanvasConfig(props: CanvasProps) {
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
+        this.canvasContext.doCanvasAction((context) => {
+            context.font = `bold ${props.fontSize}pt Handlee`;
+            context.textBaseline = "top";
+            context.lineCap = "round";
+            context.lineWidth = props.lineWidth;
+            context.strokeStyle = props.color;
+            context.globalCompositeOperation = props.compositeOperation;
+        });
 
-        context.lineCap = "round";
-        context.lineWidth = props.lineWidth;
-        context.strokeStyle = props.color;
-        context.globalCompositeOperation = props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
+        if (props.center !== this.state.center) {
+            this.setState({ center: props.center }, () => {
+                this.setCenter();
+            });
+        }
     }
-    private setCanvasSize(width: number, height: number) {
-        if (this.canvas == null) {
-            return;
-        }
 
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
-
-        const currentTransform = this.canvasTransform.getTransform();
-
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-
-        const { a, b, c, d, e, f } = currentTransform;
-        this.canvasTransform.setTransform(context, a, b, c, d, e, f);
+    private addCurrentTextToCanvas() {
+        const text = this.canvasDrawing.addText(
+            this.canvasContext,
+            this.state.textareaState.text,
+            this.canvasContext.getTransformedPoint(this.state.textareaState.position),
+            this.props.fontSize);
+        this.props.onTextAdded(text);
+        this.setState({ textareaState: { ...this.state.textareaState, text: "", isVisible: false } });
     }
-    private repaint() {
-        if (this.canvas == null) {
-            return null;
-        }
+    private showTextarea(position: Point) {
+        this.setState({
+            textareaState: {
+                ...this.state.textareaState,
+                position,
+                isVisible: true
+            }
+        }, () => {
+            setTimeout(() => {
+                if (this.textarea !== null) {
+                    this.textarea.focus();
+                }
+            });
+        });
+    }
 
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
+    private setCenter() {
+        this.canvasContext.doCanvasAction((context) => {
+            let { x, y } = this.state.center;
+            x -= context.canvas.width / 2;
+            y -= context.canvas.height / 2;
 
-        this.canvasTransform.save(context);
-        this.canvasTransform.setTransform(context, 1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvasTransform.restore(context);
-
-        // limit redrawing area to increase performance
-        let left = -this.canvasTransform.getTranslateX();
-        let top = -this.canvasTransform.getTranslateY();
-        let right = left + this.canvas.width;
-        let bottom = top + this.canvas.height;
-
-        // offset
-        left -= 40;
-        top -= 40;
-        right += 40;
-        bottom += 40;
-
-        // if (this.props.lines.length > 4) {
-        // faster, bot wrong detail (lines are not in the right order)
-        // this.drawLinesSortedAndGrouped(context, { left, top, right, bottom });
-        // } else {
-        this.drawingHandler.drawLines(
-            context,
-            this.props.lines,
-            { left, top, right, bottom });
-        // }
-
-        context.lineWidth = this.props.lineWidth;
-        context.strokeStyle = this.props.color;
-        context.globalCompositeOperation = this.props.drawMode === DrawMode.Above ? "source-over" : "destination-over";
+            this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+            this.canvasContext.translate(-x, -y);
+            this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
+        });
     }
 }

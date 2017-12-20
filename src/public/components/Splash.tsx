@@ -5,13 +5,19 @@ export interface SplashState {
 }
 
 export default class Splash extends React.Component<any, SplashState> {
+    private timeoutId: any;
+
     constructor(props: any) {
         super(props);
         this.state = { ready: false };
     }
 
     public componentWillMount() {
-        setTimeout(() => this.setState({ ready: true }), 1500);
+        this.timeoutId = setTimeout(() => this.setState({ ready: true }), 1500);
+    }
+
+    public componentWillUnmount() {
+        clearTimeout(this.timeoutId);
     }
 
     public render() {

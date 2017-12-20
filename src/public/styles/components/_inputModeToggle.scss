@@ -1,0 +1,51 @@
+button.inputModeToggle {
+    width: 90px;
+    height: 30px;
+    background: $foreground;
+    color: $background;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    border-radius: 30px;
+    >.pen,
+    >.text {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0 8px;
+        line-height: 1;
+    }
+    >.pen {
+        padding-right: 34px;
+        display: none;
+    }
+    >.text {
+        padding-left: 34px;
+    }
+    >.btn {
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        background: $background;
+        height: 26px;
+        width: 36px;
+        border-radius: 13px;
+        transition: transform 0.2s ease-in-out;
+        box-shadow: 0 0 4px 0 $foreground;
+    }
+    &.pen {
+        background: darken($blue, 20%);
+        >.btn {
+            transform: translateX(90px - 36px - 2px - 2px);
+        }
+        >.pen {
+            display: flex;
+        }
+        >.text {
+            display: none;
+        }
+    }
+}

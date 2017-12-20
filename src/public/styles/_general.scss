@@ -1,4 +1,9 @@
 @import "variables";
+@font-face {
+    font-family: "Handlee";
+    src: url("../assets/Handlee-Regular.ttf") format("truetype");
+}
+
 html,
 body {
     min-height: 100%;

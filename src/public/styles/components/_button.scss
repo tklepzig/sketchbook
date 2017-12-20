@@ -1,25 +1,8 @@
 @import "../variables";
 .btn-pen {
-    background: transparent;
-    border: none;
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    outline: none;
-    margin: 0 4px;
-    transition: transform 0.2s ease-out;
-    &:focus {
-        outline: none;
-    }
-    &:active {
-        transform: scale(0.7);
-    }
+    @extend %button;
     &:after {
         content: '';
-        cursor: pointer;
         width: 30px;
         height: 30px;
         border-radius: 15px;
@@ -44,5 +27,21 @@
     }
     &.l:after {
         width: 20px;
+    }
+}
+
+.btn-font-size {
+    @extend %button;
+    font-family: Handlee;
+    font-weight: bold;
+    line-height: 1;
+    &.small {
+        font-size: 12pt;
+    }
+    &.medium {
+        font-size: 20pt;
+    }
+    &.large {
+        font-size: 30pt;
     }
 }

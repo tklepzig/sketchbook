@@ -3,5 +3,9 @@ import { Action } from "redux";
 export enum Actions {
     SetColor,
     SetStrokeWidth,
-    AddLine
+    SetFontSize,
+    SetInputMode,
+    AddLine,
+    AddText,
+    AddPage
 }

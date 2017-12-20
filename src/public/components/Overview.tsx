@@ -1,29 +1,36 @@
 import * as React from "react";
-import { Line } from "../models/Line";
-import { Point } from "../models/Point";
-import { CanvasTransform } from "../services/CanvasTransform";
-import { DrawingHandler } from "../services/DrawingHandler";
+import { NavLink } from "react-router-dom";
+import { Line, PageElement, Point } from "../models/RootState";
+import { CanvasContext } from "../services/CanvasContext";
+import { CanvasDrawing } from "../services/CanvasDrawing";
+import canvasHelper from "../services/CanvasHelper";
+import pageElementHelper from "../services/PageElementHelper";
+import { tapEvents } from "../services/TapEvents";
 
-export interface OverviewProps {
-    lines: Line[];
+interface OverviewProps {
+    elements: PageElement[];
+    onClick: (position: Point) => void;
 }
 
-export default class Overview extends React.Component<OverviewProps> {
-    private drawingHandler: DrawingHandler;
-    private canvas: HTMLCanvasElement | null;
+interface OverviewState {
+    translation: { dx: number, dy: number };
+    scale: number;
+}
 
-    private canvasTransform: CanvasTransform;
+export class Overview extends React.Component<OverviewProps, OverviewState> {
+    private canvas: HTMLCanvasElement | null = null;
+
+    private canvasContext: CanvasContext;
+    private canvasDrawing: CanvasDrawing;
 
     constructor(props: OverviewProps) {
         super(props);
-        this.canvasTransform = new CanvasTransform();
-        this.drawingHandler = new DrawingHandler();
-
+        this.tapDown = this.tapDown.bind(this);
         this.resize = this.resize.bind(this);
-    }
 
-    public render() {
-        return <canvas ref={(canvas) => { this.canvas = canvas; }} />;
+        this.state = { scale: 1, translation: { dx: 0, dy: 0 } };
+        this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
+        this.canvasDrawing = new CanvasDrawing();
     }
 
     public componentDidMount() {
@@ -35,171 +42,134 @@ export default class Overview extends React.Component<OverviewProps> {
         window.removeEventListener("resize", this.resize);
     }
 
-    public componentWillReceiveProps(newProps: OverviewProps) {
-        this.updateCanvasConfig(newProps);
+    public render() {
+        return (
+            <canvas
+                style={{ cursor: "default" }}
+                ref={(canvas) => { this.canvas = canvas; }}
+                {...{ [tapEvents.tapDown]: this.tapDown }}
+            />);
     }
 
-    private getCanvasContext() {
-        if (this.canvas == null) {
-            return null;
-        }
-        const context = this.canvas.getContext("2d");
-        return context;
+    private tapDown(e: any) {
+        const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
+        this.props.onClick(tapDownPoint);
     }
 
     private resize() {
-        if (this.canvas == null) {
-            return;
-        }
-
-        const canvasContext = this.getCanvasContext();
-
-        if (canvasContext === null) {
-            return;
-        }
-
-        this.setCanvasSize(window.innerWidth, window.innerHeight);
-        this.updateCanvasConfig(this.props);
-        this.repaint();
+        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
+        this.generateOverview();
     }
 
-    private updateCanvasConfig(props: OverviewProps) {
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
+    private generateOverview() {
+        this.canvasContext.doCanvasAction((context) => {
+            const spacingFactor = 0.01;
 
-        context.lineCap = "round";
-    }
-    private setCanvasSize(width: number, height: number) {
-        if (this.canvas == null) {
-            return;
-        }
+            let min: Point | undefined;
+            let max: Point | undefined;
 
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
+            // calc min and max
+            this.props.elements.forEach((element) => {
+                if (pageElementHelper.elementIsLine(element)) {
+                    element.segments.forEach((segment) => {
 
-        const currentTransform = this.canvasTransform.getTransform();
+                        // TODO: DRY
+                        if (!min) {
+                            const { x, y } = segment.start;
+                            min = { x, y };
+                        }
+                        if (!max) {
+                            const { x, y } = segment.end;
+                            max = { x, y };
+                        }
 
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+                        if (segment.start.x < min.x) {
+                            min.x = segment.start.x;
+                        }
+                        if (segment.start.y < min.y) {
+                            min.y = segment.start.y;
+                        }
+                        if (segment.end.x > max.x) {
+                            max.x = segment.end.x;
+                        }
+                        if (segment.end.y > max.y) {
+                            max.y = segment.end.y;
+                        }
+                    });
+                } else if (pageElementHelper.elementIsText(element)) {
+                    // TODO: extract
+                    context.font = `bold ${element.fontSize}pt Handlee`;
+                    const { width: textWidth } = context.measureText(element.text);
+                    let textHeight = 0;
+                    for (const line of element.text.split("\n")) {
+                        textHeight += (element.fontSize + 6) * 1.2;
+                    }
 
-        const { a, b, c, d, e, f } = currentTransform;
-        this.canvasTransform.setTransform(context, a, b, c, d, e, f);
-    }
-    private repaint() {
-        if (this.canvas == null) {
-            return null;
-        }
+                    const textStart = element.position;
+                    const textEnd = { x: element.position.x + textWidth, y: element.position.y + textHeight };
 
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
+                    // TODO: DRY
+                    if (!min) {
+                        const { x, y } = textStart;
+                        min = { x, y };
+                    }
+                    if (!max) {
+                        const { x, y } = textEnd;
+                        max = { x, y };
+                    }
 
-        this.canvasTransform.save(context);
-        this.canvasTransform.setTransform(context, 1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.canvasTransform.restore(context);
-
-        // limit redrawing area to increase performance
-        let left = -this.canvasTransform.getTranslateX();
-        let top = -this.canvasTransform.getTranslateY();
-        let right = left + this.canvas.width;
-        let bottom = top + this.canvas.height;
-
-        // offset
-        left -= 40;
-        top -= 40;
-        right += 40;
-        bottom += 40;
-
-        // if (this.props.lines.length > 4) {
-        // faster, bot wrong detail (lines are not in the right order)
-        // this.drawLinesSortedAndGrouped(context, { left, top, right, bottom });
-        // } else {
-        this.drawingHandler.drawLines(
-            context,
-            this.props.lines,
-            { left, top, right, bottom });
-        // }
-    }
-
-    private generateOverview(width: number, height: number) {
-        if (this.canvas == null) {
-            return null;
-        }
-
-        const context = this.getCanvasContext();
-        if (context == null) {
-            return;
-        }
-
-        const spacingFactor = 0.01;
-
-        let min: Point | undefined;
-        let max: Point | undefined;
-
-        // calc min and max
-        this.props.lines.forEach((line) => {
-            line.segments.forEach((segment) => {
-
-                if (!min) {
-                    const { x, y } = segment.start;
-                    min = { x, y };
-                }
-                if (!max) {
-                    const { x, y } = segment.end;
-                    max = { x, y };
-                }
-
-                if (segment.start.x < min.x) {
-                    min.x = segment.start.x;
-                }
-                if (segment.start.y < min.y) {
-                    min.y = segment.start.y;
-                }
-                if (segment.end.x > max.x) {
-                    max.x = segment.end.x;
-                }
-                if (segment.end.y > max.y) {
-                    max.y = segment.end.y;
+                    if (textStart.x < min.x) {
+                        min.x = textStart.x;
+                    }
+                    if (textStart.y < min.y) {
+                        min.y = textStart.y;
+                    }
+                    if (textEnd.x > max.x) {
+                        max.x = textEnd.x;
+                    }
+                    if (textEnd.y > max.y) {
+                        max.y = textEnd.y;
+                    }
                 }
             });
+
+            if (!min || !max) {
+                return;
+            }
+
+            let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
+            let canvasHeight = Math.abs(min.y) + Math.abs(max.y);
+
+            canvasWidth += canvasWidth * spacingFactor * 2;
+            canvasHeight += canvasHeight * spacingFactor * 2;
+
+            const scaleX = context.canvas.width / canvasWidth;
+            const scaleY = context.canvas.height / canvasHeight;
+            let scale = 1;
+
+            scale = scaleX < scaleY ? scaleX : scaleY;
+
+            if (scale > 1) {
+                scale = 1;
+            }
+
+            const translation: { dx: number, dy: number } = { dx: 0, dy: 0 };
+
+            translation.dx = Math.abs(min.x) + (canvasWidth * spacingFactor);
+            translation.dy = Math.abs(min.y) + (canvasHeight * spacingFactor);
+
+            context.lineCap = "round";
+            context.textBaseline = "top";
+            this.canvasContext.scale(scale, scale);
+            this.canvasContext.translate(translation.dx, translation.dy);
+
+            this.setState({ scale, translation }, () => {
+                this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
+            });
+
+            // context.strokeStyle = "red";
+            // context.strokeRect(min.x, min.y, max.x - min.x, max.y - min.y);
         });
 
-        if (!min || !max) {
-            return;
-        }
-
-        let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
-        let canvasHeight = Math.abs(min.y) + Math.abs(max.y);
-
-        canvasWidth += canvasWidth * spacingFactor * 2;
-        canvasHeight += canvasHeight * spacingFactor * 2;
-
-        const scale = { x: width / canvasWidth, y: height / canvasHeight };
-        let newscale = 1;
-
-        newscale = scale.x < scale.y ? scale.x : scale.y;
-
-        if (newscale > 1) {
-            newscale = 1;
-        }
-
-        const translation: { x: number, y: number } = { x: 0, y: 0 };
-
-        translation.x = Math.abs(min.x) + (canvasWidth * spacingFactor);
-        translation.y = Math.abs(min.y) + (canvasHeight * spacingFactor);
-
-        context.canvas.width = width;
-        context.canvas.height = height;
-        context.lineCap = "round";
-        context.scale(newscale, newscale);
-        context.translate(translation.x, translation.y);
-
-        this.drawingHandler.drawLines(context, this.props.lines);
     }
 }

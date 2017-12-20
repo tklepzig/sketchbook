@@ -9,19 +9,16 @@ import { StrokeWidthButton } from "./StrokeWidthButton";
 export interface PenChooserProps {
     color: string;
     strokeWidth: string;
-}
-
-interface PenChooserDispatchProps {
-    onColorSelected: (color: string) => SetColorAction;
-    onStrokeWidthSelected: (strokeWidth: string) => SetStrokeWidthAction;
+    onColorSelected: (color: string) => void;
+    onStrokeWidthSelected: (strokeWidth: string) => void;
 }
 
 interface PenChooserState {
     popupVisible: boolean;
 }
 
-class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchProps, PenChooserState> {
-    constructor(props: PenChooserProps & PenChooserDispatchProps) {
+export class PenChooser extends React.Component<PenChooserProps, PenChooserState> {
+    constructor(props: PenChooserProps) {
         super(props);
         this.openPopup = this.openPopup.bind(this);
         this.closePopup = this.closePopup.bind(this);
@@ -70,20 +67,3 @@ class PenChooser extends React.Component<PenChooserProps & PenChooserDispatchPro
         this.setState({ popupVisible: false });
     }
 }
-
-function mapStateToProps(state: RootState) {
-    const { color, strokeWidth } = state.pen;
-    return { color, strokeWidth };
-}
-
-function mapDispatchToProps(dispatch: Dispatch<RootState>) {
-    return {
-        onColorSelected: (color: string) => dispatch(setColor(color)),
-        onStrokeWidthSelected: (strokeWidth: string) => dispatch(setStrokeWidth(strokeWidth)),
-    };
-}
-
-export default connect<PenChooserProps, PenChooserDispatchProps, {}, RootState>(
-    mapStateToProps,
-    mapDispatchToProps
-)(PenChooser);

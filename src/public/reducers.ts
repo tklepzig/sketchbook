@@ -1,11 +1,11 @@
 import { AnyAction, Reducer } from "redux";
-import { AddLineAction, SetColorAction } from "./actions";
+import { AddLineAction, AddTextAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "./actions";
 import { PenChooserProps } from "./components/PenChooser";
 import { Actions } from "./models/Actions";
-import { Line } from "./models/Line";
+import { FontSize, InputMode, Page, Pen } from "./models/RootState";
 
-export const pen: Reducer<PenChooserProps> =
-    (state = { color: "black", strokeWidth: "s" }, action: AnyAction): PenChooserProps => {
+export const pen: Reducer<Pen> =
+    (state = { color: "black", strokeWidth: "s" }, action: AnyAction): Pen => {
         switch (action.type) {
             case Actions.SetColor:
                 const { color } = action as SetColorAction;
@@ -23,12 +23,48 @@ export const pen: Reducer<PenChooserProps> =
         }
     };
 
-export const lines: Reducer<Line[]> =
-    (state = [], action: AnyAction): Line[] => {
+// TODO: empty page list as default
+export const pages: Reducer<Page[]> =
+    (state = [{ id: "0", elements: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddLine:
-                const { line } = action as AddLineAction;
-                return [...state, line];
+                {
+                    const { pageId, line } = action as AddLineAction;
+                    return state.map((page) => (page.id === pageId)
+                        ? { ...page, elements: [...page.elements, line] }
+                        : page
+                    );
+                }
+            case Actions.AddText:
+                {
+                    const { pageId, text } = action as AddTextAction;
+                    return state.map((page) => (page.id === pageId)
+                        ? { ...page, elements: [...page.elements, text] }
+                        : page
+                    );
+                }
+            case Actions.AddPage:
+                return state;
+            default:
+                return state;
+        }
+    };
+
+export const fontSize: Reducer<FontSize> =
+    (state = "medium", action: AnyAction): FontSize => {
+        switch (action.type) {
+            case Actions.SetFontSize:
+                return (action as SetFontSizeAction).fontSize;
+            default:
+                return state;
+        }
+    };
+
+export const inputMode: Reducer<InputMode> =
+    (state = "pen", action: AnyAction): InputMode => {
+        switch (action.type) {
+            case Actions.SetInputMode:
+                return (action as SetInputModeAction).inputMode;
             default:
                 return state;
         }

@@ -1,6 +1,25 @@
 $background: #ededed;
 $foreground: #1d1d1d;
-
 $grey: #b9afb0;
 $blue: #4595d8;
 $orange: #f9a765;
+%button {
+    background: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    outline: none;
+    margin: 0 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease-out;
+    &:focus {
+        outline: none;
+    }
+    &:active {
+        transform: scale(0.7);
+    }
+}
