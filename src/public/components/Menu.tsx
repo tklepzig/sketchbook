@@ -48,13 +48,17 @@ const Menu: React.SFC<MenuProps & MenuOwnProps & MenuDispatchProps> = (props) =>
                 onFontSizeSelected={props.onFontSizeSelected}
             />);
 
+    const inputModeToggle = "ontouchstart" in window
+        ? null
+        : <InputModeToggle inputMode={props.inputMode} inputModeChanged={props.onInputModeSelected} />;
+
     return (
         <div className="menu">
             <button className="btn-back" onClick={props.onNavigateBack} />
             <div style={{ flex: 1 }} />
             {content}
             <div style={{ flex: 1 }} />
-            <InputModeToggle inputMode={props.inputMode} inputModeChanged={props.onInputModeSelected} />
+            {inputModeToggle}
         </div>);
 };
 
