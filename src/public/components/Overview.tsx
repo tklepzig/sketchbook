@@ -166,10 +166,12 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
 
             this.setState({ scale, translation }, () => {
                 this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
-            });
 
-            // context.strokeStyle = "red";
-            // context.strokeRect(min.x, min.y, max.x - min.x, max.y - min.y);
+                // if (min && max) {
+                //     context.strokeStyle = "red";
+                //     context.strokeRect(min.x, min.y, max.x - min.x, max.y - min.y);
+                // }
+            });
         });
 
     }
