@@ -16,7 +16,7 @@ export interface StartOwnProps extends RouteComponentProps<any> {
 
 const Start: React.SFC<StartProps & StartOwnProps> = (props) => {
     const onClick = (path: string) => {
-        props.history.push(path);
+        props.history.replace(path);
         if ("ontouchstart" in window) {
             fullscreen.request(document.body);
         }

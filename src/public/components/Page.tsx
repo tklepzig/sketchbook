@@ -63,7 +63,7 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
     }
 
     private backToStart() {
-        this.props.history.push("/");
+        this.props.history.replace("/");
     }
 }
 
