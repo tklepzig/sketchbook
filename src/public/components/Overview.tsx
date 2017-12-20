@@ -62,77 +62,72 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
     }
 
     private generateOverview() {
-        this.canvasContext.doCanvasAction((context) => {
-            const spacingFactor = 0.01;
+        const spacingFactor = 0.01;
 
-            let min: Point | undefined;
-            let max: Point | undefined;
+        let min: Point | undefined;
+        let max: Point | undefined;
 
-            // calc min and max
-            this.props.elements.forEach((element) => {
-                if (pageElementHelper.elementIsLine(element)) {
-                    element.segments.forEach((segment) => {
-
-                        // TODO: DRY
-                        if (!min) {
-                            const { x, y } = segment.start;
-                            min = { x, y };
-                        }
-                        if (!max) {
-                            const { x, y } = segment.end;
-                            max = { x, y };
-                        }
-
-                        if (segment.start.x < min.x) {
-                            min.x = segment.start.x;
-                        }
-                        if (segment.start.y < min.y) {
-                            min.y = segment.start.y;
-                        }
-                        if (segment.end.x > max.x) {
-                            max.x = segment.end.x;
-                        }
-                        if (segment.end.y > max.y) {
-                            max.y = segment.end.y;
-                        }
-                    });
-                } else if (pageElementHelper.elementIsText(element)) {
-                    // TODO: extract
-                    context.font = `bold ${element.fontSize}pt Handlee`;
-                    const { width: textWidth } = context.measureText(element.text);
-                    let textHeight = 0;
-                    for (const line of element.text.split("\n")) {
-                        textHeight += (element.fontSize + 6) * 1.2;
-                    }
-
-                    const textStart = element.position;
-                    const textEnd = { x: element.position.x + textWidth, y: element.position.y + textHeight };
+        // calc min and max
+        this.props.elements.forEach((element) => {
+            if (pageElementHelper.elementIsLine(element)) {
+                element.segments.forEach((segment) => {
 
                     // TODO: DRY
                     if (!min) {
-                        const { x, y } = textStart;
+                        const { x, y } = segment.start;
                         min = { x, y };
                     }
                     if (!max) {
-                        const { x, y } = textEnd;
+                        const { x, y } = segment.end;
                         max = { x, y };
                     }
 
-                    if (textStart.x < min.x) {
-                        min.x = textStart.x;
+                    if (segment.start.x < min.x) {
+                        min.x = segment.start.x;
                     }
-                    if (textStart.y < min.y) {
-                        min.y = textStart.y;
+                    if (segment.start.y < min.y) {
+                        min.y = segment.start.y;
                     }
-                    if (textEnd.x > max.x) {
-                        max.x = textEnd.x;
+                    if (segment.end.x > max.x) {
+                        max.x = segment.end.x;
                     }
-                    if (textEnd.y > max.y) {
-                        max.y = textEnd.y;
+                    if (segment.end.y > max.y) {
+                        max.y = segment.end.y;
                     }
-                }
-            });
+                });
+            } else if (pageElementHelper.elementIsText(element)) {
+                const textStart = element.position;
+                const textEnd = {
+                    x: element.position.x + element.measurement.width,
+                    y: element.position.y + element.measurement.height
+                };
 
+                // TODO: DRY
+                if (!min) {
+                    const { x, y } = textStart;
+                    min = { x, y };
+                }
+                if (!max) {
+                    const { x, y } = textEnd;
+                    max = { x, y };
+                }
+
+                if (textStart.x < min.x) {
+                    min.x = textStart.x;
+                }
+                if (textStart.y < min.y) {
+                    min.y = textStart.y;
+                }
+                if (textEnd.x > max.x) {
+                    max.x = textEnd.x;
+                }
+                if (textEnd.y > max.y) {
+                    max.y = textEnd.y;
+                }
+            }
+        });
+
+        this.canvasContext.doCanvasAction((context) => {
             if (!min || !max) {
                 return;
             }

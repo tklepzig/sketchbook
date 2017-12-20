@@ -7,6 +7,7 @@ export interface Text {
     kind: PageElementKind;
     text: string;
     position: Point;
+    measurement: Size;
     fontSize: number;
 
 }
@@ -28,6 +29,11 @@ export interface Page {
 export interface Point {
     x: number;
     y: number;
+}
+
+export interface Size {
+    width: number;
+    height: number;
 }
 
 export interface Pen {

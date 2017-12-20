@@ -38,11 +38,12 @@ export class CanvasDrawing {
     }
 
     public addText(canvasContext: CanvasContext, text: string, position: Point, fontSize: number): Text {
+        let measurement = { width: 0, height: 0 };
         canvasContext.doCanvasAction((context) => {
-            this.drawText(context, position, text, fontSize);
+            measurement = this.drawText(context, position, text, fontSize);
         });
 
-        return { kind: "text", fontSize, position, text };
+        return { kind: "text", fontSize, position, measurement, text };
     }
 
     public repaint(canvasContext: CanvasContext, elements: PageElement[], limitToVisibleArea: boolean = true) {
@@ -167,10 +168,15 @@ export class CanvasDrawing {
         context.globalCompositeOperation = "source-over";
         context.font = `bold ${fontSize}pt Handlee`;
         let top = position.y;
+        let height = 0;
         for (const line of text.split("\n")) {
             context.fillText(line, position.x, top);
             top += (fontSize + 6) * 1.2;
+            height += (fontSize + 6) * 1.2;
         }
+
+        const { width } = context.measureText(text);
+        return { width, height };
     }
 
     // private refreshLinesGroupedByColorAndWidth() {
