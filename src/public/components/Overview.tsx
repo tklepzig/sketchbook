@@ -61,6 +61,7 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
         this.generateOverview();
     }
 
+    // TODO: refactoring
     private generateOverview() {
         const spacingFactor = 0.01;
 
@@ -71,29 +72,9 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
         this.props.elements.forEach((element) => {
             if (pageElementHelper.elementIsLine(element)) {
                 element.segments.forEach((segment) => {
-
-                    // TODO: DRY
-                    if (!min) {
-                        const { x, y } = segment.start;
-                        min = { x, y };
-                    }
-                    if (!max) {
-                        const { x, y } = segment.end;
-                        max = { x, y };
-                    }
-
-                    if (segment.start.x < min.x) {
-                        min.x = segment.start.x;
-                    }
-                    if (segment.start.y < min.y) {
-                        min.y = segment.start.y;
-                    }
-                    if (segment.end.x > max.x) {
-                        max.x = segment.end.x;
-                    }
-                    if (segment.end.y > max.y) {
-                        max.y = segment.end.y;
-                    }
+                    const minMax = this.expandMinMax(min, max, segment.start, segment.end);
+                    min = minMax.min;
+                    max = minMax.max;
                 });
             } else if (pageElementHelper.elementIsText(element)) {
                 const textStart = element.position;
@@ -102,28 +83,9 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
                     y: element.position.y + element.measurement.height
                 };
 
-                // TODO: DRY
-                if (!min) {
-                    const { x, y } = textStart;
-                    min = { x, y };
-                }
-                if (!max) {
-                    const { x, y } = textEnd;
-                    max = { x, y };
-                }
-
-                if (textStart.x < min.x) {
-                    min.x = textStart.x;
-                }
-                if (textStart.y < min.y) {
-                    min.y = textStart.y;
-                }
-                if (textEnd.x > max.x) {
-                    max.x = textEnd.x;
-                }
-                if (textEnd.y > max.y) {
-                    max.y = textEnd.y;
-                }
+                const minMax = this.expandMinMax(min, max, textStart, textEnd);
+                min = minMax.min;
+                max = minMax.max;
             }
         });
 
@@ -174,5 +136,31 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
             });
         });
 
+    }
+
+    private expandMinMax(min: Point | undefined, max: Point | undefined, elementStart: Point, elementEnd: Point) {
+        if (!min) {
+            const { x, y } = elementStart;
+            min = { x, y };
+        }
+        if (!max) {
+            const { x, y } = elementEnd;
+            max = { x, y };
+        }
+
+        if (elementStart.x < min.x) {
+            min.x = elementStart.x;
+        }
+        if (elementStart.y < min.y) {
+            min.y = elementStart.y;
+        }
+        if (elementEnd.x > max.x) {
+            max.x = elementEnd.x;
+        }
+        if (elementEnd.y > max.y) {
+            max.y = elementEnd.y;
+        }
+
+        return { min, max };
     }
 }
