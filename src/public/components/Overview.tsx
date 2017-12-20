@@ -137,6 +137,12 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
                 return;
             }
 
+            // padding for overview
+            min.x -= 20;
+            min.y -= 20;
+            max.x += 20;
+            max.y += 20;
+
             let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
             let canvasHeight = Math.abs(min.y) + Math.abs(max.y);
 
