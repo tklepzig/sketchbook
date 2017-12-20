@@ -15,12 +15,15 @@ import { FontSizeChooser } from "./FontSizeChooser";
 import { InputModeToggle } from "./InputModeToggle";
 import { PenChooser } from "./PenChooser";
 
-export interface MenuProps {
+interface MenuProps {
     inputMode: InputMode;
     color: string;
     strokeWidth: string;
     fontSize: FontSize;
+}
 
+interface MenuOwnProps {
+    onNavigateBack: () => void;
 }
 
 interface MenuDispatchProps {
@@ -30,7 +33,7 @@ interface MenuDispatchProps {
     onInputModeSelected: (inputMode: InputMode) => SetInputModeAction;
 }
 
-const Menu: React.SFC<MenuProps & MenuDispatchProps> = (props) => {
+const Menu: React.SFC<MenuProps & MenuOwnProps & MenuDispatchProps> = (props) => {
     const content = props.inputMode === "pen"
         ? (
             <PenChooser
@@ -47,10 +50,11 @@ const Menu: React.SFC<MenuProps & MenuDispatchProps> = (props) => {
 
     return (
         <div className="menu">
-            <InputModeToggle inputMode={props.inputMode} inputModeChanged={props.onInputModeSelected} />
+            <button className="btn-back" onClick={props.onNavigateBack} />
             <div style={{ flex: 1 }} />
             {content}
             <div style={{ flex: 1 }} />
+            <InputModeToggle inputMode={props.inputMode} inputModeChanged={props.onInputModeSelected} />
         </div>);
 };
 
@@ -68,7 +72,7 @@ function mapDispatchToProps(dispatch: Dispatch<RootState>) {
     };
 }
 
-export default connect<MenuProps, MenuDispatchProps, {}, RootState>(
+export default connect<MenuProps, MenuDispatchProps, MenuOwnProps, RootState>(
     mapStateToProps,
     mapDispatchToProps
 )(Menu);

@@ -38,8 +38,7 @@ const SketchArea: React.SFC<SketchAreaProps & SketchAreaDispatchProps & SketchAr
             onLineAdded={props.onLineAdded}
             onTextAdded={props.onTextAdded}
         />
-        <Menu />
-        <button style={{ position: "absolute" }} onClick={props.onNavigateBack}>Back</button>
+        <Menu onNavigateBack={props.onNavigateBack} />
     </React.Fragment>
 );
 

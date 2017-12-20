@@ -45,3 +45,12 @@
         font-size: 30pt;
     }
 }
+
+.btn-back {
+    @extend %button;
+    background-image: url(assets/back-128.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    flex: 0 0 40px;
+}
