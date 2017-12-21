@@ -25,7 +25,7 @@ export const pen: Reducer<Pen> =
 
 // TODO: empty page list as default
 export const pages: Reducer<Page[]> =
-    (state = [{ id: "0", elements: [] }], action: AnyAction): Page[] => {
+    (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddLine:
                 {
