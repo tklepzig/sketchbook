@@ -8,9 +8,6 @@
     "strictNullChecks": true,
     "baseUrl": "src/public",
     "paths": {
-      "@components/*": [
-        "components/*"
-      ],
       "@models/*": [
         "models/*"
       ],

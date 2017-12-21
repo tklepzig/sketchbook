@@ -10,7 +10,6 @@ import { tapEvents } from "../services/TapEvents";
 interface OverviewCanvasProps {
     elements: PageElement[];
     onClick: (position: Point) => void;
-    onNavigateBack: () => void;
 }
 
 interface OverviewCanvasState {
@@ -45,17 +44,12 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
 
     public render() {
         return (
-            <React.Fragment>
-                <canvas
-                    className="overview"
-                    style={{ cursor: "default" }}
-                    ref={(canvas) => { this.canvas = canvas; }}
-                    {...{ [tapEvents.tapUp]: this.tapUp }}
-                />
-                <div className="menu">
-                    <button onClick={this.props.onNavigateBack}>Back</button>
-                </div>
-            </React.Fragment>);
+            <canvas
+                className="overview"
+                style={{ cursor: "default" }}
+                ref={(canvas) => { this.canvas = canvas; }}
+                {...{ [tapEvents.tapUp]: this.tapUp }}
+            />);
     }
 
     private tapUp(e: any) {
