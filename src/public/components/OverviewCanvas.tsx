@@ -7,24 +7,24 @@ import canvasHelper from "../services/CanvasHelper";
 import pageElementHelper from "../services/PageElementHelper";
 import { tapEvents } from "../services/TapEvents";
 
-interface OverviewProps {
+interface OverviewCanvasProps {
     elements: PageElement[];
     onClick: (position: Point) => void;
     onNavigateBack: () => void;
 }
 
-interface OverviewState {
+interface OverviewCanvasState {
     translation: { dx: number, dy: number };
     scale: number;
 }
 
-export class Overview extends React.Component<OverviewProps, OverviewState> {
+export class OverviewCanvas extends React.Component<OverviewCanvasProps, OverviewCanvasState> {
     private canvas: HTMLCanvasElement | null = null;
 
     private canvasContext: CanvasContext;
     private canvasDrawing: CanvasDrawing;
 
-    constructor(props: OverviewProps) {
+    constructor(props: OverviewCanvasProps) {
         super(props);
         this.tapUp = this.tapUp.bind(this);
         this.resize = this.resize.bind(this);

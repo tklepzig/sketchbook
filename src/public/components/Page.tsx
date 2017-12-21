@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Dispatch } from "redux";
 import { Page as PageModel, Point, RootState } from "../models/RootState";
-import { Overview } from "./Overview";
+import { OverviewCanvas } from "./OverviewCanvas";
 import Sketch from "./Sketch";
 
 export interface PageRouteProps {
@@ -35,7 +35,7 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
     public render() {
         const content = this.state.isOverview
             ? (
-                <Overview
+                <OverviewCanvas
                     elements={this.props.page.elements}
                     onClick={this.onOverviewClick}
                     onNavigateBack={this.backToStart}
