@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router";
 import { Dispatch } from "redux";
 import { Page as PageModel, Point, RootState } from "../models/RootState";
 import { Overview } from "./Overview";
-import SketchArea from "./SketchArea";
+import Sketch from "./Sketch";
 
 export interface PageRouteProps {
     id: string;
@@ -19,7 +19,7 @@ export interface PageProps {
 
 export interface PageState {
     isOverview: boolean;
-    sketchAreaCenter: Point;
+    sketchCenter: Point;
 }
 
 class Page extends React.Component<PageProps & PageOwnProps, PageState> {
@@ -29,7 +29,7 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
         this.onNavigateBack = this.onNavigateBack.bind(this);
         this.backToStart = this.backToStart.bind(this);
 
-        this.state = { isOverview: props.page.elements.length > 0, sketchAreaCenter: { x: 0, y: 0 } };
+        this.state = { isOverview: props.page.elements.length > 0, sketchCenter: { x: 0, y: 0 } };
     }
 
     public render() {
@@ -41,9 +41,9 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
                     onNavigateBack={this.backToStart}
                 />)
             : (
-                <SketchArea
+                <Sketch
                     page={this.props.page}
-                    center={this.state.sketchAreaCenter}
+                    center={this.state.sketchCenter}
                     onNavigateBack={this.onNavigateBack}
                 />);
 
@@ -55,7 +55,7 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
     }
 
     private onOverviewClick(position: Point) {
-        this.setState({ isOverview: false, sketchAreaCenter: position });
+        this.setState({ isOverview: false, sketchCenter: position });
     }
 
     private onNavigateBack() {

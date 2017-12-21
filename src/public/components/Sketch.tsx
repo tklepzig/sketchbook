@@ -6,7 +6,7 @@ import { CompositeOperation, FontSize, InputMode, Line, Page, Point, RootState, 
 import Canvas from "./Canvas";
 import Menu from "./Menu";
 
-export interface SketchAreaProps {
+export interface SketchProps {
     inputMode: InputMode;
     fontSize: number;
     color: string;
@@ -14,18 +14,18 @@ export interface SketchAreaProps {
     compositeOperation: CompositeOperation;
 }
 
-export interface SketchAreaOwnProps {
+export interface SketchOwnProps {
     page: Page;
     center: Point;
     onNavigateBack: () => void;
 }
 
-interface SketchAreaDispatchProps {
+interface SketchDispatchProps {
     onLineAdded: (line: Line) => void;
     onTextAdded: (text: Text) => void;
 }
 
-const SketchArea: React.SFC<SketchAreaProps & SketchAreaDispatchProps & SketchAreaOwnProps> = (props) => (
+const Sketch: React.SFC<SketchProps & SketchDispatchProps & SketchOwnProps> = (props) => (
     <React.Fragment>
         <Canvas
             inputMode={props.inputMode}
@@ -42,7 +42,7 @@ const SketchArea: React.SFC<SketchAreaProps & SketchAreaDispatchProps & SketchAr
     </React.Fragment>
 );
 
-function mapStateToProps(state: RootState): SketchAreaProps {
+function mapStateToProps(state: RootState): SketchProps {
     const { inputMode, fontSize, pen: { color, strokeWidth } } = state;
 
     let colorHexCode: string;
@@ -101,14 +101,14 @@ function mapStateToProps(state: RootState): SketchAreaProps {
     return { color: colorHexCode, lineWidth, compositeOperation, inputMode, fontSize: fontSizeNumber };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: SketchAreaOwnProps) {
+function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: SketchOwnProps) {
     return {
         onLineAdded: (line: Line) => dispatch(addLine(ownProps.page.id, line)),
         onTextAdded: (text: Text) => dispatch(addText(ownProps.page.id, text))
     };
 }
 
-export default connect<SketchAreaProps, SketchAreaDispatchProps, SketchAreaOwnProps, RootState>(
+export default connect<SketchProps, SketchDispatchProps, SketchOwnProps, RootState>(
     mapStateToProps,
     mapDispatchToProps
-)(SketchArea);
+)(Sketch);
