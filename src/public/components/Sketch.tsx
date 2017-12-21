@@ -3,8 +3,8 @@ import { connect, Dispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { addLine, addText } from "../actions";
 import { CompositeOperation, FontSize, InputMode, Line, Page, Point, RootState, Text } from "../models/RootState";
-import Canvas from "./Canvas";
 import Menu from "./Menu";
+import SketchCanvas from "./SketchCanvas";
 
 export interface SketchProps {
     inputMode: InputMode;
@@ -27,7 +27,7 @@ interface SketchDispatchProps {
 
 const Sketch: React.SFC<SketchProps & SketchDispatchProps & SketchOwnProps> = (props) => (
     <React.Fragment>
-        <Canvas
+        <SketchCanvas
             inputMode={props.inputMode}
             fontSize={props.fontSize}
             color={props.color}

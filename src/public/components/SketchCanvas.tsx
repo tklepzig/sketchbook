@@ -6,7 +6,7 @@ import canvasHelper from "../services/CanvasHelper";
 import { CanvasTranslate } from "../services/CanvasTranslate";
 import { tapEvents } from "../services/TapEvents";
 
-interface CanvasProps {
+interface SketchCanvasProps {
     inputMode: InputMode;
     fontSize: number;
     color: string;
@@ -18,7 +18,7 @@ interface CanvasProps {
     onTextAdded: (text: Text) => void;
 }
 
-interface CanvasState {
+interface SketchCanvasState {
     textareaState: {
         position: Point,
         isVisible: boolean,
@@ -27,7 +27,7 @@ interface CanvasState {
     center: Point;
 }
 
-export default class Canvas extends React.Component<CanvasProps, CanvasState> {
+export default class SketchCanvas extends React.Component<SketchCanvasProps, SketchCanvasState> {
     private canvas: HTMLCanvasElement | null = null;
     private textarea: HTMLTextAreaElement | null = null;
     private isTranslateMode = false;
@@ -36,7 +36,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
     private canvasTranslate: CanvasTranslate;
     private canvasDrawing: CanvasDrawing;
 
-    constructor(props: CanvasProps) {
+    constructor(props: SketchCanvasProps) {
         super(props);
         this.tapDown = this.tapDown.bind(this);
         this.tapUp = this.tapUp.bind(this);
@@ -69,7 +69,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         window.removeEventListener("resize", this.resize);
     }
 
-    public componentWillReceiveProps(newProps: CanvasProps) {
+    public componentWillReceiveProps(newProps: SketchCanvasProps) {
         if (newProps.inputMode !== "text") {
             this.setState({ textareaState: { ...this.state.textareaState, isVisible: false, text: "" } });
         }
@@ -161,7 +161,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         this.setState({ textareaState: { ...this.state.textareaState, text: e.target.value } });
     }
 
-    private updateCanvasConfig(props: CanvasProps) {
+    private updateCanvasConfig(props: SketchCanvasProps) {
         this.canvasContext.doCanvasAction((context) => {
             context.font = `bold ${props.fontSize}pt Handlee`;
             context.textBaseline = "top";
