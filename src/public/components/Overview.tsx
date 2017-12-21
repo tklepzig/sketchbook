@@ -10,6 +10,7 @@ import { tapEvents } from "../services/TapEvents";
 interface OverviewProps {
     elements: PageElement[];
     onClick: (position: Point) => void;
+    onNavigateBack: () => void;
 }
 
 interface OverviewState {
@@ -25,7 +26,7 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
 
     constructor(props: OverviewProps) {
         super(props);
-        this.tapDown = this.tapDown.bind(this);
+        this.tapUp = this.tapUp.bind(this);
         this.resize = this.resize.bind(this);
 
         this.state = { scale: 1, translation: { dx: 0, dy: 0 } };
@@ -44,21 +45,29 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
 
     public render() {
         return (
-            <canvas
+            <React.Fragment>
+                <canvas
                     className="overview"
-                style={{ cursor: "default" }}
-                ref={(canvas) => { this.canvas = canvas; }}
-                {...{ [tapEvents.tapDown]: this.tapDown }}
-            />);
+                    style={{ cursor: "default" }}
+                    ref={(canvas) => { this.canvas = canvas; }}
+                    {...{ [tapEvents.tapUp]: this.tapUp }}
+                />
+                <div className="menu">
+                    <button onClick={this.props.onNavigateBack}>Back</button>
+                </div>
+            </React.Fragment>);
     }
 
-    private tapDown(e: any) {
+    private tapUp(e: any) {
         const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
+        // add offset since canvas is not at position 0, 0
+        tapDownPoint.x -= 15;
+        tapDownPoint.y -= 75;
         this.props.onClick(tapDownPoint);
     }
 
     private resize() {
-        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
+        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth - 30, window.innerHeight - 90);
         this.generateOverview();
     }
 
@@ -94,12 +103,6 @@ export class Overview extends React.Component<OverviewProps, OverviewState> {
             if (!min || !max) {
                 return;
             }
-
-            // padding for overview
-            min.x -= 20;
-            min.y -= 20;
-            max.x += 20;
-            max.y += 20;
 
             let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
             let canvasHeight = Math.abs(min.y) + Math.abs(max.y);

@@ -35,11 +35,11 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
     public render() {
         const content = this.state.isOverview
             ? (
-                <React.Fragment>
-                    <Overview elements={this.props.page.elements} onClick={this.onOverviewClick} />
-                    <button style={{ position: "fixed" }} onClick={this.backToStart}>Back</button>
-                </React.Fragment>
-            )
+                <Overview
+                    elements={this.props.page.elements}
+                    onClick={this.onOverviewClick}
+                    onNavigateBack={this.backToStart}
+                />)
             : (
                 <SketchArea
                     page={this.props.page}

@@ -8,8 +8,8 @@ class CanvasHelper {
         height: number) {
         const currentTransform = canvasContext.getTransform();
         canvasContext.doCanvasAction((context) => {
-            context.canvas.width = window.innerWidth;
-            context.canvas.height = window.innerHeight;
+            context.canvas.width = width;
+            context.canvas.height = height;
         });
 
         const { a, b, c, d, e, f } = currentTransform;
