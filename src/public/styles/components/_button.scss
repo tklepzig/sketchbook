@@ -1,4 +1,3 @@
-@import "../variables";
 .btn-pen {
     @extend %button;
     &:after {
@@ -48,7 +47,7 @@
 
 .btn-back {
     @extend %button;
-    background-image: url(assets/back-128.png);
+    background-image: url(assets/back.svg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
