@@ -1,0 +1,13 @@
+canvas.overview {
+    position: absolute;
+    top: 75px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    width: auto;
+    height: auto;
+    touch-action: none;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 0 10px 0 darken($background, 30%);
+}

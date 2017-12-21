@@ -94,6 +94,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         return (
             <React.Fragment>
                 <canvas
+                    className="sketch"
                     ref={(canvas) => { this.canvas = canvas; }}
                     {...{ [tapEvents.tapDown]: this.tapDown }}
                     {...{ [tapEvents.tapUp]: this.tapUp }}
