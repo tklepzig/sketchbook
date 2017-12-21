@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 const server = {
     entry: "./src/server/index.ts",
@@ -95,7 +96,8 @@ const client = {
             },
             { from: "./src/public/manifest.json" },
             { from: "./src/public/favicon.ico" }
-        ])
+        ]),
+        new TsconfigPathsPlugin()
     ]
 
     // // When importing a module whose path matches one of the following, just
