@@ -1,6 +1,15 @@
-import { Actions } from "@models/Actions";
 import { FontSize, InputMode, Line, Text } from "@models/RootState";
 import { Action } from "redux";
+
+export enum Actions {
+    SetColor,
+    SetStrokeWidth,
+    SetFontSize,
+    SetInputMode,
+    AddLine,
+    AddText,
+    AddPage
+}
 
 export interface SetColorAction extends Action {
     color: string;
