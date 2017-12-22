@@ -56,12 +56,12 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
         // add offset since canvas is not at position 0, 0
         tapDownPoint.x -= 15;
-        tapDownPoint.y -= 75;
+        tapDownPoint.y -= 61;
         this.props.onClick(tapDownPoint);
     }
 
     private resize() {
-        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth - 30, window.innerHeight - 90);
+        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth - (15 * 2), window.innerHeight - (61 + 15));
         this.generateOverview();
     }
 
