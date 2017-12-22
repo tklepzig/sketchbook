@@ -1,14 +1,14 @@
+import Page from "@components/Page/Page";
+import Splash from "@components/Splash";
+import Start from "@components/Start/Start";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { createStore } from "redux";
 import { devToolsEnhancer } from "redux-devtools-extension";
+import { rootReducer } from "rootReducer";
 import "./app.scss";
-import Page from "./components/Page";
-import Splash from "./components/Splash";
-import Start from "./components/Start";
-import { rootReducer } from "./rootReducer";
 
 const store = createStore(rootReducer
     // , devToolsEnhancer({})

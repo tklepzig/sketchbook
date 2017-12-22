@@ -1,4 +1,4 @@
-import { Point } from "../models/RootState";
+import { Point } from "@models/RootState";
 
 export class CanvasContext {
     private getContext: () => CanvasRenderingContext2D | null;

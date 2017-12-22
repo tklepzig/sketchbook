@@ -1,4 +1,4 @@
-import { CanvasContext } from "./CanvasContext";
+import { CanvasContext } from "@services/CanvasContext";
 
 class CanvasHelper {
 

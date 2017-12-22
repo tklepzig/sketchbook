@@ -1,5 +1,7 @@
-import * as React from "react";
-import { connect, Dispatch } from "react-redux";
+import { FontSizeChooser } from "@components/Page/Sketch/Menu/FontSizeChooser";
+import { InputModeToggle } from "@components/Page/Sketch/Menu/InputModeToggle";
+import { PenChooser } from "@components/Page/Sketch/Menu/PenChooser";
+import { FontSize, InputMode, RootState } from "@models/RootState";
 import {
     setColor,
     SetColorAction,
@@ -9,11 +11,9 @@ import {
     SetInputModeAction,
     setStrokeWidth,
     SetStrokeWidthAction
-} from "../actions";
-import { FontSize, InputMode, RootState } from "../models/RootState";
-import { FontSizeChooser } from "./FontSizeChooser";
-import { InputModeToggle } from "./InputModeToggle";
-import { PenChooser } from "./PenChooser";
+} from "actions";
+import * as React from "react";
+import { connect, Dispatch } from "react-redux";
 
 interface MenuProps {
     inputMode: InputMode;

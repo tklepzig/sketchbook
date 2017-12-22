@@ -1,10 +1,10 @@
+import { ColorButton } from "@components/Page/Sketch/Menu/ColorButton";
+import { StrokeWidthButton } from "@components/Page/Sketch/Menu/StrokeWidthButton";
+import { Popup } from "@components/Popup";
+import { RootState } from "@models/RootState";
+import { setColor, SetColorAction, setStrokeWidth, SetStrokeWidthAction } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
-import { setColor, SetColorAction, setStrokeWidth, SetStrokeWidthAction } from "../actions";
-import { RootState } from "../models/RootState";
-import { ColorButton } from "./ColorButton";
-import { Popup } from "./Popup";
-import { StrokeWidthButton } from "./StrokeWidthButton";
 
 export interface PenChooserProps {
     color: string;

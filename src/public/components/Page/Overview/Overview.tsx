@@ -1,6 +1,6 @@
+import { OverviewCanvas } from "@components/Page/Overview/OverviewCanvas";
 import { Page, Point } from "@models/RootState";
 import * as React from "react";
-import { OverviewCanvas } from "./OverviewCanvas";
 
 interface OverviewProps {
     page: Page;

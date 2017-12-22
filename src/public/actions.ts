@@ -1,6 +1,6 @@
+import { Actions } from "@models/Actions";
+import { FontSize, InputMode, Line, Text } from "@models/RootState";
 import { Action } from "redux";
-import { Actions } from "./models/Actions";
-import { FontSize, InputMode, Line, Text } from "./models/RootState";
 
 export interface SetColorAction extends Action {
     color: string;

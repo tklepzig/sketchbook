@@ -1,10 +1,19 @@
+import Menu from "@components/Page/Sketch/Menu/Menu";
+import SketchCanvas from "@components/Page/Sketch/SketchCanvas";
+import {
+    CompositeOperation,
+    FontSize,
+    InputMode,
+    Line,
+    Page,
+    Point,
+    RootState,
+    Text
+} from "@models/RootState";
+import { addLine, addText } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { addLine, addText } from "../actions";
-import { CompositeOperation, FontSize, InputMode, Line, Page, Point, RootState, Text } from "../models/RootState";
-import Menu from "./Menu";
-import SketchCanvas from "./SketchCanvas";
 
 export interface SketchProps {
     inputMode: InputMode;

@@ -1,9 +1,9 @@
+import { FontSizeButton } from "@components/Page/Sketch/Menu/FontSizeButton";
+import { Popup } from "@components/Popup";
+import { FontSize, RootState } from "@models/RootState";
+import { setFontSize, SetFontSizeAction } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
-import { setFontSize, SetFontSizeAction } from "../actions";
-import { FontSize, RootState } from "../models/RootState";
-import { FontSizeButton } from "./FontSizeButton";
-import { Popup } from "./Popup";
 
 export interface FontSizeChooserProps {
     fontSize: FontSize;

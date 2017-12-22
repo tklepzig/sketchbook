@@ -1,8 +1,7 @@
+import { Actions } from "@models/Actions";
+import { FontSize, InputMode, Page, Pen } from "@models/RootState";
+import { AddLineAction, AddTextAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "actions";
 import { AnyAction, Reducer } from "redux";
-import { AddLineAction, AddTextAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "./actions";
-import { PenChooserProps } from "./components/PenChooser";
-import { Actions } from "./models/Actions";
-import { FontSize, InputMode, Page, Pen } from "./models/RootState";
 
 export const pen: Reducer<Pen> =
     (state = { color: "black", strokeWidth: "s" }, action: AnyAction): Pen => {

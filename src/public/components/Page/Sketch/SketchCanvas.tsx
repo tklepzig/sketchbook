@@ -1,10 +1,10 @@
+import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "@models/RootState";
+import { CanvasContext } from "@services/CanvasContext";
+import { CanvasDrawing } from "@services/CanvasDrawing";
+import canvasHelper from "@services/CanvasHelper";
+import { CanvasTranslate } from "@services/CanvasTranslate";
+import { tapEvents } from "@services/TapEvents";
 import * as React from "react";
-import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "../models/RootState";
-import { CanvasContext } from "../services/CanvasContext";
-import { CanvasDrawing } from "../services/CanvasDrawing";
-import canvasHelper from "../services/CanvasHelper";
-import { CanvasTranslate } from "../services/CanvasTranslate";
-import { tapEvents } from "../services/TapEvents";
 
 interface SketchCanvasProps {
     inputMode: InputMode;

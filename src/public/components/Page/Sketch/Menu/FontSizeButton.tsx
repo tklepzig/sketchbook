@@ -1,5 +1,5 @@
+import { FontSize } from "@models/RootState";
 import * as React from "react";
-import { FontSize } from "../models/RootState";
 
 export interface FontSizeButtonProps {
     fontSize: FontSize;

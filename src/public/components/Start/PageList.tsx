@@ -1,7 +1,7 @@
+import { Page } from "@models/RootState";
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import { NavLink } from "react-router-dom";
-import { Page } from "../models/RootState";
 
 interface PageListProps {
     pages: Page[];

@@ -1,6 +1,6 @@
-import { Line, PageElement, Point, Text } from "../models/RootState";
-import { CanvasContext } from "./CanvasContext";
-import pageElementHelper from "./PageElementHelper";
+import { Line, PageElement, Point, Text } from "@models/RootState";
+import { CanvasContext } from "@services/CanvasContext";
+import pageElementHelper from "@services/PageElementHelper";
 
 export class CanvasDrawing {
     private currentLine: Line;

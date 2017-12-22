@@ -1,11 +1,9 @@
+import { PageList } from "@components/Start/PageList";
+import { Page, RootState } from "@models/RootState";
+import fullscreen from "@services/Fullscreen";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import { Page, RootState } from "../models/RootState";
-import fullscreen from "../services/Fullscreen";
-import { InputModeToggle } from "./InputModeToggle";
-import { PageList } from "./PageList";
-import Splash from "./Splash";
 
 interface StartProps {
     pages: Page[];
