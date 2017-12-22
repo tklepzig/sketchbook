@@ -8,6 +8,12 @@
         "jsx-boolean-value": false,
         "trailing-comma": false,
         "interface-name": false,
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "no-submodule-imports": [
+            true,
+            "@components",
+            "@models",
+            "@services"
+        ]
     }
 }

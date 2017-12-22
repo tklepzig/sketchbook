@@ -68,7 +68,8 @@ const client = {
     },
 
     resolve: {
-        extensions: [".ts", ".tsx", ".js", ".json"]
+        extensions: [".ts", ".tsx", ".js", ".json"],
+        plugins: [new TsconfigPathsPlugin()]
     },
 
     module: {
@@ -96,8 +97,7 @@ const client = {
             },
             { from: "./src/public/manifest.json" },
             { from: "./src/public/favicon.ico" }
-        ]),
-        new TsconfigPathsPlugin()
+        ])
     ]
 
     // // When importing a module whose path matches one of the following, just
