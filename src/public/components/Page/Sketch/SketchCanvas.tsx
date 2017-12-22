@@ -1,3 +1,4 @@
+import { Textarea } from "@components/Page/Sketch/Textarea";
 import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "@models/RootState";
 import { CanvasContext } from "@services/CanvasContext";
 import { CanvasDrawing } from "@services/CanvasDrawing";
@@ -29,7 +30,7 @@ interface SketchCanvasState {
 
 export default class SketchCanvas extends React.Component<SketchCanvasProps, SketchCanvasState> {
     private canvas: HTMLCanvasElement | null = null;
-    private textarea: HTMLTextAreaElement | null = null;
+    private textarea: Textarea | null = null;
     private isTranslateMode = false;
     private tapIsDown: boolean = false;
     private canvasContext: CanvasContext;
@@ -80,14 +81,12 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
         const { x, y } = this.state.textareaState.position;
         const textarea = this.state.textareaState.isVisible
             ? (
-                <textarea
-                    style={{ left: x, top: y }}
+                <Textarea
                     ref={(ta) => { this.textarea = ta; }}
-                    value={this.state.textareaState.text}
-                    onChange={this.textAreaTextChanged}
-                    cols={30}
-                    rows={4}
-                    className={`fs-${this.props.fontSize.toString()}`}
+                    position={{ x, y }}
+                    fontSize={this.props.fontSize}
+                    text={this.state.textareaState.text}
+                    onTextChanged={this.textAreaTextChanged}
                 />)
             : null;
 
@@ -157,8 +156,8 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
         this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
     }
 
-    private textAreaTextChanged(e: React.ChangeEvent<HTMLTextAreaElement>) {
-        this.setState({ textareaState: { ...this.state.textareaState, text: e.target.value } });
+    private textAreaTextChanged(text: string) {
+        this.setState({ textareaState: { ...this.state.textareaState, text } });
     }
 
     private updateCanvasConfig(props: SketchCanvasProps) {
@@ -195,11 +194,9 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
                 isVisible: true
             }
         }, () => {
-            setTimeout(() => {
-                if (this.textarea !== null) {
-                    this.textarea.focus();
-                }
-            });
+            if (this.textarea !== null) {
+                this.textarea.focus();
+            }
         });
     }
 

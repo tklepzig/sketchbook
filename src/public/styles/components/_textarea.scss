@@ -1,16 +1,3 @@
-canvas.sketch {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    touch-action: none;
-    overflow: hidden;
-    cursor: pointer;
-}
-
 textarea {
     position: absolute;
     background: transparent;
@@ -23,6 +10,9 @@ textarea {
     background: rgba($background, 0.4);
     outline: none;
     line-height: 1.2;
+    overflow: hidden;
+    resize: none;
+    min-width: 20px;
     &.fs-12 {
         font-size: 12pt;
     }

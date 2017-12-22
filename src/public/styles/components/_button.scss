@@ -47,9 +47,11 @@
 
 .btn-back {
     @extend %button;
+    width: 30px;
+    height: 30px;
     background-image: url(assets/back.svg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    flex: 0 0 40px;
+    flex: 0 0 30px;
 }
