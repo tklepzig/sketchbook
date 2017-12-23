@@ -1,9 +1,9 @@
-import { Line, PageElement, Point } from "@models/RootState";
 import { CanvasContext } from "@services/CanvasContext";
 import { CanvasDrawing } from "@services/CanvasDrawing";
 import canvasHelper from "@services/CanvasHelper";
 import pageElementHelper from "@services/PageElementHelper";
 import { tapEvents } from "@services/TapEvents";
+import { Line, PageElement, Point } from "@shared/RootState";
 import * as React from "react";
 import { NavLink } from "react-router-dom";
 

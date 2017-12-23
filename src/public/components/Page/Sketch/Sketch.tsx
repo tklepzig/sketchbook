@@ -9,7 +9,7 @@ import {
     Point,
     RootState,
     Text
-} from "@models/RootState";
+} from "@shared/RootState";
 import { addElement } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";

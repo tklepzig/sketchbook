@@ -1,4 +1,4 @@
-import { FontSize, InputMode, Page, Pen } from "@models/RootState";
+import { FontSize, InputMode, Page, Pen } from "@shared/RootState";
 import { AddElementAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "actions";
 import { AnyAction, Reducer } from "redux";
 import { Actions } from "./actions";

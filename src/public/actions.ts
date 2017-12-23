@@ -1,4 +1,4 @@
-import { FontSize, InputMode, PageElement } from "@models/RootState";
+import { FontSize, InputMode, PageElement } from "@shared/RootState";
 import { Action } from "redux";
 
 export enum Actions {

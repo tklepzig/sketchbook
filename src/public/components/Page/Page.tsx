@@ -1,6 +1,6 @@
 import { Overview } from "@components/Page/Overview/Overview";
 import Sketch from "@components/Page/Sketch/Sketch";
-import { Page as PageModel, Point, RootState } from "@models/RootState";
+import { Page as PageModel, Point, RootState } from "@shared/RootState";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";

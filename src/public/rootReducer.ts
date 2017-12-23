@@ -1,4 +1,4 @@
-import { RootState } from "@models/RootState";
+import { RootState } from "@shared/RootState";
 import { fontSize, inputMode, pages, pen } from "reducers";
 import { combineReducers } from "redux";
 

@@ -1,10 +1,10 @@
 import { Textarea } from "@components/Page/Sketch/Textarea";
-import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "@models/RootState";
 import { CanvasContext } from "@services/CanvasContext";
 import { CanvasDrawing } from "@services/CanvasDrawing";
 import canvasHelper from "@services/CanvasHelper";
 import { CanvasTranslate } from "@services/CanvasTranslate";
 import { tapEvents } from "@services/TapEvents";
+import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "@shared/RootState";
 import * as React from "react";
 
 interface SketchCanvasProps {

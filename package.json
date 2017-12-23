@@ -8,7 +8,9 @@
     "start": "node dist/server/index.js"
   },
   "dependencies": {
-    "express": "^4.16.2"
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "redux": "^3.7.2"
   },
   "devDependencies": {
     "@types/enzyme": "^3.1.1",
@@ -20,6 +22,7 @@
     "@types/react-dom": "^16.0.3",
     "@types/react-redux": "^5.0.13",
     "@types/react-router-dom": "^4.2.3",
+    "@types/redux": "^3.6.0",
     "awesome-typescript-loader": "^3.2.3",
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.2.0",

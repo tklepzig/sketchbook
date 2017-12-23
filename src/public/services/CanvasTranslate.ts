@@ -1,5 +1,5 @@
-import { Point } from "@models/RootState";
 import { CanvasContext } from "@services/CanvasContext";
+import { Point } from "@shared/RootState";
 
 export class CanvasTranslate {
     private startPoint: Point;

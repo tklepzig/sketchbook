@@ -41,9 +41,14 @@ export interface Pen {
     strokeWidth: string;
 }
 
-export interface RootState {
+export interface UiState {
     pen: Pen;
     fontSize: FontSize;
     inputMode: InputMode;
+}
+
+export interface PersistentState {
     pages: Page[];
 }
+
+export type RootState = UiState & PersistentState;
