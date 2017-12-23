@@ -1,10 +1,7 @@
-import Page from "@components/Page/Page";
-import Splash from "@components/Splash";
-import Start from "@components/Start/Start";
+import App from "@components/App";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunkMiddleware from "redux-thunk";
@@ -17,16 +14,7 @@ const store = createStore(rootReducer,
     // ),
 );
 
-ReactDOM.render(
+ReactDOM.render((
     <Provider store={store}>
-        <React.Fragment>
-            <Splash />
-            <BrowserRouter>
-                <Switch>
-                    <Route exact path="/" component={Start} />
-                    <Route exact path="/page/:id" component={Page} />
-                </Switch>
-            </BrowserRouter>
-        </React.Fragment>
-    </Provider>,
-    document.getElementById("root"));
+        <App />
+    </Provider>), document.getElementById("root"));

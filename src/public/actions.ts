@@ -8,7 +8,8 @@ export enum Actions {
     SetInputMode,
     AddElement,
     AddPage,
-    PostFailed
+    SetError,
+    ClearError
 }
 
 export interface SetColorAction extends Action {
@@ -70,16 +71,20 @@ export const addElement = (pageId: string, element: PageElement) => (dispatch: D
             if (response.status >= 200 && response.status < 300) {
                 console.dir("post succeeded");
             } else {
-                dispatch(postFailed(response.statusText));
+                dispatch(setError(response.statusText));
             }
         })
-        .catch((error) => { dispatch(postFailed(error.message)); });
+        .catch((error) => { dispatch(setError(error.message)); });
 };
 
-export interface PostFailedAction extends Action {
+export interface SetErrorAction extends Action {
     error: string;
 }
-export const postFailed = (error: string): PostFailedAction => ({
-    type: Actions.PostFailed,
+export const setError = (error: string): SetErrorAction => ({
+    type: Actions.SetError,
     error
+});
+
+export const clearError = (): Action => ({
+    type: Actions.ClearError
 });
