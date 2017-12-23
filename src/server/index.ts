@@ -2,6 +2,7 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as path from "path";
 import { createStore } from "redux";
+import { addElement } from "./actions";
 import reducers from "./reducers";
 
 const port = process.env.PORT || 8080;
@@ -16,7 +17,8 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.post("/addElement", (req, res) => {
-    console.dir(req.body);
+    const { pageId, element } = req.body;
+    store.dispatch(addElement(pageId, element));
     res.sendStatus(200);
 });
 
@@ -31,5 +33,3 @@ app.listen(port, () => {
 
 // store.dispatch(addLine("1", line));
 // store.dispatch(addText("1", text));
-
-unsubscribe();
