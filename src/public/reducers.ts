@@ -1,7 +1,7 @@
 import { FontSize, InputMode, Page, Pen } from "@shared/RootState";
 import { AddElementAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "actions";
 import { AnyAction, Reducer } from "redux";
-import { Actions } from "./actions";
+import { Actions, PostFailedAction } from "./actions";
 
 export const pen: Reducer<Pen> =
     (state = { color: "black", strokeWidth: "s" }, action: AnyAction): Pen => {
@@ -47,16 +47,23 @@ export const pages: Reducer<Page[]> =
     (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddElement:
-                {
-                    const { pageId, element } = action as AddElementAction;
-                    return state.map((page) => (page.id === pageId)
-                        ? { ...page, elements: [...page.elements, element] }
-                        : page
-                    );
-                }
+                const { pageId, element } = action as AddElementAction;
+                return state.map((page) => (page.id === pageId)
+                    ? { ...page, elements: [...page.elements, element] }
+                    : page
+                );
             case Actions.AddPage:
                 return state;
             default:
                 return state;
         }
     };
+
+export const error: Reducer<string> = (state = "", action: AnyAction) => {
+    switch (action.type) {
+        case Actions.PostFailed:
+            return (action as PostFailedAction).error;
+        default:
+            return state;
+    }
+};

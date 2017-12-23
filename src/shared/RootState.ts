@@ -45,6 +45,7 @@ export interface UiState {
     pen: Pen;
     fontSize: FontSize;
     inputMode: InputMode;
+    error: string;
 }
 
 export interface PersistentState {
