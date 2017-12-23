@@ -108,11 +108,11 @@ export class CanvasContext {
     }
 
     public getTransformedPoint(point: Point): Point {
-        const { x, y } = point;
-        this.svgPoint.x = x;
-        this.svgPoint.y = y;
+        this.svgPoint.x = point.x;
+        this.svgPoint.y = point.y;
 
-        return this.svgPoint.matrixTransform(this.transformMatrix.inverse()) as Point;
+        const { x, y } = this.svgPoint.matrixTransform(this.transformMatrix.inverse());
+        return { x, y };
     }
 
     public getTranslateX() {
