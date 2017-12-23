@@ -1,4 +1,4 @@
-import { FontSize, InputMode, Line, Text } from "@models/RootState";
+import { FontSize, InputMode, PageElement } from "@models/RootState";
 import { Action } from "redux";
 
 export enum Actions {
@@ -6,8 +6,7 @@ export enum Actions {
     SetStrokeWidth,
     SetFontSize,
     SetInputMode,
-    AddLine,
-    AddText,
+    AddElement,
     AddPage
 }
 
@@ -35,16 +34,9 @@ export interface SetInputModeAction extends Action {
 export const setInputMode =
     (inputMode: InputMode): SetInputModeAction => ({ type: Actions.SetInputMode, inputMode });
 
-export interface AddLineAction extends Action {
-    line: Line;
+export interface AddElementAction extends Action {
+    element: PageElement;
     pageId: string;
 }
-export const addLine =
-    (pageId: string, line: Line): AddLineAction => ({ type: Actions.AddLine, line, pageId });
-
-export interface AddTextAction extends Action {
-    text: Text;
-    pageId: string;
-}
-export const addText =
-    (pageId: string, text: Text): AddTextAction => ({ type: Actions.AddText, text, pageId });
+export const addElement =
+    (pageId: string, element: PageElement): AddElementAction => ({ type: Actions.AddElement, element, pageId });

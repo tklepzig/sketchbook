@@ -1,5 +1,5 @@
 import { FontSize, InputMode, Page, Pen } from "@models/RootState";
-import { AddLineAction, AddTextAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "actions";
+import { AddElementAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "actions";
 import { AnyAction, Reducer } from "redux";
 import { Actions } from "./actions";
 
@@ -22,33 +22,6 @@ export const pen: Reducer<Pen> =
         }
     };
 
-// TODO: empty page list as default
-export const pages: Reducer<Page[]> =
-    (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
-        switch (action.type) {
-            case Actions.AddLine:
-                {
-                    const { pageId, line } = action as AddLineAction;
-                    return state.map((page) => (page.id === pageId)
-                        ? { ...page, elements: [...page.elements, line] }
-                        : page
-                    );
-                }
-            case Actions.AddText:
-                {
-                    const { pageId, text } = action as AddTextAction;
-                    return state.map((page) => (page.id === pageId)
-                        ? { ...page, elements: [...page.elements, text] }
-                        : page
-                    );
-                }
-            case Actions.AddPage:
-                return state;
-            default:
-                return state;
-        }
-    };
-
 export const fontSize: Reducer<FontSize> =
     (state = "medium", action: AnyAction): FontSize => {
         switch (action.type) {
@@ -64,6 +37,25 @@ export const inputMode: Reducer<InputMode> =
         switch (action.type) {
             case Actions.SetInputMode:
                 return (action as SetInputModeAction).inputMode;
+            default:
+                return state;
+        }
+    };
+
+// TODO: empty page list as default
+export const pages: Reducer<Page[]> =
+    (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
+        switch (action.type) {
+            case Actions.AddElement:
+                {
+                    const { pageId, element } = action as AddElementAction;
+                    return state.map((page) => (page.id === pageId)
+                        ? { ...page, elements: [...page.elements, element] }
+                        : page
+                    );
+                }
+            case Actions.AddPage:
+                return state;
             default:
                 return state;
         }

@@ -10,7 +10,7 @@ import {
     RootState,
     Text
 } from "@models/RootState";
-import { addLine, addText } from "actions";
+import { addElement } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
@@ -112,8 +112,8 @@ function mapStateToProps(state: RootState): SketchProps {
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: SketchOwnProps) {
     return {
-        onLineAdded: (line: Line) => dispatch(addLine(ownProps.page.id, line)),
-        onTextAdded: (text: Text) => dispatch(addText(ownProps.page.id, text))
+        onLineAdded: (line: Line) => dispatch(addElement(ownProps.page.id, line)),
+        onTextAdded: (text: Text) => dispatch(addElement(ownProps.page.id, text))
     };
 }
 
