@@ -1,24 +1,36 @@
 import { Action, AnyAction, combineReducers, Reducer } from "redux";
 import { Page } from "../shared/models";
-import { Actions, AddElementAction } from "./actions";
+import { Actions, AddElementAction, AddPageAction } from "./actions";
 import { RootState } from "./RootState";
 
-const pages: Reducer<Page[]> =
-    (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
+const pageList: Reducer<Array<{ id: string }>> =
+    (state = [], action: AnyAction): Array<{ id: string }> => {
         switch (action.type) {
-            case Actions.AddElement:
-                {
-                    const { pageId, element } = action as AddElementAction;
-                    return state.map((page) => (page.id === pageId)
-                        ? { ...page, elements: [...page.elements, element] }
-                        : page
-                    );
-                }
             case Actions.AddPage:
-                return state;
+                const { pageId } = action as AddPageAction;
+                return [...state, { id: pageId }];
             default:
                 return state;
         }
     };
 
-export default combineReducers<RootState>({ pages });
+const pageDetails: Reducer<{ [id: string]: Page; }> =
+    (state = {}, action: AnyAction): { [id: string]: Page; } => {
+        switch (action.type) {
+            case Actions.AddPage:
+                {
+                    const { pageId } = action as AddElementAction;
+                    return { ...state, [pageId]: { id: pageId, elements: [] } };
+                }
+            case Actions.AddElement:
+                {
+                    const { pageId, element } = action as AddElementAction;
+                    const page = state[pageId];
+                    return { ...state, [pageId]: { ...page, elements: [...page.elements, element] } };
+                }
+            default:
+                return state;
+        }
+    };
+
+export default combineReducers<RootState>({ pageList, pageDetails });

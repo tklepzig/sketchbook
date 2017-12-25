@@ -10,5 +10,16 @@ export interface AddElementAction extends Action {
     element: PageElement;
     pageId: string;
 }
-export const addElement =
-    (pageId: string, element: PageElement): AddElementAction => ({ type: Actions.AddElement, element, pageId });
+export const addElement = (pageId: string, element: PageElement): AddElementAction => ({
+    type: Actions.AddElement,
+    element,
+    pageId
+});
+
+export interface AddPageAction extends Action {
+    pageId: string;
+}
+export const addPage = (pageId: string): AddPageAction => ({
+    type: Actions.AddPage,
+    pageId
+});
