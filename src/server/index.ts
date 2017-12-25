@@ -40,8 +40,12 @@ store.dispatch(addElement("3", {
     fontSize: 1
 }));
 
-app.post("/getPageList", (req, res) => { });
-app.post("/getPageById", (req, res) => { });
+app.get("/pages", (req, res) => {
+    res.json(store.getState().pageList);
+});
+app.get("/page/:id", (req, res) => {
+    res.json(store.getState().pageDetails[req.params.id]);
+});
 
 app.get("/*", (req, res) => {
     res.sendFile(path.resolve(path.join(__dirname, "..", "public", "index.html")));
