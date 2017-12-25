@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router";
 import { NavLink } from "react-router-dom";
 
 interface PageListProps {
-    pages: Page[];
+    pageList: Array<{ id: string }>;
     onClick: (page: string) => void;
 }
 
@@ -13,7 +13,7 @@ export const PageList: React.SFC<PageListProps> = (props) => {
         props.onClick("/page/1");
     };
 
-    const pageList = props.pages.map((page) => (
+    const pageList = props.pageList.map((page) => (
         <li key={page.id}>
             <button onClick={onClick}>Page {page.id}</button>
         </li>));

@@ -1,5 +1,5 @@
 import { FontSize, InputMode, Page, Pen } from "@shared/models";
-import { AddElementAction, SetColorAction, SetFontSizeAction, SetInputModeAction } from "actions";
+import { AddElementAction, SetColorAction, SetFontSizeAction, SetInputModeAction, SetReadyAction, ReceivedPageListAction } from "actions";
 import { AnyAction, Reducer } from "redux";
 import { Actions, SetErrorAction } from "./actions";
 
@@ -59,12 +59,34 @@ export const pages: Reducer<Page[]> =
         }
     };
 
+export const pageList: Reducer<Array<{ id: string }>> =
+    (state = [], action: AnyAction): Array<{ id: string }> => {
+        switch (action.type) {
+            case Actions.ReceivedPageList:
+                return (action as ReceivedPageListAction).pageList;
+            case Actions.AddPage:
+                return state;
+            default:
+                return state;
+        }
+    };
+
+
 export const error: Reducer<string> = (state = "", action: AnyAction) => {
     switch (action.type) {
         case Actions.SetError:
             return (action as SetErrorAction).error;
         case Actions.ClearError:
             return "";
+        default:
+            return state;
+    }
+};
+
+export const ready: Reducer<boolean> = (state = false, action: AnyAction) => {
+    switch (action.type) {
+        case Actions.SetReady:
+            return (action as SetReadyAction).ready;
         default:
             return state;
     }

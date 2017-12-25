@@ -1,5 +1,21 @@
 import { RootState } from "@models/RootState";
-import { error, fontSize, inputMode, pages, pen } from "reducers";
+import {
+    error,
+    fontSize,
+    inputMode,
+    pageList,
+    pages,
+    pen,
+    ready
+} from "reducers";
 import { combineReducers } from "redux";
 
-export const rootReducer = combineReducers<RootState>({ pen, pages, fontSize, inputMode, error });
+export const rootReducer = combineReducers<RootState>({
+    pen,
+    fontSize,
+    inputMode,
+    pages,
+    pageList,
+    error,
+    ready
+});

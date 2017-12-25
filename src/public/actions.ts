@@ -9,8 +9,11 @@ export enum Actions {
     SetInputMode,
     AddElement,
     AddPage,
+    FetchPageList,
+    ReceivedPageList,
     SetError,
-    ClearError
+    ClearError,
+    SetReady
 }
 
 export interface SetColorAction extends Action {
@@ -57,7 +60,7 @@ export const addElement = (pageId: string, element: PageElement) => (dispatch: D
         pageId
     });
 
-    fetch("addElement", {
+    fetch("api/element", {
         method: "post",
         headers: {
             "Accept": "application/json",
@@ -78,6 +81,38 @@ export const addElement = (pageId: string, element: PageElement) => (dispatch: D
         .catch((error) => { dispatch(setError(error.message)); });
 };
 
+export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
+
+    try {
+        const response = await fetch("api/pages", {
+            method: "get",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.status >= 200 && response.status < 300) {
+            const json = await response.json();
+            dispatch(receivedPageList(json));
+        } else {
+            dispatch(setError(response.statusText));
+        }
+    } catch (error) {
+        dispatch(setError(error.message));
+    } finally {
+        dispatch(setReady(true));
+    }
+};
+
+export interface ReceivedPageListAction extends Action {
+    pageList: Array<{ id: string }>;
+}
+export const receivedPageList = (pageList: Array<{ id: string }>): ReceivedPageListAction => ({
+    type: Actions.ReceivedPageList,
+    pageList
+});
+
 export interface SetErrorAction extends Action {
     error: string;
 }
@@ -88,4 +123,12 @@ export const setError = (error: string): SetErrorAction => ({
 
 export const clearError = (): Action => ({
     type: Actions.ClearError
+});
+
+export interface SetReadyAction extends Action {
+    ready: boolean;
+}
+export const setReady = (ready: boolean): SetReadyAction => ({
+    type: Actions.SetReady,
+    ready
 });

@@ -4,7 +4,8 @@ export interface RootState {
     fontSize: FontSize;
     inputMode: InputMode;
     error: string;
-    // pageList: Array<{ id: string, name: string }>;
-    // currentPage: Page;
+    ready: boolean;
+    pageList: Array<{ id: string }>;
+    currentPage: Page;
     pages: Page[];
 }

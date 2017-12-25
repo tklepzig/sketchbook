@@ -10,6 +10,7 @@ import { clearError } from "../actions";
 
 interface AppProps {
     error: string;
+    ready: boolean;
 }
 
 interface AppDispatchProps {
@@ -24,7 +25,7 @@ const App: React.SFC<AppProps & AppDispatchProps> = (props) => {
     return (
         <React.Fragment>
             {errorHeadline}
-            <Splash />
+            <Splash isVisible={!props.ready} />
             <BrowserRouter>
                 <Switch>
                     <Route exact path="/" component={Start} />
@@ -36,8 +37,8 @@ const App: React.SFC<AppProps & AppDispatchProps> = (props) => {
 };
 
 function mapStateToProps(state: RootState): AppProps {
-    const { error } = state;
-    return { error };
+    const { error, ready } = state;
+    return { error, ready };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>) {

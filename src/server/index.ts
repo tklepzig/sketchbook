@@ -18,18 +18,20 @@ const unsubscribe = store.subscribe(() => {
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-app.post("/addPage", (req, res) => {
+app.post("/api/page", (req, res) => {
     const { pageId } = req.body;
     store.dispatch(addPage(pageId));
     res.sendStatus(200);
 });
-app.post("/addElement", (req, res) => {
+app.post("/api/element", (req, res) => {
     const { pageId, element } = req.body;
     store.dispatch(addElement(pageId, element));
     res.sendStatus(200);
 });
 
 store.dispatch(addPage("1"));
+store.dispatch(addPage("2"));
+store.dispatch(addPage("3"));
 store.dispatch(addElement("1", {
     kind: "text",
     text: "Blubb",
@@ -38,10 +40,10 @@ store.dispatch(addElement("1", {
     fontSize: 12
 }));
 
-app.get("/pages", (req, res) => {
+app.get("/api/pages", (req, res) => {
     res.json(store.getState().pageList);
 });
-app.get("/page/:id", (req, res) => {
+app.get("/api/page/:id", (req, res) => {
     res.json(store.getState().pageDetails[req.params.id]);
 });
 

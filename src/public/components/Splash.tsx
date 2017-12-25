@@ -1,10 +1,13 @@
 import * as React from "react";
 
-export interface SplashState {
+interface SplashProps {
+    isVisible: boolean;
+}
+interface SplashState {
     ready: boolean;
 }
 
-export default class Splash extends React.Component<any, SplashState> {
+export default class Splash extends React.Component<SplashProps, SplashState> {
     private timeoutId: any;
 
     constructor(props: any) {
@@ -21,6 +24,6 @@ export default class Splash extends React.Component<any, SplashState> {
     }
 
     public render() {
-        return <div id="loading" className={this.state.ready ? "hidden" : ""} />;
+        return <div id="loading" className={!this.props.isVisible ? "hidden" : ""} />;
     }
 }
