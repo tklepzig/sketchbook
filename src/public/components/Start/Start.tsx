@@ -1,6 +1,7 @@
 import { PageList } from "@components/Start/PageList";
+import { RootState } from "@models/RootState";
 import fullscreen from "@services/Fullscreen";
-import { Page, RootState } from "@shared/RootState";
+import { Page } from "@shared/models";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";

@@ -1,4 +1,4 @@
-import { Page } from "@shared/RootState";
+import { Page } from "@shared/models";
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import { NavLink } from "react-router-dom";

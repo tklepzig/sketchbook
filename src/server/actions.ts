@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { Line, PageElement, Text } from "../shared/RootState";
+import { Line, PageElement, Text } from "../shared/models";
 
 export enum Actions {
     AddElement,

@@ -1,4 +1,4 @@
-import { FontSize, Point } from "@shared/RootState";
+import { FontSize, Point } from "@shared/models";
 import * as React from "react";
 
 interface TextareaProps {

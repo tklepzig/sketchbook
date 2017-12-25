@@ -1,5 +1,6 @@
 import Menu from "@components/Page/Sketch/Menu/Menu";
 import SketchCanvas from "@components/Page/Sketch/SketchCanvas";
+import { RootState } from "@models/RootState";
 import {
     CompositeOperation,
     FontSize,
@@ -7,9 +8,8 @@ import {
     Line,
     Page,
     Point,
-    RootState,
     Text
-} from "@shared/RootState";
+} from "@shared/models";
 import { addElement } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";

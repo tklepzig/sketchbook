@@ -1,4 +1,4 @@
-import { InputMode } from "@shared/RootState";
+import { InputMode } from "@shared/models";
 import * as React from "react";
 
 export interface InputModeToggleProps {

@@ -1,7 +1,9 @@
 import { FontSizeChooser } from "@components/Page/Sketch/Menu/FontSizeChooser";
 import { InputModeToggle } from "@components/Page/Sketch/Menu/InputModeToggle";
 import { PenChooser } from "@components/Page/Sketch/Menu/PenChooser";
-import { FontSize, InputMode, RootState } from "@shared/RootState";
+import { RootState } from "@models/RootState";
+import { FontSize, InputMode } from "@shared/models";
+
 import {
     setColor,
     SetColorAction,

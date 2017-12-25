@@ -1,6 +1,6 @@
 import { Menu } from "@components/Page/Overview/Menu";
 import { OverviewCanvas } from "@components/Page/Overview/OverviewCanvas";
-import { Page, Point } from "@shared/RootState";
+import { Page, Point } from "@shared/models";
 import * as React from "react";
 
 interface OverviewProps {

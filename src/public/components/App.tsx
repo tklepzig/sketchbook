@@ -1,7 +1,7 @@
 import Page from "@components/Page/Page";
 import Splash from "@components/Splash";
 import Start from "@components/Start/Start";
-import { RootState } from "@shared/RootState";
+import { RootState } from "@models/RootState";
 import * as React from "react";
 import { connect } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";

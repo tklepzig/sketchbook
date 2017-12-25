@@ -1,4 +1,4 @@
-import { Line, PageElement, Text } from "@shared/RootState";
+import { Line, PageElement, Text } from "@shared/models";
 
 class PageElementHelper {
     public elementIsLine(element: PageElement): element is Line {

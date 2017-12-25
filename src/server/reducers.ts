@@ -1,6 +1,7 @@
 import { Action, AnyAction, combineReducers, Reducer } from "redux";
-import { Page, PersistentState } from "../shared/RootState";
+import { Page } from "../shared/models";
 import { Actions, AddElementAction } from "./actions";
+import { RootState } from "./RootState";
 
 const pages: Reducer<Page[]> =
     (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
@@ -20,4 +21,4 @@ const pages: Reducer<Page[]> =
         }
     };
 
-export default combineReducers<PersistentState>({ pages });
+export default combineReducers<RootState>({ pages });

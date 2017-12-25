@@ -1,4 +1,4 @@
-import { Point } from "@shared/RootState";
+import { Point } from "@shared/models";
 
 class TapEvents {
     public tapDown: string;

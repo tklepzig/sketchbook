@@ -1,6 +1,7 @@
 import { FontSizeButton } from "@components/Page/Sketch/Menu/FontSizeButton";
 import { Popup } from "@components/Popup";
-import { FontSize, RootState } from "@shared/RootState";
+import { RootState } from "@models/RootState";
+import { FontSize } from "@shared/models";
 import { setFontSize, SetFontSizeAction } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";

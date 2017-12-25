@@ -1,7 +1,7 @@
 import { ColorButton } from "@components/Page/Sketch/Menu/ColorButton";
 import { StrokeWidthButton } from "@components/Page/Sketch/Menu/StrokeWidthButton";
 import { Popup } from "@components/Popup";
-import { RootState } from "@shared/RootState";
+import { RootState } from "@models/RootState";
 import { setColor, SetColorAction, setStrokeWidth, SetStrokeWidthAction } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";

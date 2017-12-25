@@ -40,16 +40,3 @@ export interface Pen {
     color: string;
     strokeWidth: string;
 }
-
-export interface UiState {
-    pen: Pen;
-    fontSize: FontSize;
-    inputMode: InputMode;
-    error: string;
-}
-
-export interface PersistentState {
-    pages: Page[];
-}
-
-export type RootState = UiState & PersistentState;
