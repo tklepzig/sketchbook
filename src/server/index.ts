@@ -30,14 +30,12 @@ app.post("/addElement", (req, res) => {
 });
 
 store.dispatch(addPage("1"));
-store.dispatch(addPage("2"));
-store.dispatch(addPage("3"));
-store.dispatch(addElement("3", {
+store.dispatch(addElement("1", {
     kind: "text",
-    text: "42",
-    position: { x: 0, y: 0 },
-    measurement: { width: 0, height: 0 },
-    fontSize: 1
+    text: "Blubb",
+    position: { x: 100, y: 100 },
+    measurement: { width: 100, height: 20 },
+    fontSize: 12
 }));
 
 app.get("/pages", (req, res) => {
