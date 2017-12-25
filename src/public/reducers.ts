@@ -1,5 +1,12 @@
 import { FontSize, InputMode, Page, Pen } from "@shared/models";
-import { AddElementAction, SetColorAction, SetFontSizeAction, SetInputModeAction, SetReadyAction, ReceivedPageListAction } from "actions";
+import {
+    AddElementAction,
+    ReceivedPageListAction,
+    SetColorAction,
+    SetFontSizeAction,
+    SetInputModeAction,
+    SetReadyAction
+} from "actions";
 import { AnyAction, Reducer } from "redux";
 import { Actions, SetErrorAction } from "./actions";
 
@@ -42,7 +49,6 @@ export const inputMode: Reducer<InputMode> =
         }
     };
 
-// TODO: empty page list as default
 export const pages: Reducer<Page[]> =
     (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
         switch (action.type) {
@@ -70,7 +76,6 @@ export const pageList: Reducer<Array<{ id: string }>> =
                 return state;
         }
     };
-
 
 export const error: Reducer<string> = (state = "", action: AnyAction) => {
     switch (action.type) {
