@@ -1,11 +1,9 @@
 import { Line, Page, PageElement, Text } from "@shared/models";
+import { pageDirectory, pageListFile } from "config";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { Action, Dispatch } from "redux";
 import { RootState } from "RootState";
-
-const dataPath = "../../../data";
-const pageDirectory = path.resolve(__dirname, dataPath, "pages");
 
 export enum Actions {
     AddElement,
@@ -33,7 +31,13 @@ export const addElement = (pageId: string, element: PageElement) =>
 export interface AddPageAction extends Action {
     pageId: string;
 }
-export const addPage = (pageId: string): AddPageAction => ({
-    type: Actions.AddPage,
-    pageId
-});
+export const addPage = (pageId: string) =>
+    async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
+        dispatch({
+            type: Actions.AddPage,
+            pageId
+        });
+
+        const state = getState();
+        await fs.writeFile(path.resolve(pageListFile), JSON.stringify(state.pageList));
+    };

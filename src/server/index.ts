@@ -1,4 +1,5 @@
 import * as bodyParser from "body-parser";
+import { configFile } from "config";
 import * as express from "express";
 import * as fs from "fs-extra";
 import * as nconf from "nconf";
@@ -7,11 +8,6 @@ import { applyMiddleware, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import { addElement, addPage } from "./actions";
 import reducers from "./reducers";
-
-const dataPath = "../../../data";
-const configFile = path.resolve(__dirname, dataPath, "config.json");
-const pageListFile = path.resolve(__dirname, dataPath, "page-list");
-const pageDirectory = path.resolve(__dirname, dataPath, "pages");
 
 nconf.file(configFile).env();
 const config = {
@@ -23,6 +19,8 @@ const config = {
 
 const port = process.env.PORT || config.port || 80;
 const app = express();
+
+// TODO: push every n minutes if getStatus (from nodegit) shows any changes
 
 // load data also by async action
 // fs.pathExists
