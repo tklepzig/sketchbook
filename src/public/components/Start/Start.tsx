@@ -19,18 +19,27 @@ interface StartDispatchProps {
 export interface StartOwnProps extends RouteComponentProps<any> {
 }
 
-const Start: React.SFC<StartProps & StartOwnProps & StartDispatchProps> = (props) => {
+class Start extends React.Component<StartProps & StartOwnProps & StartDispatchProps> {
+    constructor(props: StartProps & StartOwnProps & StartDispatchProps) {
+        super(props);
+        this.onPageClick = this.onPageClick.bind(this);
+    }
 
-        // on init: call dispatch(fetchPageList) und set ready wenn fertig
-    props.dispatch(fetchPageList());
-    const onClick = (path: string) => {
-        props.history.replace(path);
+    public componentWillMount() {
+        this.props.dispatch(fetchPageList());
+    }
+
+    public render() {
+        return <PageList onClick={this.onPageClick} pageList={this.props.pageList} />;
+    }
+
+    private onPageClick(path: string) {
+        this.props.history.replace(path);
         if ("ontouchstart" in window) {
             fullscreen.request(document.body);
         }
-    };
-    return <PageList onClick={onClick} pageList={props.pageList} />;
-};
+    }
+}
 
 function mapStateToProps(state: RootState): StartProps {
     const { pageList } = state;
