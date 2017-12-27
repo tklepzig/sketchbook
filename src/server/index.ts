@@ -22,8 +22,7 @@ const app = express();
 
 // TODO: push every n minutes if getStatus (from nodegit) shows any changes
 
-// fs.pathExists
-const store = createStore(reducers, /*{ pageList, pageDetails },*/ applyMiddleware(thunkMiddleware));
+const store = createStore(reducers, applyMiddleware(thunkMiddleware));
 
 store.dispatch(loadState());
 

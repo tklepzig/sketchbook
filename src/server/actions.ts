@@ -48,6 +48,11 @@ export const addPage = (pageId: string) =>
 
 export const loadPageList = () =>
     async (dispatch: Dispatch<RootState>) => {
+        const pathExists = await fs.pathExists(pageListFile);
+        if (!pathExists) {
+            return;
+        }
+
         const content = await fs.readFile(path.resolve(pageListFile));
         const pageList = JSON.parse(content.toString());
         dispatch(pageListLoaded(pageList));
@@ -64,6 +69,11 @@ export const pageListLoaded =
 
 export const loadPageDetails = () =>
     async (dispatch: Dispatch<RootState>) => {
+        const pathExists = await fs.pathExists(pageDirectory);
+        if (!pathExists) {
+            return;
+        }
+
         const files = await fs.readdir(pageDirectory);
         const pageDetails: { [id: string]: Page; } = {};
         files.forEach(async (file) => {
