@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": [
+        "components/*"
+      ],
+      "@models/*": [
+        "models/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@shared/*": [
+        "../shared/*"
+      ]
+    }
+  }
+}
