@@ -1,22 +1,35 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
+import * as fs from "fs-extra";
+import * as nconf from "nconf";
 import * as path from "path";
-import { createStore } from "redux";
+import { applyMiddleware, createStore } from "redux";
+import thunkMiddleware from "redux-thunk";
 import { addElement, addPage } from "./actions";
 import reducers from "./reducers";
 
-const port = process.env.PORT || 8080;
+const dataPath = "../../../data";
+const configFile = path.resolve(__dirname, dataPath, "config.json");
+const pageListFile = path.resolve(__dirname, dataPath, "page-list");
+const pageDirectory = path.resolve(__dirname, dataPath, "pages");
+
+nconf.file(configFile).env();
+const config = {
+    port: nconf.get("port"),
+    repoUrl: nconf.get("repoUrl"),
+    repoUser: nconf.get("repoUser"),
+    repoPassword: nconf.get("repoPassword")
+};
+
+const port = process.env.PORT || config.port || 80;
 const app = express();
 
-const store = createStore(reducers);
-console.dir(store.getState());
-const unsubscribe = store.subscribe(() => {
-    const state = store.getState();
-    console.dir(state);
-});
+// load data also by async action
+// fs.pathExists
+const store = createStore(reducers, /*{ pageList, pageDetails },*/ applyMiddleware(thunkMiddleware));
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "..", "public")));
+app.use(express.static(path.resolve(__dirname, "..", "public")));
 
 app.post("/api/page", (req, res) => {
     const { pageId } = req.body;
@@ -29,16 +42,14 @@ app.post("/api/element", (req, res) => {
     res.sendStatus(200);
 });
 
-store.dispatch(addPage("1"));
-store.dispatch(addPage("2"));
-store.dispatch(addPage("3"));
-store.dispatch(addElement("1", {
-    kind: "text",
-    text: "Blubb 42",
-    position: { x: 100, y: 100 },
-    measurement: { width: 100, height: 20 },
-    fontSize: 20
-}));
+// store.dispatch(addPage("1"));
+// store.dispatch(addElement("1", {
+//     kind: "text",
+//     text: new Date().toISOString(),
+//     position: { x: 100, y: 100 },
+//     measurement: { width: 100, height: 20 },
+//     fontSize: 20
+// }));
 
 app.get("/api/pages", (req, res) => {
     res.json(store.getState().pageList);
@@ -55,6 +66,3 @@ app.listen(port, () => {
     // tslint:disable-next-line:no-console
     console.log(`listening on *:${port}`);
 });
-
-// store.dispatch(addLine("1", line));
-// store.dispatch(addText("1", text));
