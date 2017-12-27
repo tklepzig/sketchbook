@@ -1,6 +1,6 @@
 import { Action, AnyAction, combineReducers, Reducer } from "redux";
 import { Page } from "../shared/models";
-import { Actions, AddElementAction, AddPageAction } from "./actions";
+import { Actions, AddElementAction, AddPageAction, PageDetailsLoadedAction, PageListLoadedAction } from "./actions";
 import { RootState } from "./RootState";
 
 const pageList: Reducer<Array<{ id: string }>> =
@@ -9,6 +9,8 @@ const pageList: Reducer<Array<{ id: string }>> =
             case Actions.AddPage:
                 const { pageId } = action as AddPageAction;
                 return [...state, { id: pageId }];
+            case Actions.PageListLoaded:
+                return (action as PageListLoadedAction).pageList;
             default:
                 return state;
         }
@@ -28,6 +30,8 @@ const pageDetails: Reducer<{ [id: string]: Page; }> =
                     const page = state[pageId];
                     return { ...state, [pageId]: { ...page, elements: [...page.elements, element] } };
                 }
+            case Actions.PageDetailsLoaded:
+                return (action as PageDetailsLoadedAction).pageDetails;
             default:
                 return state;
         }

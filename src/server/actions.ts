@@ -7,7 +7,11 @@ import { RootState } from "RootState";
 
 export enum Actions {
     AddElement,
-    AddPage
+    AddPage,
+    LoadPageList,
+    LoadPageDetails,
+    PageListLoaded,
+    PageDetailsLoaded
 }
 
 export interface AddElementAction extends Action {
@@ -40,4 +44,46 @@ export const addPage = (pageId: string) =>
 
         const state = getState();
         await fs.writeFile(path.resolve(pageListFile), JSON.stringify(state.pageList));
+    };
+
+export const loadPageList = () =>
+    async (dispatch: Dispatch<RootState>) => {
+        const content = await fs.readFile(path.resolve(pageListFile));
+        const pageList = JSON.parse(content.toString());
+        dispatch(pageListLoaded(pageList));
+    };
+
+export interface PageListLoadedAction extends Action {
+    pageList: Array<{ id: string }>;
+}
+export const pageListLoaded =
+    (pageList: Array<{ id: string }>): PageListLoadedAction => ({
+        type: Actions.PageListLoaded,
+        pageList
+    });
+
+export const loadPageDetails = () =>
+    async (dispatch: Dispatch<RootState>) => {
+        const files = await fs.readdir(pageDirectory);
+        const pageDetails: { [id: string]: Page; } = {};
+        files.forEach(async (file) => {
+            const content = await fs.readFile(path.resolve(pageDirectory, file));
+            pageDetails[file] = JSON.parse(content.toString());
+        });
+        dispatch(pageDetailsLoaded(pageDetails));
+    };
+
+export interface PageDetailsLoadedAction extends Action {
+    pageDetails: { [id: string]: Page; };
+}
+export const pageDetailsLoaded =
+    (pageDetails: { [id: string]: Page; }): PageDetailsLoadedAction => ({
+        type: Actions.PageDetailsLoaded,
+        pageDetails
+    });
+
+export const loadState = () =>
+    async (dispatch: Dispatch<RootState>) => {
+        await dispatch(loadPageList());
+        await dispatch(loadPageDetails());
     };

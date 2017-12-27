@@ -6,7 +6,7 @@ import * as nconf from "nconf";
 import * as path from "path";
 import { applyMiddleware, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
-import { addElement, addPage } from "./actions";
+import { addElement, addPage, loadPageDetails, loadPageList, loadState } from "./actions";
 import reducers from "./reducers";
 
 nconf.file(configFile).env();
@@ -22,9 +22,10 @@ const app = express();
 
 // TODO: push every n minutes if getStatus (from nodegit) shows any changes
 
-// load data also by async action
 // fs.pathExists
 const store = createStore(reducers, /*{ pageList, pageDetails },*/ applyMiddleware(thunkMiddleware));
+
+store.dispatch(loadState());
 
 app.use(bodyParser.json());
 app.use(express.static(path.resolve(__dirname, "..", "public")));
