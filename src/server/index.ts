@@ -34,10 +34,10 @@ store.dispatch(addPage("2"));
 store.dispatch(addPage("3"));
 store.dispatch(addElement("1", {
     kind: "text",
-    text: "Blubb",
+    text: "Blubb 42",
     position: { x: 100, y: 100 },
     measurement: { width: 100, height: 20 },
-    fontSize: 12
+    fontSize: 20
 }));
 
 app.get("/api/pages", (req, res) => {

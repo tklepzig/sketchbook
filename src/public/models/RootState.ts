@@ -6,6 +6,5 @@ export interface RootState {
     error: string;
     ready: boolean;
     pageList: Array<{ id: string }>;
-    currentPage: Page;
-    pages: Page[];
+    currentPage: Page | null;
 }

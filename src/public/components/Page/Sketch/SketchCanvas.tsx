@@ -162,8 +162,6 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
 
     private updateCanvasConfig(props: SketchCanvasProps) {
         this.canvasContext.doCanvasAction((context) => {
-            context.font = `bold ${props.fontSize}pt Handlee`;
-            context.textBaseline = "top";
             context.lineCap = "round";
             context.lineWidth = props.lineWidth;
             context.strokeStyle = props.color;

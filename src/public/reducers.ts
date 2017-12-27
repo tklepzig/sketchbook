@@ -1,14 +1,16 @@
 import { FontSize, InputMode, Page, Pen } from "@shared/models";
 import {
+    Actions,
     AddElementAction,
+    ReceivedPageAction,
     ReceivedPageListAction,
     SetColorAction,
+    SetErrorAction,
     SetFontSizeAction,
     SetInputModeAction,
     SetReadyAction
 } from "actions";
 import { AnyAction, Reducer } from "redux";
-import { Actions, SetErrorAction } from "./actions";
 
 export const pen: Reducer<Pen> =
     (state = { color: "black", strokeWidth: "s" }, action: AnyAction): Pen => {
@@ -49,33 +51,30 @@ export const inputMode: Reducer<InputMode> =
         }
     };
 
-export const pages: Reducer<Page[]> =
-    (state = [{ id: "1", elements: [] }], action: AnyAction): Page[] => {
-        switch (action.type) {
-            case Actions.AddElement:
-                const { pageId, element } = action as AddElementAction;
-                return state.map((page) => (page.id === pageId)
-                    ? { ...page, elements: [...page.elements, element] }
-                    : page
-                );
-            case Actions.AddPage:
-                return state;
-            default:
-                return state;
-        }
-    };
-
 export const pageList: Reducer<Array<{ id: string }>> =
     (state = [], action: AnyAction): Array<{ id: string }> => {
         switch (action.type) {
             case Actions.ReceivedPageList:
                 return (action as ReceivedPageListAction).pageList;
-            case Actions.AddPage:
-                return state;
             default:
                 return state;
         }
     };
+
+export const currentPage: Reducer<Page | null> = (state = null, action: AnyAction) => {
+    switch (action.type) {
+        case Actions.ReceivedPage:
+            return (action as ReceivedPageAction).page;
+        case Actions.AddElement:
+            const { pageId, element } = action as AddElementAction;
+            if (!state || state.id !== pageId) {
+                return state;
+            }
+            return { ...state, elements: [...state.elements, element] };
+        default:
+            return state;
+    }
+};
 
 export const error: Reducer<string> = (state = "", action: AnyAction) => {
     switch (action.type) {

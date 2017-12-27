@@ -120,7 +120,6 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
             translation.dy = Math.abs(min.y) + (canvasHeight * spacingFactor);
 
             context.lineCap = "round";
-            context.textBaseline = "top";
             this.canvasContext.scale(scale, scale);
             this.canvasContext.translate(translation.dx, translation.dy);
 

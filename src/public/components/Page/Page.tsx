@@ -1,39 +1,57 @@
 import { Overview } from "@components/Page/Overview/Overview";
 import Sketch from "@components/Page/Sketch/Sketch";
 import { RootState } from "@models/RootState";
-import { Page as PageModel, Point } from "@shared/models";
+import { Point } from "@shared/models";
+// tslint:disable-next-line:no-duplicate-imports
+import * as models from "@shared/models";
+import { fetchPage } from "actions";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Dispatch } from "redux";
 
-export interface PageRouteProps {
+interface PageRouteProps {
     id: string;
 }
 
-export interface PageOwnProps extends RouteComponentProps<PageRouteProps> {
+interface PageOwnProps extends RouteComponentProps<PageRouteProps> {
 }
 
-export interface PageProps {
-    page: PageModel;
+interface PageProps {
+    page: models.Page | null;
 }
 
-export interface PageState {
-    isOverview: boolean;
+interface PageDispatchProps {
+    dispatch: Dispatch<RootState>;
+}
+
+interface PageState {
     sketchCenter: Point;
+    isOverview: boolean;
 }
 
-class Page extends React.Component<PageProps & PageOwnProps, PageState> {
-    constructor(props: PageProps & PageOwnProps) {
+class Page extends React.Component<PageProps & PageOwnProps & PageDispatchProps, PageState> {
+    constructor(props: PageProps & PageOwnProps & PageDispatchProps) {
         super(props);
         this.onOverviewClick = this.onOverviewClick.bind(this);
         this.onNavigateBack = this.onNavigateBack.bind(this);
         this.backToStart = this.backToStart.bind(this);
 
-        this.state = { isOverview: props.page.elements.length > 0, sketchCenter: { x: 0, y: 0 } };
+        this.state = {
+            isOverview: true,
+            sketchCenter: { x: 0, y: 0 }
+        };
+    }
+
+    public componentWillMount() {
+        this.props.dispatch(fetchPage(this.props.match.params.id));
     }
 
     public render() {
+        if (!this.props.page) {
+            return null;
+        }
+
         const content = this.state.isOverview
             ? (
                 <Overview
@@ -68,16 +86,11 @@ class Page extends React.Component<PageProps & PageOwnProps, PageState> {
     }
 }
 
-function mapStateToProps(state: RootState, ownProps: PageOwnProps): PageProps {
-    const page = state.pages.find((p) => p.id === ownProps.match.params.id);
-
-    if (!page) {
-        throw new Error(`Unknown Page with id ${ownProps.match.params.id}`);
-    }
-
+function mapStateToProps(state: RootState): PageProps {
+    const page = state.currentPage;
     return { page };
 }
 
-export default connect<PageProps, {}, PageOwnProps, RootState>(
+export default connect<PageProps, PageDispatchProps, PageOwnProps, RootState>(
     mapStateToProps
 )(Page);

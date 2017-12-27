@@ -1,5 +1,5 @@
 import { RootState } from "@models/RootState";
-import { FontSize, InputMode, PageElement } from "@shared/models";
+import { FontSize, InputMode, Page, PageElement } from "@shared/models";
 import { Action, Dispatch } from "redux";
 
 export enum Actions {
@@ -11,6 +11,8 @@ export enum Actions {
     AddPage,
     FetchPageList,
     ReceivedPageList,
+    FetchPage,
+    ReceivedPage,
     SetError,
     ClearError,
     SetReady
@@ -111,6 +113,41 @@ export interface ReceivedPageListAction extends Action {
 export const receivedPageList = (pageList: Array<{ id: string }>): ReceivedPageListAction => ({
     type: Actions.ReceivedPageList,
     pageList
+});
+
+export interface FetchPageAction extends Action {
+    id: string;
+}
+export const fetchPage = (id: string) => async (dispatch: Dispatch<RootState>) => {
+
+    try {
+        const response = await fetch("api/page/" + id, {
+            method: "get",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.status >= 200 && response.status < 300) {
+            const json = await response.json();
+            dispatch(receivedPage(json));
+        } else {
+            dispatch(setError(response.statusText));
+        }
+    } catch (error) {
+        dispatch(setError(error.message));
+    } finally {
+        dispatch(setReady(true));
+    }
+};
+
+export interface ReceivedPageAction extends Action {
+    page: Page;
+}
+export const receivedPage = (page: Page): ReceivedPageAction => ({
+    type: Actions.ReceivedPage,
+    page
 });
 
 export interface SetErrorAction extends Action {
