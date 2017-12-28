@@ -31,6 +31,25 @@ export class Server {
         await this.init();
         await this.loadDataFromFiles();
         await this.startServer();
+
+        const intervalId = setInterval(async () => {
+            const statuses = await this.repoService.status(dataPath);
+
+            if (status.length > 0) {
+                const { repoUser, repoPassword } = this.config;
+
+                await this.repoService.addAllAndCommit(
+                    dataPath,
+                    "data changed",
+                    "sketchbook bot",
+                    "bot@sketchbook");
+
+                await this.repoService.push(
+                    dataPath,
+                    repoUser,
+                    repoPassword);
+            }
+        }, 10000);
     }
 
     private async init() {
