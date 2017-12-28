@@ -29,7 +29,7 @@ export class PenChooser extends React.Component<PenChooserProps, PenChooserState
     }
     public render() {
         return (
-            <React.Fragment>
+            <>
                 <button
                     onClick={this.openPopup}
                     className={`btn-pen ${this.props.color} ${this.props.strokeWidth}`}
@@ -45,7 +45,7 @@ export class PenChooser extends React.Component<PenChooserProps, PenChooserState
                     <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="m" />
                     <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="l" />
                 </Popup>
-            </React.Fragment>
+            </>
         );
     }
 

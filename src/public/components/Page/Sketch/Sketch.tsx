@@ -35,7 +35,7 @@ interface SketchDispatchProps {
 }
 
 const Sketch: React.SFC<SketchProps & SketchDispatchProps & SketchOwnProps> = (props) => (
-    <React.Fragment>
+    <>
         <SketchCanvas
             inputMode={props.inputMode}
             fontSize={props.fontSize}
@@ -48,7 +48,7 @@ const Sketch: React.SFC<SketchProps & SketchDispatchProps & SketchOwnProps> = (p
             onTextAdded={props.onTextAdded}
         />
         <Menu onNavigateBack={props.onNavigateBack} />
-    </React.Fragment>
+    </>
 );
 
 function mapStateToProps(state: RootState): SketchProps {

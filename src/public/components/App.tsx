@@ -23,7 +23,7 @@ const App: React.SFC<AppProps & AppDispatchProps> = (props) => {
             <button onClick={props.onDismissError}>Dismiss</button></h1>) : null;
 
     return (
-        <React.Fragment>
+        <>
             {errorHeadline}
             <Splash isVisible={!props.ready} />
             <BrowserRouter>
@@ -32,7 +32,7 @@ const App: React.SFC<AppProps & AppDispatchProps> = (props) => {
                     <Route exact path="/page/:id" component={Page} />
                 </Switch>
             </BrowserRouter>
-        </React.Fragment>
+        </>
     );
 };
 

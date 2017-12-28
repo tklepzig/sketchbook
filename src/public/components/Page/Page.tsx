@@ -70,9 +70,9 @@ class Page extends React.Component<PageProps & PageOwnProps & PageDispatchProps,
                 />);
 
         return (
-            <React.Fragment>
+            <>
                 {content}
-            </React.Fragment>
+            </>
         );
     }
 

@@ -91,7 +91,7 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
             : null;
 
         return (
-            <React.Fragment>
+            <>
                 <canvas
                     className="sketch"
                     ref={(canvas) => { this.canvas = canvas; }}
@@ -100,7 +100,7 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
                     {...{ [tapEvents.tapMove]: this.tapMove }}
                 />
                 {textarea}
-            </React.Fragment>);
+            </>);
     }
 
     private tapDown(e: any) {

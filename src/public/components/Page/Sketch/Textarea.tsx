@@ -36,7 +36,7 @@ export class Textarea extends React.Component<TextareaProps, TextareaState> {
         const { width, height } = this.state;
 
         return (
-            <React.Fragment>
+            <>
                 <textarea
                     style={{ top, left, width, height }}
                     ref={(ta) => { this.textarea = ta; }}
@@ -45,7 +45,7 @@ export class Textarea extends React.Component<TextareaProps, TextareaState> {
                     className={`fs-${this.props.fontSize.toString()}`}
                 />
                 <canvas style={{ display: "none" }} ref={(c) => this.canvas = c} />
-            </React.Fragment>);
+            </>);
     }
 
     private onTextChanged(e: React.ChangeEvent<HTMLTextAreaElement>) {
