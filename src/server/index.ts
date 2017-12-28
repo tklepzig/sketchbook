@@ -1,5 +1,5 @@
 import * as bodyParser from "body-parser";
-import { configFile } from "config";
+import { dataPath, pageDirectory } from "config";
 import * as express from "express";
 import * as fs from "fs-extra";
 import * as nconf from "nconf";
@@ -9,7 +9,7 @@ import thunkMiddleware from "redux-thunk";
 import { addElement, addPage, loadPageDetails, loadPageList, loadState } from "./actions";
 import reducers from "./reducers";
 
-nconf.file(configFile).env();
+nconf.argv().env();
 const config = {
     port: nconf.get("port"),
     repoUrl: nconf.get("repoUrl"),
@@ -21,6 +21,15 @@ const port = process.env.PORT || config.port || 80;
 const app = express();
 
 // TODO: push every n minutes if getStatus (from nodegit) shows any changes
+
+// TODO: extract and use async version with await
+if (!fs.pathExistsSync(dataPath)) {
+    if (config.repoUrl) {
+        // clone repo into dataPath
+    } else {
+        fs.mkdirpSync(dataPath);
+    }
+}
 
 const store = createStore(reducers, applyMiddleware(thunkMiddleware));
 
