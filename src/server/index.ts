@@ -3,6 +3,7 @@ import { dataPath, pageDirectory } from "config";
 import * as express from "express";
 import * as fs from "fs-extra";
 import * as nconf from "nconf";
+import * as git from "nodegit";
 import * as path from "path";
 import { applyMiddleware, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
@@ -33,6 +34,15 @@ async function initialize() {
     if (!existsDataPath) {
         if (config.repoUrl) {
             // clone repo into dataPath
+            git.Clone.clone(config.repoUrl, dataPath, {
+                fetchOpts: {
+                    callbacks: {
+                        credentials: () => {
+                            return git.Cred.userpassPlaintextNew(config.repoUser, config.repoPassword);
+                        }
+                    }
+                }
+            });
         } else {
             await fs.mkdirp(dataPath);
         }
