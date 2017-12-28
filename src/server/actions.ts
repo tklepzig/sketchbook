@@ -42,8 +42,11 @@ export const addPage = (pageId: string) =>
             pageId
         });
 
+        const emptyPage: Page = { id: pageId, elements: [] };
         const state = getState();
         await fs.writeFile(path.resolve(pageListFile), JSON.stringify(state.pageList));
+        await fs.ensureDir(pageDirectory);
+        await fs.writeFile(path.resolve(pageDirectory, pageId), JSON.stringify(emptyPage));
     };
 
 export const loadPageList = () =>
