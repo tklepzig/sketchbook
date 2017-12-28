@@ -22,19 +22,28 @@ const app = express();
 
 // TODO: push every n minutes if getStatus (from nodegit) shows any changes
 
-// TODO: extract and use async version with await
-if (!fs.pathExistsSync(dataPath)) {
-    if (config.repoUrl) {
-        // clone repo into dataPath
-    } else {
-        fs.mkdirpSync(dataPath);
+const store = createStore(reducers, applyMiddleware(thunkMiddleware));
+
+initialize()
+    .then(loadData)
+    .then(startServer);
+
+async function initialize() {
+    const existsDataPath = await fs.pathExists(dataPath);
+    if (!existsDataPath) {
+        if (config.repoUrl) {
+            // clone repo into dataPath
+        } else {
+            await fs.mkdirp(dataPath);
+        }
     }
 }
 
-const store = createStore(reducers, applyMiddleware(thunkMiddleware));
+async function loadData() {
+    await store.dispatch(loadState());
+}
 
-// TODO: extract to separate class to avoid then and use async/await
-store.dispatch(loadState()).then(() => {
+function startServer() {
     app.use(bodyParser.json());
     app.use(express.static(path.resolve(__dirname, "..", "public")));
 
@@ -73,4 +82,4 @@ store.dispatch(loadState()).then(() => {
         // tslint:disable-next-line:no-console
         console.log(`listening on *:${port}`);
     });
-});
+}
