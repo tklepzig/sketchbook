@@ -24,43 +24,44 @@ const app = express();
 
 const store = createStore(reducers, applyMiddleware(thunkMiddleware));
 
-store.dispatch(loadState());
+// TODO: extract to separate class to avoid then and use async/await
+store.dispatch(loadState()).then(() => {
+    app.use(bodyParser.json());
+    app.use(express.static(path.resolve(__dirname, "..", "public")));
 
-app.use(bodyParser.json());
-app.use(express.static(path.resolve(__dirname, "..", "public")));
+    app.post("/api/page", (req, res) => {
+        const { pageId } = req.body;
+        store.dispatch(addPage(pageId));
+        res.sendStatus(200);
+    });
+    app.post("/api/element", (req, res) => {
+        const { pageId, element } = req.body;
+        store.dispatch(addElement(pageId, element));
+        res.sendStatus(200);
+    });
 
-app.post("/api/page", (req, res) => {
-    const { pageId } = req.body;
-    store.dispatch(addPage(pageId));
-    res.sendStatus(200);
-});
-app.post("/api/element", (req, res) => {
-    const { pageId, element } = req.body;
-    store.dispatch(addElement(pageId, element));
-    res.sendStatus(200);
-});
+    // store.dispatch(addPage("1"));
+    // store.dispatch(addElement("1", {
+    //     kind: "text",
+    //     text: new Date().toISOString(),
+    //     position: { x: 100, y: 100 },
+    //     measurement: { width: 100, height: 20 },
+    //     fontSize: 20
+    // }));
 
-// store.dispatch(addPage("1"));
-// store.dispatch(addElement("1", {
-//     kind: "text",
-//     text: new Date().toISOString(),
-//     position: { x: 100, y: 100 },
-//     measurement: { width: 100, height: 20 },
-//     fontSize: 20
-// }));
+    app.get("/api/pages", (req, res) => {
+        res.json(store.getState().pageList);
+    });
+    app.get("/api/page/:id", (req, res) => {
+        res.json(store.getState().pageDetails[req.params.id]);
+    });
 
-app.get("/api/pages", (req, res) => {
-    res.json(store.getState().pageList);
-});
-app.get("/api/page/:id", (req, res) => {
-    res.json(store.getState().pageDetails[req.params.id]);
-});
+    app.get("/*", (req, res) => {
+        res.sendFile(path.resolve(path.join(__dirname, "..", "public", "index.html")));
+    });
 
-app.get("/*", (req, res) => {
-    res.sendFile(path.resolve(path.join(__dirname, "..", "public", "index.html")));
-});
-
-app.listen(port, () => {
-    // tslint:disable-next-line:no-console
-    console.log(`listening on *:${port}`);
+    app.listen(port, () => {
+        // tslint:disable-next-line:no-console
+        console.log(`listening on *:${port}`);
+    });
 });
