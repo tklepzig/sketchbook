@@ -32,24 +32,26 @@ export class Server {
         await this.loadDataFromFiles();
         await this.startServer();
 
-        const intervalId = setInterval(async () => {
-            const statuses = await this.repoService.status(dataPath);
+        if (this.config.repoUrl) {
+            const intervalId = setInterval(async () => {
+                const statuses = await this.repoService.status(dataPath);
 
-            if (status.length > 0) {
-                const { repoUser, repoPassword } = this.config;
+                if (statuses.length > 0) {
+                    const { repoUser, repoPassword } = this.config;
 
-                await this.repoService.addAllAndCommit(
-                    dataPath,
-                    "data changed",
-                    "sketchbook bot",
-                    "bot@sketchbook");
+                    await this.repoService.addAllAndCommit(
+                        dataPath,
+                        "data changed",
+                        "sketchbook bot",
+                        "bot@sketchbook");
 
-                await this.repoService.push(
-                    dataPath,
-                    repoUser,
-                    repoPassword);
-            }
-        }, 10000);
+                    await this.repoService.push(
+                        dataPath,
+                        repoUser,
+                        repoPassword);
+                }
+            }, 10000);
+        }
     }
 
     private async init() {
@@ -89,7 +91,7 @@ export class Server {
             res.sendStatus(200);
         });
 
-        this.store.dispatch(addPage("1"));
+        // this.store.dispatch(addPage("1"));
         // store.dispatch(addElement("1", {
         //     kind: "text",
         //     text: new Date().toISOString(),
