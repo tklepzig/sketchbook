@@ -76,10 +76,11 @@ export const loadPageDetails = () =>
 
         const files = await fs.readdir(pageDirectory);
         const pageDetails: { [id: string]: Page; } = {};
-        files.forEach(async (file) => {
+
+        for (const file of files) {
             const content = await fs.readFile(path.resolve(pageDirectory, file));
             pageDetails[file] = JSON.parse(content.toString());
-        });
+        }
         dispatch(pageDetailsLoaded(pageDetails));
     };
 
