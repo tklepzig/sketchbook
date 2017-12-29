@@ -10,7 +10,7 @@ interface PageListProps {
 
 export const PageList: React.SFC<PageListProps> = (props) => {
     const onClick = () => {
-        props.onClick("/page/1");
+        props.onClick("1");
     };
 
     const pageList = props.pageList.map((page) => (

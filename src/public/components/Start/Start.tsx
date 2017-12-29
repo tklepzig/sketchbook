@@ -13,7 +13,7 @@ interface StartProps {
 
 interface StartDispatchProps {
     dispatch: Dispatch<RootState>;
-    onAddPage: () => void;
+    onAddPage: (id: string) => void;
 
 }
 
@@ -24,6 +24,7 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
     constructor(props: StartProps & StartOwnProps & StartDispatchProps) {
         super(props);
         this.onPageClick = this.onPageClick.bind(this);
+        this.onAddPageClick = this.onAddPageClick.bind(this);
     }
 
     public componentWillMount() {
@@ -34,16 +35,22 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
         return (
             <>
             <PageList onClick={this.onPageClick} pageList={this.props.pageList} />
-            <button onClick={this.props.onAddPage}>Add</button>
+            <button onClick={this.onAddPageClick}>Add</button>
             </>
         );
     }
 
-    private onPageClick(path: string) {
-        this.props.history.replace(path);
+    private onPageClick(id: string) {
+        this.props.history.replace(`/page/${id}`);
         if ("ontouchstart" in window) {
             fullscreen.request(document.body);
         }
+    }
+
+    private onAddPageClick() {
+        const nextPageId = (this.props.pageList.length + 1).toString();
+        this.props.onAddPage(nextPageId);
+        this.onPageClick(nextPageId);
     }
 }
 
@@ -55,7 +62,7 @@ function mapStateToProps(state: RootState): StartProps {
 function mapDispatchToProps(dispatch: Dispatch<RootState>) {
     return {
         dispatch,
-        onAddPage: () => dispatch(addPage("1"))
+        onAddPage: (id: string) => dispatch(addPage(id))
     };
 }
 
