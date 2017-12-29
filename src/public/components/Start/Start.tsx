@@ -1,4 +1,4 @@
-import { PageList } from "@components/Start/PageList";
+import { PageList } from "@components/Start/PageList/PageList";
 import { RootState } from "@models/RootState";
 import fullscreen from "@services/Fullscreen";
 import { Page } from "@shared/models";

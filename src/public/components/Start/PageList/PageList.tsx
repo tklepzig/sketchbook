@@ -1,3 +1,4 @@
+import { PageButton } from "@components/Start/PageList/PageButton";
 import { Page } from "@shared/models";
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
@@ -9,13 +10,13 @@ interface PageListProps {
 }
 
 export const PageList: React.SFC<PageListProps> = (props) => {
-    const onClick = () => {
-        props.onClick("1");
+    const onClick = (id: string) => {
+        props.onClick(id);
     };
 
     const pageList = props.pageList.map((page) => (
         <li key={page.id}>
-            <button onClick={onClick}>Page {page.id}</button>
+            <PageButton id={page.id} onClick={onClick} />
         </li>));
     return <ul>{pageList}</ul>;
 };
