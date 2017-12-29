@@ -2,6 +2,7 @@ import { FontSize, InputMode, Page, Pen } from "@shared/models";
 import {
     Actions,
     AddElementAction,
+    AddPageAction,
     ReceivedPageAction,
     ReceivedPageListAction,
     SetColorAction,
@@ -56,6 +57,9 @@ export const pageList: Reducer<Array<{ id: string }>> =
         switch (action.type) {
             case Actions.ReceivedPageList:
                 return (action as ReceivedPageListAction).pageList;
+            case Actions.AddPage:
+                const { pageId: id } = action as AddPageAction;
+                return [...state, { id }];
             default:
                 return state;
         }

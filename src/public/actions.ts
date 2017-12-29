@@ -83,6 +83,34 @@ export const addElement = (pageId: string, element: PageElement) => (dispatch: D
         .catch((error) => { dispatch(setError(error.message)); });
 };
 
+export interface AddPageAction extends Action {
+    pageId: string;
+}
+export const addPage = (pageId: string) => (dispatch: Dispatch<RootState>) => {
+
+    dispatch({
+        type: Actions.AddPage,
+        pageId
+    });
+
+    fetch("api/page", {
+        method: "post",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pageId }),
+    })
+        .then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                console.dir("post succeeded");
+            } else {
+                dispatch(setError(response.statusText));
+            }
+        })
+        .catch((error) => { dispatch(setError(error.message)); });
+};
+
 export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
 
     try {
