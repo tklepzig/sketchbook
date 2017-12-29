@@ -18,8 +18,6 @@ export interface Config {
     repoPassword: string;
 }
 export class Server {
-    // TODO: push every n minutes if getStatus (from nodegit) shows any changes
-
     private store: Store<RootState>;
     private repoService: RepoService;
     constructor(private config: Config) {
@@ -33,7 +31,7 @@ export class Server {
         await this.startServer();
 
         if (this.config.repoUrl) {
-            const intervalId = setInterval(async () => {
+            setInterval(async () => {
                 const statuses = await this.repoService.status(dataPath);
 
                 if (statuses.length > 0) {
@@ -50,7 +48,7 @@ export class Server {
                         repoUser,
                         repoPassword);
                 }
-            }, 10000);
+            }, 5 * 60 * 1000);
         }
     }
 
