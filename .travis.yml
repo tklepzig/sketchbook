@@ -11,7 +11,7 @@ node_js:
 branches:
   only:
   - master
-after_success:
+script:
   - docker build -t $DOCKER_IMAGE --build-arg azure_user="$AZURE_WA_USERNAME"  --build-arg azure_pwd="$AZURE_WA_PASSWORD"  --build-arg azure_site="$AZURE_WA_SITE" .
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker push $DOCKER_IMAGE
