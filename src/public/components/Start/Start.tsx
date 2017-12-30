@@ -8,12 +8,12 @@ import { connect, Dispatch, DispatchProp, ProviderProps } from "react-redux";
 import { RouteComponentProps } from "react-router";
 
 interface StartProps {
-    pageList: Array<{ id: string }>;
+    pageList: Page[];
 }
 
 interface StartDispatchProps {
     dispatch: Dispatch<RootState>;
-    onAddPage: (id: string) => void;
+    onAddPage: (pageNumber: number, name: string) => void;
 
 }
 
@@ -40,17 +40,23 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
         );
     }
 
-    private onPageClick(id: string) {
-        this.props.history.replace(`/page/${id}`);
+    private onPageClick(pageNumber: number) {
+        this.props.history.replace(`/page/${pageNumber}`);
         if ("ontouchstart" in window) {
             fullscreen.request(document.body);
         }
     }
 
     private onAddPageClick() {
-        const nextPageId = (this.props.pageList.length + 1).toString();
-        this.props.onAddPage(nextPageId);
-        this.onPageClick(nextPageId);
+        let nextPageNumber = 1;
+        for (const page of this.props.pageList) {
+            if (page.pageNumber > nextPageNumber) {
+                nextPageNumber = page.pageNumber;
+            }
+        }
+
+        this.props.onAddPage(nextPageNumber, "");
+        this.onPageClick(nextPageNumber);
     }
 }
 
@@ -62,7 +68,8 @@ function mapStateToProps(state: RootState): StartProps {
 function mapDispatchToProps(dispatch: Dispatch<RootState>) {
     return {
         dispatch,
-        onAddPage: (id: string) => dispatch(addPage(id))
+        onAddPage: (pageNumber: number, name: string) =>
+            dispatch(addPage(pageNumber, name))
     };
 }
 

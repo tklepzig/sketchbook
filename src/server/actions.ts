@@ -1,4 +1,4 @@
-import { Line, Page, PageElement, Text } from "@shared/models";
+import { Line, Page, PageDetails, PageElement, Text } from "@shared/models";
 import { pageDirectory, pageListFile } from "config";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -16,37 +16,39 @@ export enum Actions {
 
 export interface AddElementAction extends Action {
     element: PageElement;
-    pageId: string;
+    pageNumber: number;
 }
-export const addElement = (pageId: string, element: PageElement) =>
+export const addElement = (pageNumber: number, element: PageElement) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
 
         dispatch({
             type: Actions.AddElement,
             element,
-            pageId
+            pageNumber
         });
 
         const state = getState();
-        const page = state.pageDetails[pageId];
-        await fs.writeFile(path.resolve(pageDirectory, pageId), JSON.stringify(page));
+        const page = state.pageDetails[pageNumber];
+        await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(page));
     };
 
 export interface AddPageAction extends Action {
-    pageId: string;
+    pageNumber: number;
+    name: string;
 }
-export const addPage = (pageId: string) =>
+export const addPage = (pageNumber: number, name: string) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
         dispatch({
             type: Actions.AddPage,
-            pageId
+            pageNumber,
+            name
         });
 
-        const emptyPage: Page = { id: pageId, elements: [] };
+        const emptyPage: PageDetails = { name, pageNumber, elements: [] };
         const state = getState();
         await fs.writeFile(path.resolve(pageListFile), JSON.stringify(state.pageList));
         await fs.ensureDir(pageDirectory);
-        await fs.writeFile(path.resolve(pageDirectory, pageId), JSON.stringify(emptyPage));
+        await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(emptyPage));
     };
 
 export const loadPageList = () =>
@@ -62,10 +64,10 @@ export const loadPageList = () =>
     };
 
 export interface PageListLoadedAction extends Action {
-    pageList: Array<{ id: string }>;
+    pageList: Page[];
 }
 export const pageListLoaded =
-    (pageList: Array<{ id: string }>): PageListLoadedAction => ({
+    (pageList: Page[]): PageListLoadedAction => ({
         type: Actions.PageListLoaded,
         pageList
     });
@@ -78,20 +80,21 @@ export const loadPageDetails = () =>
         }
 
         const files = await fs.readdir(pageDirectory);
-        const pageDetails: { [id: string]: Page; } = {};
+        const pageDetails: { [pageNumber: number]: PageDetails; } = {};
 
         for (const file of files) {
+            const pageNumber = +file;
             const content = await fs.readFile(path.resolve(pageDirectory, file));
-            pageDetails[file] = JSON.parse(content.toString());
+            pageDetails[pageNumber] = JSON.parse(content.toString());
         }
         dispatch(pageDetailsLoaded(pageDetails));
     };
 
 export interface PageDetailsLoadedAction extends Action {
-    pageDetails: { [id: string]: Page; };
+    pageDetails: { [pageNumber: number]: PageDetails; };
 }
 export const pageDetailsLoaded =
-    (pageDetails: { [id: string]: Page; }): PageDetailsLoadedAction => ({
+    (pageDetails: { [pageNumber: number]: PageDetails; }): PageDetailsLoadedAction => ({
         type: Actions.PageDetailsLoaded,
         pageDetails
     });

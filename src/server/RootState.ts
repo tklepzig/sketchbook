@@ -1,5 +1,5 @@
-import { Page } from "@shared/models";
+import { Page, PageDetails } from "@shared/models";
 export interface RootState {
-    pageList: Array<{ id: string }>;
-    pageDetails: { [id: string]: Page; };
+    pageList: Page[];
+    pageDetails: { [pageNumber: number]: PageDetails; };
 }

@@ -79,13 +79,13 @@ export class Server {
         app.use(express.static(path.resolve(__dirname, "..", "public")));
 
         app.post("/api/page", (req: Request, res: Response) => {
-            const { pageId } = req.body;
-            this.store.dispatch(addPage(pageId));
+            const { pageNumber, name } = req.body;
+            this.store.dispatch(addPage(pageNumber, name));
             res.sendStatus(200);
         });
         app.post("/api/element", (req, res) => {
-            const { pageId, element } = req.body;
-            this.store.dispatch(addElement(pageId, element));
+            const { pageNumber, element } = req.body;
+            this.store.dispatch(addElement(pageNumber, element));
             res.sendStatus(200);
         });
 
@@ -101,8 +101,8 @@ export class Server {
         app.get("/api/pages", (req, res) => {
             res.json(this.store.getState().pageList);
         });
-        app.get("/api/page/:id", (req, res) => {
-            res.json(this.store.getState().pageDetails[req.params.id]);
+        app.get("/api/page/:pageNumber", (req, res) => {
+            res.json(this.store.getState().pageDetails[req.params.pageNumber]);
         });
 
         app.get("/*", (req, res) => {

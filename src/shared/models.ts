@@ -21,9 +21,15 @@ export interface Line {
 
 export type PageElement = Line | Text;
 
-export interface Page {
-    id: string;
+export interface PageDetails {
+    pageNumber: number;
+    name: string;
     elements: PageElement[];
+}
+
+export interface Page {
+    pageNumber: number;
+    name: string;
 }
 
 export interface Point {

@@ -7,6 +7,7 @@ import {
     InputMode,
     Line,
     Page,
+    PageDetails,
     Point,
     Text
 } from "@shared/models";
@@ -24,7 +25,7 @@ export interface SketchProps {
 }
 
 export interface SketchOwnProps {
-    page: Page;
+    page: PageDetails;
     center: Point;
     onNavigateBack: () => void;
 }
@@ -112,8 +113,8 @@ function mapStateToProps(state: RootState): SketchProps {
 
 function mapDispatchToProps(dispatch: Dispatch<RootState>, ownProps: SketchOwnProps) {
     return {
-        onLineAdded: (line: Line) => dispatch(addElement(ownProps.page.id, line)),
-        onTextAdded: (text: Text) => dispatch(addElement(ownProps.page.id, text))
+        onLineAdded: (line: Line) => dispatch(addElement(ownProps.page.pageNumber, line)),
+        onTextAdded: (text: Text) => dispatch(addElement(ownProps.page.pageNumber, text))
     };
 }
 

@@ -1,10 +1,10 @@
-import { FontSize, InputMode, Page, Pen } from "@shared/models";
+import { FontSize, InputMode, Page, PageDetails, Pen } from "@shared/models";
 export interface RootState {
     pen: Pen;
     fontSize: FontSize;
     inputMode: InputMode;
     error: string;
     ready: boolean;
-    pageList: Array<{ id: string }>;
-    currentPage: Page | null;
+    pageList: Page[];
+    currentPage: PageDetails | null;
 }

@@ -29,7 +29,7 @@ const App: React.SFC<AppProps & AppDispatchProps> = (props) => {
             <BrowserRouter>
                 <Switch>
                     <Route exact path="/" component={Start} />
-                    <Route exact path="/page/:id" component={Page} />
+                    <Route exact path="/page/:pageNumber" component={Page} />
                 </Switch>
             </BrowserRouter>
         </>

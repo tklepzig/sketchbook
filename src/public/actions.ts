@@ -1,5 +1,5 @@
 import { RootState } from "@models/RootState";
-import { FontSize, InputMode, Page, PageElement } from "@shared/models";
+import { FontSize, InputMode, Page, PageDetails, PageElement } from "@shared/models";
 import { Action, Dispatch } from "redux";
 
 export enum Actions {
@@ -52,14 +52,14 @@ export const setInputMode = (inputMode: InputMode): SetInputModeAction => ({
 
 export interface AddElementAction extends Action {
     element: PageElement;
-    pageId: string;
+    pageNumber: number;
 }
-export const addElement = (pageId: string, element: PageElement) => (dispatch: Dispatch<RootState>) => {
+export const addElement = (pageNumber: number, element: PageElement) => (dispatch: Dispatch<RootState>) => {
 
     dispatch({
         type: Actions.AddElement,
         element,
-        pageId
+        pageNumber
     });
 
     fetch("api/element", {
@@ -70,7 +70,7 @@ export const addElement = (pageId: string, element: PageElement) => (dispatch: D
         },
         body: JSON.stringify({
             element,
-            pageId
+            pageNumber
         }),
     })
         .then((response) => {
@@ -84,13 +84,15 @@ export const addElement = (pageId: string, element: PageElement) => (dispatch: D
 };
 
 export interface AddPageAction extends Action {
-    pageId: string;
+    pageNumber: number;
+    name: string;
 }
-export const addPage = (pageId: string) => (dispatch: Dispatch<RootState>) => {
+export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch<RootState>) => {
 
     dispatch({
         type: Actions.AddPage,
-        pageId
+        pageNumber,
+        name
     });
 
     fetch("api/page", {
@@ -99,7 +101,7 @@ export const addPage = (pageId: string) => (dispatch: Dispatch<RootState>) => {
             "Accept": "application/json",
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ pageId }),
+        body: JSON.stringify({ pageNumber, name }),
     })
         .then((response) => {
             if (response.status >= 200 && response.status < 300) {
@@ -136,20 +138,20 @@ export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
 };
 
 export interface ReceivedPageListAction extends Action {
-    pageList: Array<{ id: string }>;
+    pageList: Page[];
 }
-export const receivedPageList = (pageList: Array<{ id: string }>): ReceivedPageListAction => ({
+export const receivedPageList = (pageList: Page[]): ReceivedPageListAction => ({
     type: Actions.ReceivedPageList,
     pageList
 });
 
 export interface FetchPageAction extends Action {
-    id: string;
+    pageNumber: number;
 }
-export const fetchPage = (id: string) => async (dispatch: Dispatch<RootState>) => {
+export const fetchPage = (pageNumber: number) => async (dispatch: Dispatch<RootState>) => {
 
     try {
-        const response = await fetch("api/page/" + id, {
+        const response = await fetch("api/page/" + pageNumber, {
             method: "get",
             headers: {
                 "Accept": "application/json",
@@ -171,9 +173,9 @@ export const fetchPage = (id: string) => async (dispatch: Dispatch<RootState>) =
 };
 
 export interface ReceivedPageAction extends Action {
-    page: Page;
+    page: PageDetails;
 }
-export const receivedPage = (page: Page): ReceivedPageAction => ({
+export const receivedPage = (page: PageDetails): ReceivedPageAction => ({
     type: Actions.ReceivedPage,
     page
 });

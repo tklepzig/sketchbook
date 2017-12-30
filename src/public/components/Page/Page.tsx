@@ -1,9 +1,7 @@
 import { Overview } from "@components/Page/Overview/Overview";
 import Sketch from "@components/Page/Sketch/Sketch";
 import { RootState } from "@models/RootState";
-import { Point } from "@shared/models";
-// tslint:disable-next-line:no-duplicate-imports
-import * as models from "@shared/models";
+import { PageDetails, Point } from "@shared/models";
 import { fetchPage } from "actions";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -11,14 +9,14 @@ import { RouteComponentProps } from "react-router";
 import { Dispatch } from "redux";
 
 interface PageRouteProps {
-    id: string;
+    pageNumber: number;
 }
 
 interface PageOwnProps extends RouteComponentProps<PageRouteProps> {
 }
 
 interface PageProps {
-    page: models.Page | null;
+    page: PageDetails | null;
 }
 
 interface PageDispatchProps {
@@ -47,7 +45,7 @@ class Page extends React.Component<PageProps & PageOwnProps & PageDispatchProps,
         // make sure the web font has been loaded before the page is fetched from server
         document.fonts.load("1px Handlee");
         await document.fonts.ready;
-        this.props.dispatch(fetchPage(this.props.match.params.id));
+        this.props.dispatch(fetchPage(this.props.match.params.pageNumber));
     }
 
     public render() {

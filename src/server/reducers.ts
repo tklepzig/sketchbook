@@ -1,14 +1,14 @@
 import { Action, AnyAction, combineReducers, Reducer } from "redux";
-import { Page } from "../shared/models";
+import { Page, PageDetails } from "../shared/models";
 import { Actions, AddElementAction, AddPageAction, PageDetailsLoadedAction, PageListLoadedAction } from "./actions";
 import { RootState } from "./RootState";
 
-const pageList: Reducer<Array<{ id: string }>> =
-    (state = [], action: AnyAction): Array<{ id: string }> => {
+const pageList: Reducer<Page[]> =
+    (state = [], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.AddPage:
-                const { pageId } = action as AddPageAction;
-                return [...state, { id: pageId }];
+                const { pageNumber, name } = action as AddPageAction;
+                return [...state, { pageNumber, name }];
             case Actions.PageListLoaded:
                 return (action as PageListLoadedAction).pageList;
             default:
@@ -16,19 +16,19 @@ const pageList: Reducer<Array<{ id: string }>> =
         }
     };
 
-const pageDetails: Reducer<{ [id: string]: Page; }> =
-    (state = {}, action: AnyAction): { [id: string]: Page; } => {
+const pageDetails: Reducer<{ [pageNumber: number]: PageDetails; }> =
+    (state = {}, action: AnyAction): { [pageNumber: number]: PageDetails; } => {
         switch (action.type) {
             case Actions.AddPage:
                 {
-                    const { pageId } = action as AddElementAction;
-                    return { ...state, [pageId]: { id: pageId, elements: [] } };
+                    const { pageNumber, name } = action as AddPageAction;
+                    return { ...state, [pageNumber]: { name, pageNumber, elements: [] } };
                 }
             case Actions.AddElement:
                 {
-                    const { pageId, element } = action as AddElementAction;
-                    const page = state[pageId];
-                    return { ...state, [pageId]: { ...page, elements: [...page.elements, element] } };
+                    const { pageNumber, element } = action as AddElementAction;
+                    const page = state[pageNumber];
+                    return { ...state, [pageNumber]: { ...page, elements: [...page.elements, element] } };
                 }
             case Actions.PageDetailsLoaded:
                 return (action as PageDetailsLoadedAction).pageDetails;

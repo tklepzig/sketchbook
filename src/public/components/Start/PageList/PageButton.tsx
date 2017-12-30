@@ -1,11 +1,11 @@
 import * as React from "react";
 
 export interface PageButtonProps {
-    id: string;
-    onClick: (id: string) => void;
+    pageNumber: number;
+    onClick: (pageNumber: number) => void;
 }
 
 export const PageButton: React.SFC<PageButtonProps> = (props) => {
-    const onClick = () => props.onClick(props.id);
-    return <button onClick={onClick}>{`Page ${props.id}`}</button>;
+    const onClick = () => props.onClick(props.pageNumber);
+    return <button onClick={onClick}>{`Page ${props.pageNumber}`}</button>;
 };

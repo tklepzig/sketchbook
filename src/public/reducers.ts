@@ -1,4 +1,4 @@
-import { FontSize, InputMode, Page, Pen } from "@shared/models";
+import { FontSize, InputMode, Page, PageDetails, Pen } from "@shared/models";
 import {
     Actions,
     AddElementAction,
@@ -52,26 +52,26 @@ export const inputMode: Reducer<InputMode> =
         }
     };
 
-export const pageList: Reducer<Array<{ id: string }>> =
-    (state = [], action: AnyAction): Array<{ id: string }> => {
+export const pageList: Reducer<Page[]> =
+    (state = [], action: AnyAction): Page[] => {
         switch (action.type) {
             case Actions.ReceivedPageList:
                 return (action as ReceivedPageListAction).pageList;
             case Actions.AddPage:
-                const { pageId: id } = action as AddPageAction;
-                return [...state, { id }];
+                const { pageNumber, name } = action as AddPageAction;
+                return [...state, { pageNumber, name }];
             default:
                 return state;
         }
     };
 
-export const currentPage: Reducer<Page | null> = (state = null, action: AnyAction) => {
+export const currentPage: Reducer<PageDetails | null> = (state = null, action: AnyAction) => {
     switch (action.type) {
         case Actions.ReceivedPage:
             return (action as ReceivedPageAction).page;
         case Actions.AddElement:
-            const { pageId, element } = action as AddElementAction;
-            if (!state || state.id !== pageId) {
+            const { pageNumber, element } = action as AddElementAction;
+            if (!state || state.pageNumber !== pageNumber) {
                 return state;
             }
             return { ...state, elements: [...state.elements, element] };
