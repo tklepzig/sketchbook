@@ -16,6 +16,7 @@ RUN yarn
 FROM alpine
 COPY --from=builder /app/dist/ /app
 WORKDIR /app
-RUN apk add --no-cache nodejs
+RUN apk add --no-cache nodejs curl libcurl \
+    && ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4
 EXPOSE 8080
 CMD npm start
