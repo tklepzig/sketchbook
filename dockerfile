@@ -1,10 +1,10 @@
-FROM alpine as builder
+FROM frolvlad/alpine-gcc as builder
 ARG azure_user
 ARG azure_pwd
 ARG azure_site
 COPY . /app
 WORKDIR /app
-RUN apk add --no-cache nodejs yarn git
+RUN apk add --no-cache nodejs yarn git openssl-dev
 RUN yarn && npm run build
 RUN git init
 RUN git config user.email "deploy@docker" && git config user.name "deploy from docker"
