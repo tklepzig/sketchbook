@@ -48,12 +48,13 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
     }
 
     private onAddPageClick() {
-        let nextPageNumber = 1;
+        let maxPageNumber = 0;
         for (const page of this.props.pageList) {
-            if (page.pageNumber > nextPageNumber) {
-                nextPageNumber = page.pageNumber;
+            if (page.pageNumber > maxPageNumber) {
+                maxPageNumber = page.pageNumber;
             }
         }
+        const nextPageNumber = maxPageNumber + 1;
 
         this.props.onAddPage(nextPageNumber, "");
         this.onPageClick(nextPageNumber);
