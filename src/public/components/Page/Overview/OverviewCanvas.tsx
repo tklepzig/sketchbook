@@ -42,6 +42,10 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         window.removeEventListener("resize", this.resize);
     }
 
+    public componentWillReceiveProps() {
+        this.generateOverview();
+    }
+
     public render() {
         return (
             <canvas

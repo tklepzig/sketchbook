@@ -13,6 +13,7 @@ export enum Actions {
     ReceivedPageList,
     FetchPage,
     ReceivedPage,
+    ClearCurrentPage,
     SetError,
     ClearError,
     SetReady
@@ -178,6 +179,10 @@ export interface ReceivedPageAction extends Action {
 export const receivedPage = (page: PageDetails): ReceivedPageAction => ({
     type: Actions.ReceivedPage,
     page
+});
+
+export const clearCurrentPage = (): Action => ({
+    type: Actions.ClearCurrentPage
 });
 
 export interface SetErrorAction extends Action {

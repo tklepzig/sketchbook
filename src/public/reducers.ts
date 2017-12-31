@@ -75,6 +75,8 @@ export const currentPage: Reducer<PageDetails | null> = (state = null, action: A
                 return state;
             }
             return { ...state, elements: [...state.elements, element] };
+        case Actions.ClearCurrentPage:
+            return null;
         default:
             return state;
     }

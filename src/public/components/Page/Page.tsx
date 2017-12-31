@@ -2,7 +2,7 @@ import { Overview } from "@components/Page/Overview/Overview";
 import Sketch from "@components/Page/Sketch/Sketch";
 import { RootState } from "@models/RootState";
 import { PageDetails, Point } from "@shared/models";
-import { fetchPage } from "actions";
+import { clearCurrentPage, fetchPage } from "actions";
 import * as React from "react";
 import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router";
@@ -83,6 +83,7 @@ class Page extends React.Component<PageProps & PageOwnProps & PageDispatchProps,
     }
 
     private backToStart() {
+        this.props.dispatch(clearCurrentPage());
         this.props.history.replace("/");
     }
 }
