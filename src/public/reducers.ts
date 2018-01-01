@@ -3,6 +3,7 @@ import {
     Actions,
     AddElementAction,
     AddPageAction,
+    DeletePageAction,
     ReceivedPageAction,
     ReceivedPageListAction,
     SetColorAction,
@@ -58,8 +59,15 @@ export const pageList: Reducer<Page[]> =
             case Actions.ReceivedPageList:
                 return (action as ReceivedPageListAction).pageList;
             case Actions.AddPage:
-                const { pageNumber, name } = action as AddPageAction;
-                return [...state, { pageNumber, name }];
+                {
+                    const { pageNumber, name } = action as AddPageAction;
+                    return [...state, { pageNumber, name }];
+                }
+            case Actions.DeletePage:
+                {
+                    const { pageNumber } = action as DeletePageAction;
+                    return state.filter((page) => page.pageNumber !== pageNumber);
+                }
             default:
                 return state;
         }

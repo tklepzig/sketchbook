@@ -2,7 +2,7 @@ import { PageList } from "@components/Start/PageList/PageList";
 import { RootState } from "@models/RootState";
 import fullscreen from "@services/Fullscreen";
 import { Page } from "@shared/models";
-import { addPage, fetchPageList } from "actions";
+import { addPage, deletePage, fetchPageList } from "actions";
 import * as React from "react";
 import { connect, Dispatch, DispatchProp, ProviderProps } from "react-redux";
 import { RouteComponentProps } from "react-router";
@@ -14,7 +14,7 @@ interface StartProps {
 interface StartDispatchProps {
     dispatch: Dispatch<RootState>;
     onAddPage: (pageNumber: number, name: string) => void;
-
+    onDeletePage: (pageNumber: number) => void;
 }
 
 export interface StartOwnProps extends RouteComponentProps<any> {
@@ -34,7 +34,11 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
     public render() {
         return (
             <>
-            <PageList onClick={this.onPageClick} pageList={this.props.pageList} />
+            <PageList
+                onDeletePage={this.props.onDeletePage}
+                onClick={this.onPageClick}
+                pageList={this.props.pageList}
+            />
             <button onClick={this.onAddPageClick}>Add</button>
             </>
         );
@@ -70,7 +74,9 @@ function mapDispatchToProps(dispatch: Dispatch<RootState>) {
     return {
         dispatch,
         onAddPage: (pageNumber: number, name: string) =>
-            dispatch(addPage(pageNumber, name))
+            dispatch(addPage(pageNumber, name)),
+        onDeletePage: (pageNumber: number) =>
+            dispatch(deletePage(pageNumber))
     };
 }
 

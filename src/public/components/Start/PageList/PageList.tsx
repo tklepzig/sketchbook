@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 interface PageListProps {
     pageList: Page[];
     onClick: (pageNumber: number) => void;
+    onDeletePage: (pageNumber: number) => void;
 }
 
 export const PageList: React.SFC<PageListProps> = (props) => {
@@ -16,8 +17,11 @@ export const PageList: React.SFC<PageListProps> = (props) => {
 
     const pageList = props.pageList.map((page) => (
         <li key={page.pageNumber}>
-            <PageButton pageNumber={page.pageNumber} onClick={onClick} />
-            <button disabled>Delete</button>
+            <PageButton
+                onDeletePage={props.onDeletePage}
+                pageNumber={page.pageNumber}
+                onClick={onClick}
+            />
         </li>));
     return <ul>{pageList}</ul>;
 };

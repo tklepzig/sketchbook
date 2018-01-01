@@ -9,6 +9,7 @@ export enum Actions {
     SetInputMode,
     AddElement,
     AddPage,
+    DeletePage,
     FetchPageList,
     ReceivedPageList,
     FetchPage,
@@ -107,6 +108,34 @@ export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch
         .then((response) => {
             if (response.status >= 200 && response.status < 300) {
                 console.dir("post succeeded");
+            } else {
+                dispatch(setError(response.statusText));
+            }
+        })
+        .catch((error) => { dispatch(setError(error.message)); });
+};
+
+export interface DeletePageAction extends Action {
+    pageNumber: number;
+}
+export const deletePage = (pageNumber: number) => (dispatch: Dispatch<RootState>) => {
+
+    dispatch({
+        type: Actions.DeletePage,
+        pageNumber
+    });
+
+    fetch("api/page", {
+        method: "delete",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pageNumber }),
+    })
+        .then((response) => {
+            if (response.status >= 200 && response.status < 300) {
+                console.dir("delete succeeded");
             } else {
                 dispatch(setError(response.statusText));
             }
