@@ -17,6 +17,7 @@ export const PageList: React.SFC<PageListProps> = (props) => {
     const pageList = props.pageList.map((page) => (
         <li key={page.pageNumber}>
             <PageButton pageNumber={page.pageNumber} onClick={onClick} />
+            <button disabled>Delete</button>
         </li>));
     return <ul>{pageList}</ul>;
 };
