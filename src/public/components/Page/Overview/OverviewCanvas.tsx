@@ -102,6 +102,9 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
                 return;
             }
 
+            this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
             let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
             let canvasHeight = Math.abs(min.y) + Math.abs(max.y);
 
