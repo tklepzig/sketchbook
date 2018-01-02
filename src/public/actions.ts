@@ -66,6 +66,9 @@ export const addElement = (pageNumber: number, element: PageElement) => (dispatc
 
     fetch("api/element", {
         method: "post",
+        credentials: "include",
+        cache: "no-cache",
+        mode: "cors",
         headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
@@ -99,6 +102,9 @@ export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch
 
     fetch("api/page", {
         method: "post",
+        credentials: "include",
+        cache: "no-cache",
+        mode: "cors",
         headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
@@ -127,6 +133,9 @@ export const deletePage = (pageNumber: number) => (dispatch: Dispatch<RootState>
 
     fetch("api/page", {
         method: "delete",
+        credentials: "include",
+        cache: "no-cache",
+        mode: "cors",
         headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
@@ -157,8 +166,6 @@ export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
             }
         });
 
-        console.dir(response);
-
         if (response.status >= 200 && response.status < 300) {
             const json = await response.json();
             dispatch(receivedPageList(json));
@@ -167,7 +174,6 @@ export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
         }
     } catch (error) {
         dispatch(setError(error.message));
-        throw error;
     } finally {
         dispatch(setReady(true));
     }
@@ -189,6 +195,9 @@ export const fetchPage = (pageNumber: number) => async (dispatch: Dispatch<RootS
     try {
         const response = await fetch("api/page/" + pageNumber, {
             method: "get",
+            credentials: "include",
+            cache: "no-cache",
+            mode: "cors",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
