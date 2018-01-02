@@ -148,11 +148,18 @@ export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
     try {
         const response = await fetch("api/pages", {
             method: "get",
+            credentials: "include",
+            cache: "no-cache",
+            mode: "cors",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-            },
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Origin": "true"
+            }
         });
+
+        console.dir(response);
 
         if (response.status >= 200 && response.status < 300) {
             const json = await response.json();
@@ -162,6 +169,7 @@ export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
         }
     } catch (error) {
         dispatch(setError(error.message));
+        throw error;
     } finally {
         dispatch(setReady(true));
     }
