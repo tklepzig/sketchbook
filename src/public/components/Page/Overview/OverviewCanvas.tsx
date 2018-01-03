@@ -59,8 +59,9 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
     private tapUp(e: any) {
         const downPoint = tapEvents.getTapPosition(e);
         // add offset since canvas is not at position 0, 0
-        downPoint.x -= 15;
-        downPoint.y -= 61;
+        const { x, y } = this.canvasContext.getPosition();
+        downPoint.x -= x;
+        downPoint.y -= y;
 
         const tapDownPoint = this.canvasContext.getTransformedPoint(downPoint);
         this.props.onClick(tapDownPoint);

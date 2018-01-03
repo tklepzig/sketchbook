@@ -139,4 +139,13 @@ export class CanvasContext {
 
         action(context);
     }
+
+    public getPosition(): Point {
+        const context = this.getContext();
+        if (context == null) {
+            return { x: 0, y: 0 };
+        }
+
+        return { x: context.canvas.offsetLeft, y: context.canvas.offsetTop };
+    }
 }
