@@ -1,46 +1,41 @@
-import { Action, AnyAction, combineReducers, Reducer } from "redux";
+import { combineReducers, Reducer } from "@shared/redux";
 import { Page, PageDetails } from "../shared/models";
-import {
-    Actions,
-    AddElementAction,
-    AddPageAction,
-    DeletePageAction,
-    PageDetailsLoadedAction,
-    PageListLoadedAction
-} from "./actions";
+import { ActionTypes, AppAction } from "./actions";
 import { RootState } from "./RootState";
 
-const pageList: Reducer<Page[]> =
-    (state = [], action: AnyAction): Page[] => {
+type AppReducer<S> = Reducer<S, AppAction>;
+
+const pageList: AppReducer<Page[]> =
+    (state = [], action) => {
         switch (action.type) {
-            case Actions.AddPage:
+            case ActionTypes.AddPage:
                 {
-                    const { pageNumber, name } = action as AddPageAction;
+                    const { pageNumber, name } = action;
                     return [...state, { pageNumber, name }];
                 }
-            case Actions.DeletePage:
+            case ActionTypes.DeletePage:
                 {
-                    const { pageNumber } = action as DeletePageAction;
+                    const { pageNumber } = action;
                     return state.filter((page) => page.pageNumber !== pageNumber);
                 }
-            case Actions.PageListLoaded:
-                return (action as PageListLoadedAction).pageList;
+            case ActionTypes.PageListLoaded:
+                return action.pageList;
             default:
                 return state;
         }
     };
 
-const pageDetails: Reducer<{ [pageNumber: number]: PageDetails }> =
-    (state = {}, action: AnyAction): { [pageNumber: number]: PageDetails } => {
+const pageDetails: AppReducer<{ [pageNumber: number]: PageDetails }> =
+    (state = {}, action) => {
         switch (action.type) {
-            case Actions.AddPage:
+            case ActionTypes.AddPage:
                 {
-                    const { pageNumber, name } = action as AddPageAction;
+                    const { pageNumber, name } = action;
                     return { ...state, [pageNumber]: { name, pageNumber, elements: [] } };
                 }
-            case Actions.DeletePage:
+            case ActionTypes.DeletePage:
                 {
-                    const { pageNumber } = action as DeletePageAction;
+                    const { pageNumber } = action;
                     const newState: { [pageNumber: number]: PageDetails } = {};
                     for (const key in state) {
                         if (state.hasOwnProperty(key)) {
@@ -52,14 +47,14 @@ const pageDetails: Reducer<{ [pageNumber: number]: PageDetails }> =
                     }
                     return newState;
                 }
-            case Actions.AddElement:
+            case ActionTypes.AddElement:
                 {
-                    const { pageNumber, element } = action as AddElementAction;
+                    const { pageNumber, element } = action;
                     const page = state[pageNumber];
                     return { ...state, [pageNumber]: { ...page, elements: [...page.elements, element] } };
                 }
-            case Actions.PageDetailsLoaded:
-                return (action as PageDetailsLoadedAction).pageDetails;
+            case ActionTypes.PageDetailsLoaded:
+                return action.pageDetails;
             default:
                 return state;
         }

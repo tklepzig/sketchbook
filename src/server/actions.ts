@@ -2,10 +2,16 @@ import { Line, Page, PageDetails, PageElement, Text } from "@shared/models";
 import { pageDirectory, pageListFile } from "config";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { Action, Dispatch } from "redux";
+import { Dispatch } from "redux";
 import { RootState } from "RootState";
 
-export enum Actions {
+export type AppAction = AddElementAction
+    | AddPageAction
+    | DeletePageAction
+    | PageListLoadedAction
+    | PageDetailsLoadedAction;
+
+export enum ActionTypes {
     AddElement,
     AddPage,
     DeletePage,
@@ -15,35 +21,39 @@ export enum Actions {
     PageDetailsLoaded
 }
 
-export interface AddElementAction extends Action {
+export interface AddElementAction {
+    type: ActionTypes.AddElement;
     element: PageElement;
     pageNumber: number;
 }
 export const addElement = (pageNumber: number, element: PageElement) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
 
-        dispatch({
-            type: Actions.AddElement,
+        const action: AddElementAction = {
+            type: ActionTypes.AddElement,
             element,
             pageNumber
-        });
+        };
+        dispatch(action);
 
         const state = getState();
         const page = state.pageDetails[pageNumber];
         await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(page));
     };
 
-export interface AddPageAction extends Action {
+export interface AddPageAction {
+    type: ActionTypes.AddPage;
     pageNumber: number;
     name: string;
 }
 export const addPage = (pageNumber: number, name: string) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
-        dispatch({
-            type: Actions.AddPage,
+        const action: AddPageAction = {
+            type: ActionTypes.AddPage,
             pageNumber,
             name
-        });
+        };
+        dispatch(action);
 
         const emptyPage: PageDetails = { name, pageNumber, elements: [] };
         const state = getState();
@@ -52,15 +62,17 @@ export const addPage = (pageNumber: number, name: string) =>
         await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(emptyPage));
     };
 
-export interface DeletePageAction extends Action {
+export interface DeletePageAction {
+    type: ActionTypes.DeletePage;
     pageNumber: number;
 }
 export const deletePage = (pageNumber: number) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
-        dispatch({
-            type: Actions.DeletePage,
+        const action: DeletePageAction = {
+            type: ActionTypes.DeletePage,
             pageNumber
-        });
+        };
+        dispatch(action);
 
         const state = getState();
         await fs.writeFile(path.resolve(pageListFile), JSON.stringify(state.pageList));
@@ -79,12 +91,13 @@ export const loadPageList = () =>
         dispatch(pageListLoaded(pageList));
     };
 
-export interface PageListLoadedAction extends Action {
+export interface PageListLoadedAction {
+    type: ActionTypes.PageListLoaded;
     pageList: Page[];
 }
 export const pageListLoaded =
     (pageList: Page[]): PageListLoadedAction => ({
-        type: Actions.PageListLoaded,
+        type: ActionTypes.PageListLoaded,
         pageList
     });
 
@@ -106,12 +119,13 @@ export const loadPageDetails = () =>
         dispatch(pageDetailsLoaded(pageDetails));
     };
 
-export interface PageDetailsLoadedAction extends Action {
+export interface PageDetailsLoadedAction {
+    type: ActionTypes.PageDetailsLoaded;
     pageDetails: { [pageNumber: number]: PageDetails; };
 }
 export const pageDetailsLoaded =
     (pageDetails: { [pageNumber: number]: PageDetails; }): PageDetailsLoadedAction => ({
-        type: Actions.PageDetailsLoaded,
+        type: ActionTypes.PageDetailsLoaded,
         pageDetails
     });
 
