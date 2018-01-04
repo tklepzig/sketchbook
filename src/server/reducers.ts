@@ -1,5 +1,5 @@
-import { combineReducers, Reducer } from "@shared/redux";
 import { Page, PageDetails } from "../shared/models";
+import { combineReducers, Reducer, ReducersMapObject } from "../shared/redux";
 import { ActionTypes, AppAction } from "./actions";
 import { RootState } from "./RootState";
 

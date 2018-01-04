@@ -2,7 +2,7 @@ import { RootState } from "@models/RootState";
 import { FontSize, InputMode, Page, PageDetails, PageElement } from "@shared/models";
 import { Action, Dispatch } from "redux";
 
-export enum Actions {
+export enum ActionTypes {
     SetColor,
     SetStrokeWidth,
     SetFontSize,
@@ -20,46 +20,65 @@ export enum Actions {
     SetReady
 }
 
-export interface SetColorAction extends Action {
+export type AppAction = SetColorAction
+    | SetStrokeWidthAction
+    | SetFontSizeAction
+    | SetInputModeAction
+    | AddElementAction
+    | AddPageAction
+    | DeletePageAction
+    | ReceivedPageListAction
+    | ReceivedPageAction
+    | ClearCurrentPageAction
+    | SetErrorAction
+    | ClearErrorAction
+    | SetReadyAction;
+
+export interface SetColorAction {
+    type: ActionTypes.SetColor;
     color: string;
 }
 export const setColor = (color: string): SetColorAction => ({
-    type: Actions.SetColor,
+    type: ActionTypes.SetColor,
     color
 });
 
-export interface SetStrokeWidthAction extends Action {
+export interface SetStrokeWidthAction {
+    type: ActionTypes.SetStrokeWidth;
     strokeWidth: string;
 }
 export const setStrokeWidth = (strokeWidth: string): SetStrokeWidthAction => ({
-    type: Actions.SetStrokeWidth,
+    type: ActionTypes.SetStrokeWidth,
     strokeWidth
 });
 
-export interface SetFontSizeAction extends Action {
+export interface SetFontSizeAction {
+    type: ActionTypes.SetFontSize;
     fontSize: FontSize;
 }
 export const setFontSize = (fontSize: FontSize): SetFontSizeAction => ({
-    type: Actions.SetFontSize,
+    type: ActionTypes.SetFontSize,
     fontSize
 });
 
-export interface SetInputModeAction extends Action {
+export interface SetInputModeAction {
+    type: ActionTypes.SetInputMode;
     inputMode: InputMode;
 }
 export const setInputMode = (inputMode: InputMode): SetInputModeAction => ({
-    type: Actions.SetInputMode,
+    type: ActionTypes.SetInputMode,
     inputMode
 });
 
-export interface AddElementAction extends Action {
+export interface AddElementAction {
+    type: ActionTypes.AddElement;
     element: PageElement;
     pageNumber: number;
 }
 export const addElement = (pageNumber: number, element: PageElement) => (dispatch: Dispatch<RootState>) => {
 
     dispatch({
-        type: Actions.AddElement,
+        type: ActionTypes.AddElement,
         element,
         pageNumber
     });
@@ -88,14 +107,15 @@ export const addElement = (pageNumber: number, element: PageElement) => (dispatc
         .catch((error) => { dispatch(setError(error.message)); });
 };
 
-export interface AddPageAction extends Action {
+export interface AddPageAction {
+    type: ActionTypes.AddPage;
     pageNumber: number;
     name: string;
 }
 export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch<RootState>) => {
 
     dispatch({
-        type: Actions.AddPage,
+        type: ActionTypes.AddPage,
         pageNumber,
         name
     });
@@ -121,13 +141,14 @@ export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch
         .catch((error) => { dispatch(setError(error.message)); });
 };
 
-export interface DeletePageAction extends Action {
+export interface DeletePageAction {
+    type: ActionTypes.DeletePage;
     pageNumber: number;
 }
 export const deletePage = (pageNumber: number) => (dispatch: Dispatch<RootState>) => {
 
     dispatch({
-        type: Actions.DeletePage,
+        type: ActionTypes.DeletePage,
         pageNumber
     });
 
@@ -179,17 +200,15 @@ export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
     }
 };
 
-export interface ReceivedPageListAction extends Action {
+export interface ReceivedPageListAction {
+    type: ActionTypes.ReceivedPageList;
     pageList: Page[];
 }
 export const receivedPageList = (pageList: Page[]): ReceivedPageListAction => ({
-    type: Actions.ReceivedPageList,
+    type: ActionTypes.ReceivedPageList,
     pageList
 });
 
-export interface FetchPageAction extends Action {
-    pageNumber: number;
-}
 export const fetchPage = (pageNumber: number) => async (dispatch: Dispatch<RootState>) => {
 
     try {
@@ -217,34 +236,43 @@ export const fetchPage = (pageNumber: number) => async (dispatch: Dispatch<RootS
     }
 };
 
-export interface ReceivedPageAction extends Action {
+export interface ReceivedPageAction {
+    type: ActionTypes.ReceivedPage;
     page: PageDetails;
 }
 export const receivedPage = (page: PageDetails): ReceivedPageAction => ({
-    type: Actions.ReceivedPage,
+    type: ActionTypes.ReceivedPage,
     page
 });
 
-export const clearCurrentPage = (): Action => ({
-    type: Actions.ClearCurrentPage
+export interface ClearCurrentPageAction {
+    type: ActionTypes.ClearCurrentPage;
+}
+export const clearCurrentPage = (): ClearCurrentPageAction => ({
+    type: ActionTypes.ClearCurrentPage
 });
 
-export interface SetErrorAction extends Action {
+export interface SetErrorAction {
+    type: ActionTypes.SetError;
     error: string;
 }
 export const setError = (error: string): SetErrorAction => ({
-    type: Actions.SetError,
+    type: ActionTypes.SetError,
     error
 });
 
-export const clearError = (): Action => ({
-    type: Actions.ClearError
+export interface ClearErrorAction {
+    type: ActionTypes.ClearError;
+}
+export const clearError = (): ClearErrorAction => ({
+    type: ActionTypes.ClearError
 });
 
-export interface SetReadyAction extends Action {
+export interface SetReadyAction {
+    type: ActionTypes.SetReady;
     ready: boolean;
 }
 export const setReady = (ready: boolean): SetReadyAction => ({
-    type: Actions.SetReady,
+    type: ActionTypes.SetReady,
     ready
 });

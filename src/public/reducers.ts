@@ -1,31 +1,21 @@
 import { FontSize, InputMode, Page, PageDetails, Pen } from "@shared/models";
-import {
-    Actions,
-    AddElementAction,
-    AddPageAction,
-    DeletePageAction,
-    ReceivedPageAction,
-    ReceivedPageListAction,
-    SetColorAction,
-    SetErrorAction,
-    SetFontSizeAction,
-    SetInputModeAction,
-    SetReadyAction
-} from "actions";
-import { AnyAction, Reducer } from "redux";
+import { Reducer } from "@shared/redux";
+import { ActionTypes, AppAction } from "actions";
 
-export const pen: Reducer<Pen> =
-    (state = { color: "black", strokeWidth: "s" }, action: AnyAction): Pen => {
+type AppReducer<S> = Reducer<S, AppAction>;
+
+export const pen: AppReducer<Pen> =
+    (state = { color: "black", strokeWidth: "s" }, action) => {
         switch (action.type) {
-            case Actions.SetColor:
-                const { color } = action as SetColorAction;
+            case ActionTypes.SetColor:
+                const { color } = action;
 
                 if (color === "black") {
                     return { ...state, color, strokeWidth: "s" };
                 }
                 return { ...state, color, strokeWidth: "m" };
 
-            case Actions.SetStrokeWidth:
+            case ActionTypes.SetStrokeWidth:
                 const { strokeWidth } = action;
                 return { ...state, strokeWidth };
             default:
@@ -33,39 +23,39 @@ export const pen: Reducer<Pen> =
         }
     };
 
-export const fontSize: Reducer<FontSize> =
-    (state = "medium", action: AnyAction): FontSize => {
+export const fontSize: AppReducer<FontSize> =
+    (state = "medium", action) => {
         switch (action.type) {
-            case Actions.SetFontSize:
-                return (action as SetFontSizeAction).fontSize;
+            case ActionTypes.SetFontSize:
+                return action.fontSize;
             default:
                 return state;
         }
     };
 
-export const inputMode: Reducer<InputMode> =
-    (state = "pen", action: AnyAction): InputMode => {
+export const inputMode: AppReducer<InputMode> =
+    (state = "pen", action) => {
         switch (action.type) {
-            case Actions.SetInputMode:
-                return (action as SetInputModeAction).inputMode;
+            case ActionTypes.SetInputMode:
+                return action.inputMode;
             default:
                 return state;
         }
     };
 
-export const pageList: Reducer<Page[]> =
-    (state = [], action: AnyAction): Page[] => {
+export const pageList: AppReducer<Page[]> =
+    (state = [], action) => {
         switch (action.type) {
-            case Actions.ReceivedPageList:
-                return (action as ReceivedPageListAction).pageList;
-            case Actions.AddPage:
+            case ActionTypes.ReceivedPageList:
+                return action.pageList;
+            case ActionTypes.AddPage:
                 {
-                    const { pageNumber, name } = action as AddPageAction;
+                    const { pageNumber, name } = action;
                     return [...state, { pageNumber, name }];
                 }
-            case Actions.DeletePage:
+            case ActionTypes.DeletePage:
                 {
-                    const { pageNumber } = action as DeletePageAction;
+                    const { pageNumber } = action;
                     return state.filter((page) => page.pageNumber !== pageNumber);
                 }
             default:
@@ -73,38 +63,38 @@ export const pageList: Reducer<Page[]> =
         }
     };
 
-export const currentPage: Reducer<PageDetails | null> = (state = null, action: AnyAction) => {
+export const currentPage: AppReducer<PageDetails | null> = (state = null, action) => {
     switch (action.type) {
-        case Actions.ReceivedPage:
-            return (action as ReceivedPageAction).page;
-        case Actions.AddElement:
-            const { pageNumber, element } = action as AddElementAction;
+        case ActionTypes.ReceivedPage:
+            return action.page;
+        case ActionTypes.AddElement:
+            const { pageNumber, element } = action;
             if (!state || state.pageNumber !== pageNumber) {
                 return state;
             }
             return { ...state, elements: [...state.elements, element] };
-        case Actions.ClearCurrentPage:
+        case ActionTypes.ClearCurrentPage:
             return null;
         default:
             return state;
     }
 };
 
-export const error: Reducer<string> = (state = "", action: AnyAction) => {
+export const error: AppReducer<string> = (state = "", action) => {
     switch (action.type) {
-        case Actions.SetError:
-            return (action as SetErrorAction).error;
-        case Actions.ClearError:
+        case ActionTypes.SetError:
+            return action.error;
+        case ActionTypes.ClearError:
             return "";
         default:
             return state;
     }
 };
 
-export const ready: Reducer<boolean> = (state = false, action: AnyAction) => {
+export const ready: AppReducer<boolean> = (state = false, action) => {
     switch (action.type) {
-        case Actions.SetReady:
-            return (action as SetReadyAction).ready;
+        case ActionTypes.SetReady:
+            return action.ready;
         default:
             return state;
     }
