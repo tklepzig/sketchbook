@@ -18,20 +18,22 @@ interface AppDispatchProps {
 }
 
 const App: React.SFC<AppProps & AppDispatchProps> = (props) => {
-    const errorHeadline = props.error ? (
-        <h1 style={{ position: "fixed", zIndex: 100000 }}>{props.error}
-            <button onClick={props.onDismissError}>Dismiss</button></h1>) : null;
+    const errorToast = (
+        <div className="error-toast">
+            <header>{props.error}</header>
+            <button onClick={props.onDismissError}>Dismiss</button>
+        </div>);
 
     return (
         <>
-            {errorHeadline}
-            <Splash isVisible={!props.ready} />
-            <BrowserRouter>
-                <Switch>
-                    <Route exact path="/" component={Start} />
-                    <Route exact path="/page/:pageNumber" component={Page} />
-                </Switch>
-            </BrowserRouter>
+        {props.error ? errorToast : null}
+        <Splash isVisible={!props.ready} />
+        <BrowserRouter>
+            <Switch>
+                <Route exact path="/" component={Start} />
+                <Route exact path="/page/:pageNumber" component={Page} />
+            </Switch>
+        </BrowserRouter>
         </>
     );
 };
