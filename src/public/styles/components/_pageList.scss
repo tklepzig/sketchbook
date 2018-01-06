@@ -1,0 +1,14 @@
+.page-list {
+    position: absolute;
+    top: 61px; //menu is 30px + 2*padding of 8px, so 46px + 15px = 61px
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    width: auto;
+    height: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}

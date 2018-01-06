@@ -1,3 +1,4 @@
+import { Menu } from "@components/Start/Menu";
 import { PageList } from "@components/Start/PageList/PageList";
 import { RootState } from "@models/RootState";
 import fullscreen from "@services/Fullscreen";
@@ -34,12 +35,12 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
     public render() {
         return (
             <>
+            <Menu onAddPage={this.onAddPageClick} />
             <PageList
                 onDeletePage={this.props.onDeletePage}
                 onClick={this.onPageClick}
                 pageList={this.props.pageList}
             />
-            <button onClick={this.onAddPageClick}>Add</button>
             </>
         );
     }

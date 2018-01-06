@@ -16,12 +16,14 @@ export const PageList: React.SFC<PageListProps> = (props) => {
     };
 
     const pageList = props.pageList.map((page) => (
-        <li key={page.pageNumber}>
-            <PageButton
-                onDeletePage={props.onDeletePage}
-                pageNumber={page.pageNumber}
-                onClick={onClick}
-            />
-        </li>));
-    return <ul>{pageList}</ul>;
+        <PageButton
+            key={page.pageNumber}
+            onDeletePage={props.onDeletePage}
+            pageNumber={page.pageNumber}
+            onClick={onClick}
+        />));
+    return (
+        <div className="page-list">
+            {pageList}
+        </div>);
 };
