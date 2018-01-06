@@ -4,14 +4,14 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 8px;
+    padding: 4px 8px;
     left: 0;
     right: 0;
     width: auto;
     box-shadow: 0 0 10px 0 darken($background, 30%);
     background: $background;
     >img {
-        height: 30px;
+        height: 40px;
     }
     >header {
         font-size: 16pt;

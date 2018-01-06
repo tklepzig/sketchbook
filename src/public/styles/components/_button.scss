@@ -1,5 +1,7 @@
 .btn-pen {
     @extend %button;
+    @extend %round;
+    
     &:after {
         content: '';
         width: 30px;
@@ -31,6 +33,7 @@
 
 .btn-font-size {
     @extend %button;
+    @extend %round;
     font-family: Handlee;
     font-weight: bold;
     line-height: 1;
@@ -47,11 +50,10 @@
 
 .btn-back {
     @extend %button;
-    width: 30px;
-    height: 30px;
+    @extend %round;
     background-image: url(assets/back.svg);
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain;
-    flex: 0 0 30px;
+    background-size: 30px;
+    flex: 0 0 40px;
 }

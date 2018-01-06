@@ -35,11 +35,12 @@
     >.delete {
         @extend %button;
         height: auto;
-        width: 30px;
+        margin: 0;
+        width: 38px;
         background-color: transparent;
         background-image: url(assets/delete.svg);
         background-repeat: no-repeat;
         background-position: center;
-        background-size: contain;
+        background-size: 30px;
     }
 }

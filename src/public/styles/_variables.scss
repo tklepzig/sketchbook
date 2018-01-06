@@ -8,7 +8,7 @@ $error: #ab2201;
     background-color: transparent;
     border: none;
     width: 40px;
-    height: 30px;
+    height: 40px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -16,11 +16,15 @@ $error: #ab2201;
     outline: none;
     margin: 0 4px;
     cursor: pointer;
-    transition: transform 0.2s ease-out;
+    transition: background-color 0.4s ease-out;
     &:focus {
         outline: none;
     }
     &:active {
-        transform: scale(0.7);
+        background-color: rgba(darken($background, 20%), 0.5);
     }
+}
+
+%round {
+    border-radius: 50%;
 }

@@ -68,7 +68,7 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
     }
 
     private resize() {
-        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth - (15 * 2), window.innerHeight - (61 + 15));
+        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth - (15 * 2), window.innerHeight - (63 + 15));
         this.generateOverview();
     }
 
