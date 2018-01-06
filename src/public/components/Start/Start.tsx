@@ -26,6 +26,7 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
         super(props);
         this.onPageClick = this.onPageClick.bind(this);
         this.onAddPageClick = this.onAddPageClick.bind(this);
+        this.onDeletePageClick = this.onDeletePageClick.bind(this);
     }
 
     public componentWillMount() {
@@ -37,7 +38,7 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
             <>
             <Menu onAddPage={this.onAddPageClick} />
             <PageList
-                onDeletePage={this.props.onDeletePage}
+                onDeletePage={this.onDeletePageClick}
                 onClick={this.onPageClick}
                 pageList={this.props.pageList}
             />
@@ -63,6 +64,12 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
 
         this.props.onAddPage(nextPageNumber, "");
         this.onPageClick(nextPageNumber);
+    }
+
+    private onDeletePageClick(pageNumber: number) {
+        if (confirm("This operation is irreversible, are you sure?")) {
+            this.props.onDeletePage(pageNumber);
+        }
     }
 }
 
