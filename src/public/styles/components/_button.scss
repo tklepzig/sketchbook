@@ -1,7 +1,6 @@
 .btn-pen {
     @extend %button;
     @extend %round;
-    
     &:after {
         content: '';
         width: 30px;
@@ -52,6 +51,16 @@
     @extend %button;
     @extend %round;
     background-image: url(assets/back.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30px;
+    flex: 0 0 40px;
+}
+
+.btn-add-page {
+    @extend %button;
+    @extend %round;
+    background-image: url(assets/add.svg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 30px;
