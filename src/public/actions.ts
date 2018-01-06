@@ -98,9 +98,7 @@ export const addElement = (pageNumber: number, element: PageElement) => (dispatc
         }),
     })
         .then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                console.dir("post succeeded");
-            } else {
+            if (response.status < 200 || response.status >= 300) {
                 dispatch(setError(response.statusText));
             }
         })
@@ -132,9 +130,7 @@ export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch
         body: JSON.stringify({ pageNumber, name }),
     })
         .then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                console.dir("post succeeded");
-            } else {
+            if (response.status < 200 || response.status >= 300) {
                 dispatch(setError(response.statusText));
             }
         })
@@ -164,9 +160,7 @@ export const deletePage = (pageNumber: number) => (dispatch: Dispatch<RootState>
         body: JSON.stringify({ pageNumber }),
     })
         .then((response) => {
-            if (response.status >= 200 && response.status < 300) {
-                console.dir("delete succeeded");
-            } else {
+            if (response.status < 200 || response.status >= 300) {
                 dispatch(setError(response.statusText));
             }
         })
