@@ -170,13 +170,17 @@ export class CanvasDrawing {
         context.textBaseline = "top";
         let top = position.y;
         let height = 0;
+        let width = 0;
         for (const line of text.split("\n")) {
             context.fillText(line, position.x, top);
             top += (fontSize + 6) * 1.2;
             height += (fontSize + 6) * 1.2;
-        }
 
-        const { width } = context.measureText(text);
+            const { width: lineWidth } = context.measureText(line);
+            if (lineWidth > width) {
+                width = lineWidth;
+            }
+        }
         return { width, height };
     }
 
