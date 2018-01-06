@@ -1,4 +1,44 @@
 .tile-page {
-    >.open {}
-    >.delete {}
+    box-shadow: 0 0 10px 1px darken($background, 30%);
+    height: 40px;
+    margin: 1%;
+    display: flex;
+    flex-flow: nowrap row;
+    align-items: stretch;
+    @media (max-width: 359px) {
+        flex: 0 0 98%;
+    }
+    @media (min-width: 360px) and (max-width: 599px) {
+        flex: 0 0 48%;
+    }
+    @media (min-width: 600px) and (max-width:959px) {
+        flex: 0 0 31%;
+    }
+    @media (min-width: 960px) and (max-width:1279px) {
+        flex: 0 0 23%;
+    }
+    @media (min-width: 1280px) and (max-width:1919px) {
+        flex: 0 0 18%;
+    }
+    @media (min-width: 1920px) {
+        flex: 0 0 10.5%;
+    }
+    >.open {
+        @extend %button;
+        height: auto;
+        width: auto;
+        flex: 1;
+        font-size: 1em;
+        border-right: 1px solid darken($background, 20%);
+    }
+    >.delete {
+        @extend %button;
+        height: auto;
+        width: 30px;
+        background-color: transparent;
+        background-image: url(assets/delete.svg);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
 }

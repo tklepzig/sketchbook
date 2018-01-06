@@ -12,6 +12,6 @@ export const PageButton: React.SFC<PageButtonProps> = (props) => {
     return (
         <div className="tile-page">
             <button className="open" onClick={onClick}>{`Page ${props.pageNumber}`}</button>
-            <button className="delete" onClick={onDeleteClick}>Delete</button>
+            <button className="delete" onClick={onDeleteClick} />
         </div>);
 };
