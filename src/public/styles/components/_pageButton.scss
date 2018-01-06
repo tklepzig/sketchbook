@@ -27,6 +27,7 @@
         @extend %button;
         height: auto;
         width: auto;
+        margin: 0;
         flex: 1;
         font-size: 1em;
         border-right: 1px solid darken($background, 20%);
