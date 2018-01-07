@@ -143,27 +143,34 @@ export class CanvasDrawing {
             right: number,
             bottom: number
         }): boolean {
-        if (boundary) {
-            const { top, left, right, bottom } = boundary;
 
-            if (
-                (segment.start.x > left
-                    && segment.start.x < right
-                    && segment.start.y > top
-                    && segment.start.y < bottom)
-                ||
-                (segment.end.x > left
-                    && segment.end.x < right
-                    && segment.end.y > top
-                    && segment.end.y < bottom)) {
-                return true;
-            }
-        } else {
+        if (!boundary) {
+            return true;
+        }
+
+        if (this.isPointInBoundary(segment.start, boundary)
+            || this.isPointInBoundary(segment.end, boundary)) {
             return true;
         }
 
         return false;
     }
+
+    private isPointInBoundary(
+        point: Point,
+        boundary: {
+            left: number,
+            top: number,
+            right: number,
+            bottom: number
+        }) {
+        const { top, left, right, bottom } = boundary;
+        return (point.x > left
+            && point.x < right
+            && point.y > top
+            && point.y < bottom);
+    }
+
     private drawText(context: CanvasRenderingContext2D, position: Point, text: string, fontSize: number) {
         context.globalCompositeOperation = "source-over";
         context.font = `bold ${fontSize}pt Handlee`;
