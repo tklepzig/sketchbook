@@ -1,6 +1,6 @@
 import { Page, PageDetails } from "../shared/models";
 import { combineReducers, Reducer, ReducersMapObject } from "../shared/redux";
-import { ActionTypes, AppAction } from "./actions";
+import { AppAction } from "./actions";
 import { RootState } from "./RootState";
 
 type AppReducer<S> = Reducer<S, AppAction>;
@@ -8,17 +8,17 @@ type AppReducer<S> = Reducer<S, AppAction>;
 const pageList: AppReducer<Page[]> =
     (state = [], action) => {
         switch (action.type) {
-            case ActionTypes.AddPage:
+            case "AddPage":
                 {
                     const { pageNumber, name } = action;
                     return [...state, { pageNumber, name }];
                 }
-            case ActionTypes.DeletePage:
+            case "DeletePage":
                 {
                     const { pageNumber } = action;
                     return state.filter((page) => page.pageNumber !== pageNumber);
                 }
-            case ActionTypes.PageListLoaded:
+            case "PageListLoaded":
                 return action.pageList;
             default:
                 return state;
@@ -28,12 +28,12 @@ const pageList: AppReducer<Page[]> =
 const pageDetails: AppReducer<{ [pageNumber: number]: PageDetails }> =
     (state = {}, action) => {
         switch (action.type) {
-            case ActionTypes.AddPage:
+            case "AddPage":
                 {
                     const { pageNumber, name } = action;
                     return { ...state, [pageNumber]: { name, pageNumber, elements: [] } };
                 }
-            case ActionTypes.DeletePage:
+            case "DeletePage":
                 {
                     const { pageNumber } = action;
                     const newState: { [pageNumber: number]: PageDetails } = {};
@@ -47,13 +47,13 @@ const pageDetails: AppReducer<{ [pageNumber: number]: PageDetails }> =
                     }
                     return newState;
                 }
-            case ActionTypes.AddElement:
+            case "AddElement":
                 {
                     const { pageNumber, element } = action;
                     const page = state[pageNumber];
                     return { ...state, [pageNumber]: { ...page, elements: [...page.elements, element] } };
                 }
-            case ActionTypes.PageDetailsLoaded:
+            case "PageDetailsLoaded":
                 return action.pageDetails;
             default:
                 return state;

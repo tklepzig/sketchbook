@@ -22,7 +22,7 @@ export enum ActionTypes {
 }
 
 export interface AddElementAction {
-    type: ActionTypes.AddElement;
+    type: "AddElement";
     element: PageElement;
     pageNumber: number;
 }
@@ -30,7 +30,7 @@ export const addElement = (pageNumber: number, element: PageElement) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
 
         const action: AddElementAction = {
-            type: ActionTypes.AddElement,
+            type: "AddElement",
             element,
             pageNumber
         };
@@ -42,14 +42,14 @@ export const addElement = (pageNumber: number, element: PageElement) =>
     };
 
 export interface AddPageAction {
-    type: ActionTypes.AddPage;
+    type: "AddPage";
     pageNumber: number;
     name: string;
 }
 export const addPage = (pageNumber: number, name: string) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
         const action: AddPageAction = {
-            type: ActionTypes.AddPage,
+            type: "AddPage",
             pageNumber,
             name
         };
@@ -63,13 +63,13 @@ export const addPage = (pageNumber: number, name: string) =>
     };
 
 export interface DeletePageAction {
-    type: ActionTypes.DeletePage;
+    type: "DeletePage";
     pageNumber: number;
 }
 export const deletePage = (pageNumber: number) =>
     async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
         const action: DeletePageAction = {
-            type: ActionTypes.DeletePage,
+            type: "DeletePage",
             pageNumber
         };
         dispatch(action);
@@ -92,12 +92,12 @@ export const loadPageList = () =>
     };
 
 export interface PageListLoadedAction {
-    type: ActionTypes.PageListLoaded;
+    type: "PageListLoaded";
     pageList: Page[];
 }
 export const pageListLoaded =
     (pageList: Page[]): PageListLoadedAction => ({
-        type: ActionTypes.PageListLoaded,
+        type: "PageListLoaded",
         pageList
     });
 
@@ -120,12 +120,12 @@ export const loadPageDetails = () =>
     };
 
 export interface PageDetailsLoadedAction {
-    type: ActionTypes.PageDetailsLoaded;
+    type: "PageDetailsLoaded";
     pageDetails: { [pageNumber: number]: PageDetails; };
 }
 export const pageDetailsLoaded =
     (pageDetails: { [pageNumber: number]: PageDetails; }): PageDetailsLoadedAction => ({
-        type: ActionTypes.PageDetailsLoaded,
+        type: "PageDetailsLoaded",
         pageDetails
     });
 
