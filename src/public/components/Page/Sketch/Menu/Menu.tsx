@@ -59,8 +59,9 @@ const Menu: React.SFC<MenuProps & MenuOwnProps & MenuDispatchProps> = (props) =>
             <button className="btn-back" onClick={props.onNavigateBack} />
             <div style={{ flex: 1 }} />
             {content}
-            <div style={{ flex: 1 }} />
+            <div style={{ flex: "0 0 20px" }} />
             {inputModeToggle}
+            <div style={{ flex: 1 }} />
         </div>);
 };
 

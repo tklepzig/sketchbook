@@ -1,5 +1,5 @@
 button.inputModeToggle {
-    width: 90px;
+    width: 70px;
     height: 30px;
     background: $foreground;
     color: $background;
@@ -19,11 +19,11 @@ button.inputModeToggle {
         line-height: 1;
     }
     >.pen {
-        padding-right: 34px;
+        padding-right: 24px;
         display: none;
     }
     >.text {
-        padding-left: 34px;
+        padding-left: 24px;
     }
     >.btn {
         position: absolute;
@@ -31,7 +31,7 @@ button.inputModeToggle {
         top: 2px;
         background: $background;
         height: 26px;
-        width: 36px;
+        width: 26px;
         border-radius: 13px;
         transition: transform 0.2s ease-in-out;
         box-shadow: 0 0 4px 0 $foreground;
@@ -39,7 +39,7 @@ button.inputModeToggle {
     &.pen {
         background: darken($blue, 20%);
         >.btn {
-            transform: translateX(90px - 36px - 2px - 2px);
+            transform: translateX(70px - 26px - 2px - 2px);
         }
         >.pen {
             display: flex;
