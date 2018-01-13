@@ -13,25 +13,9 @@ class TapEvents {
         this.tapMove = this.deviceSupportsTouchEvents() ? "onTouchMove" : "onMouseMove";
 
         if (this.deviceSupportsTouchEvents()) {
-            this.getTapPosition = (e: any) => {
-                if (e.targetTouches.length > 0) {
-                    return {
-                        x: e.targetTouches[0].pageX,
-                        y: e.targetTouches[0].pageY
-                    };
-                }
-
-                return {
-                    x: e.changedTouches[0].pageX,
-                    y: e.changedTouches[0].pageY
-                };
-            };
-            this.getTouchCount = (e: any) => e.touches.length;
+            this.initForTouchDevice();
         } else {
-            this.getTapPosition = (e: any) => ({
-                x: e.pageX, y: e.pageY
-            });
-            this.getTouchCount = (e: any) => 1;
+            this.initForDesktop();
         }
     }
 
@@ -39,6 +23,24 @@ class TapEvents {
         return "ontouchstart" in window;
     }
 
+    private initForDesktop() {
+        this.getTapPosition = (e: any) => ({
+            x: e.pageX, y: e.pageY
+        });
+        this.getTouchCount = (e: any) => 1;
+    }
+
+    private initForTouchDevice() {
+        this.getTapPosition = (e: any) => {
+            const touches = e.targetTouches.length > 0
+                ? e.targetTouches[0]
+                : e.changedTouches[0];
+
+            const { pageX: x, pageY: y } = touches;
+            return { x, y };
+        };
+        this.getTouchCount = (e: any) => e.touches.length;
+    }
 }
 
 export const tapEvents = new TapEvents();
