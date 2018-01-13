@@ -19,12 +19,15 @@ class Fullscreen {
 
     public request(element: any) {
         if (this.isFullscreenSupported) {
-            this.callBrowserSpecificFunction([
-                element.requestFullscreen,
-                element.webkitRequestFullscreen,
-                element.msRequestFullscreen,
-                element.mozRequestFullScreen
-            ]);
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            }
         }
     }
 
@@ -32,12 +35,15 @@ class Fullscreen {
         if (this.isFullscreenSupported) {
             const document: any = window.document;
 
-            this.callBrowserSpecificFunction([
-                document.exitFullscreen,
-                document.webkitExitFullscreen,
-                document.msExitFullscreen,
-                document.mozCancelFullScreen
-            ]);
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            }
         }
     }
 
@@ -46,15 +52,6 @@ class Fullscreen {
             this.request(element);
         } else {
             this.exit();
-        }
-    }
-
-    private callBrowserSpecificFunction(funcs: any[]) {
-        for (const func of funcs) {
-            if (func) {
-                func();
-                break;
-            }
         }
     }
 }
