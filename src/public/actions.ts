@@ -57,7 +57,7 @@ export interface AddElementAction {
     element: PageElement;
     pageNumber: number;
 }
-export const addElement = (pageNumber: number, element: PageElement) => (dispatch: Dispatch<RootState>) => {
+export const addElement = (pageNumber: number, element: PageElement) => async (dispatch: Dispatch<RootState>) => {
 
     dispatch({
         type: "AddElement",
@@ -65,26 +65,7 @@ export const addElement = (pageNumber: number, element: PageElement) => (dispatc
         pageNumber
     });
 
-    fetch("api/element", {
-        method: "post",
-        credentials: "include",
-        cache: "no-cache",
-        mode: "cors",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            element,
-            pageNumber
-        }),
-    })
-        .then((response) => {
-            if (response.status < 200 || response.status >= 300) {
-                dispatch(setError(response.statusText));
-            }
-        })
-        .catch((error) => { dispatch(setError(error.message)); });
+    await sendRequest(dispatch, "api/element", "post", JSON.stringify({ element, pageNumber }));
 };
 
 export interface AddPageAction {
@@ -92,7 +73,7 @@ export interface AddPageAction {
     pageNumber: number;
     name: string;
 }
-export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch<RootState>) => {
+export const addPage = (pageNumber: number, name: string) => async (dispatch: Dispatch<RootState>) => {
 
     dispatch({
         type: "AddPage",
@@ -100,80 +81,29 @@ export const addPage = (pageNumber: number, name: string) => (dispatch: Dispatch
         name
     });
 
-    fetch("api/page", {
-        method: "post",
-        credentials: "include",
-        cache: "no-cache",
-        mode: "cors",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ pageNumber, name }),
-    })
-        .then((response) => {
-            if (response.status < 200 || response.status >= 300) {
-                dispatch(setError(response.statusText));
-            }
-        })
-        .catch((error) => { dispatch(setError(error.message)); });
+    await sendRequest(dispatch, "api/page", "post", JSON.stringify({ pageNumber, name }));
 };
 
 export interface DeletePageAction {
     type: "DeletePage";
     pageNumber: number;
 }
-export const deletePage = (pageNumber: number) => (dispatch: Dispatch<RootState>) => {
+export const deletePage = (pageNumber: number) => async (dispatch: Dispatch<RootState>) => {
 
     dispatch({
         type: "DeletePage",
         pageNumber
     });
 
-    fetch("api/page", {
-        method: "delete",
-        credentials: "include",
-        cache: "no-cache",
-        mode: "cors",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ pageNumber }),
-    })
-        .then((response) => {
-            if (response.status < 200 || response.status >= 300) {
-                dispatch(setError(response.statusText));
-            }
-        })
-        .catch((error) => { dispatch(setError(error.message)); });
+    await sendRequest(dispatch, "api/page", "delete", JSON.stringify({ pageNumber }));
 };
 
 export const fetchPageList = () => async (dispatch: Dispatch<RootState>) => {
 
-    try {
-        const response = await fetch("api/pages", {
-            method: "get",
-            credentials: "include",
-            cache: "no-cache",
-            mode: "cors",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (response.status >= 200 && response.status < 300) {
-            const json = await response.json();
-            dispatch(receivedPageList(json));
-        } else {
-            dispatch(setError(response.statusText));
-        }
-    } catch (error) {
-        dispatch(setError(error.message));
-    } finally {
-        dispatch(setReady(true));
-    }
+    const response = await sendRequest(dispatch, "api/pages", "get");
+    const pageList = await response.json();
+    dispatch(receivedPageList(pageList));
+    dispatch(setReady(true));
 };
 
 export interface ReceivedPageListAction {
@@ -187,29 +117,10 @@ export const receivedPageList = (pageList: Page[]): ReceivedPageListAction => ({
 
 export const fetchPage = (pageNumber: number) => async (dispatch: Dispatch<RootState>) => {
 
-    try {
-        const response = await fetch("api/page/" + pageNumber, {
-            method: "get",
-            credentials: "include",
-            cache: "no-cache",
-            mode: "cors",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (response.status >= 200 && response.status < 300) {
-            const json = await response.json();
-            dispatch(receivedPage(json));
-        } else {
-            dispatch(setError(response.statusText));
-        }
-    } catch (error) {
-        dispatch(setError(error.message));
-    } finally {
-        dispatch(setReady(true));
-    }
+    const response = await sendRequest(dispatch, `api/page/${pageNumber}`, "get");
+    const page = await response.json();
+    dispatch(receivedPage(page));
+    dispatch(setReady(true));
 };
 
 export interface ReceivedPageAction {
@@ -252,3 +163,36 @@ export const setReady = (ready: boolean): SetReadyAction => ({
     type: "SetReady",
     ready
 });
+
+const sendRequest = async (
+    dispatch: Dispatch<RootState>, url: string,
+    method: string, body?: string): Promise<Response> => {
+    return new Promise<Response>(async (resolve, reject) => {
+        try {
+            const options: RequestInit = {
+                method,
+                credentials: "include",
+                cache: "no-cache",
+                mode: "cors",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            };
+
+            if (body) {
+                options.body = body;
+            }
+
+            const response = await fetch(url, options);
+
+            if (response.status >= 200 && response.status < 300) {
+                resolve(response);
+            } else {
+                dispatch(setError(response.statusText));
+            }
+        } catch (error) {
+            dispatch(setError(error.message));
+        }
+    });
+};
