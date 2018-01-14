@@ -76,6 +76,18 @@ function mapStateToProps(state: RootState): SketchProps {
             colorHexCode = "#f9a765";
             compositeOperation = "destination-over";
             break;
+        case "red":
+            colorHexCode = "#f46767";
+            compositeOperation = "destination-over";
+            break;
+        case "green":
+            colorHexCode = "#66c763";
+            compositeOperation = "destination-over";
+            break;
+        case "yellow":
+            colorHexCode = "#f2e242";
+            compositeOperation = "destination-over";
+            break;
         default:
             throw new Error(`Unknown line color: ${color}`);
     }

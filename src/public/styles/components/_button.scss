@@ -19,6 +19,15 @@
     &.orange:after {
         background: $orange;
     }
+    &.red:after {
+        background: $red;
+    }
+    &.green:after {
+        background: $green;
+    }
+    &.yellow:after {
+        background: $yellow;
+    }
     &.s:after {
         width: 4px;
     }

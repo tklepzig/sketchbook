@@ -40,6 +40,10 @@ export class PenChooser extends React.Component<PenChooserProps, PenChooserState
                     <ColorButton onClick={this.colorSelected} color="grey" />
                     <ColorButton onClick={this.colorSelected} color="blue" />
                     <ColorButton onClick={this.colorSelected} color="orange" />
+                    <br />
+                    <ColorButton onClick={this.colorSelected} color="red" />
+                    <ColorButton onClick={this.colorSelected} color="green" />
+                    <ColorButton onClick={this.colorSelected} color="yellow" />
                     <header>Stroke Width</header>
                     <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="s" />
                     <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="m" />
