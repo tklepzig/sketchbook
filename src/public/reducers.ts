@@ -10,10 +10,18 @@ export const pen: AppReducer<Pen> =
             case "SetColor":
                 const { color } = action;
 
+                // switch to black
                 if (color === "black") {
                     return { ...state, color, strokeWidth: "s" };
                 }
-                return { ...state, color, strokeWidth: "m" };
+
+                // switch from black to color
+                if (state.color === "black") {
+                    return { ...state, color, strokeWidth: "m" };
+                }
+
+                // switch from color to color
+                return { ...state, color };
 
             case "SetStrokeWidth":
                 const { strokeWidth } = action;
