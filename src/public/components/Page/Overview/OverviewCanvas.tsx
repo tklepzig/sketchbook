@@ -75,7 +75,30 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
     // TODO: refactoring
     private generateOverview() {
         const spacingFactor = 0.01;
-        const { min, max } = this.calculateMinMax(this.props.elements);
+
+        let min: Point | undefined;
+        let max: Point | undefined;
+
+        // calc min and max
+        this.props.elements.forEach((element) => {
+            if (pageElementHelper.elementIsLine(element)) {
+                element.segments.forEach((segment) => {
+                    const minMax = this.expandMinMax(min, max, segment.start, segment.end);
+                    min = minMax.min;
+                    max = minMax.max;
+                });
+            } else if (pageElementHelper.elementIsText(element)) {
+                const textStart = element.position;
+                const textEnd = {
+                    x: element.position.x + element.measurement.width,
+                    y: element.position.y + element.measurement.height
+                };
+
+                const minMax = this.expandMinMax(min, max, textStart, textEnd);
+                min = minMax.min;
+                max = minMax.max;
+            }
+        });
 
         this.canvasContext.doCanvasAction((context) => {
             if (!min || !max) {
@@ -85,21 +108,26 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
             this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-            const canvasWidth = (Math.abs(min.x) + Math.abs(max.x)) * spacingFactor * 2;
-            const canvasHeight = (Math.abs(min.y) + Math.abs(max.y)) * spacingFactor * 2;
+            let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
+            let canvasHeight = Math.abs(min.y) + Math.abs(max.y);
+
+            canvasWidth += canvasWidth * spacingFactor * 2;
+            canvasHeight += canvasHeight * spacingFactor * 2;
 
             const scaleX = context.canvas.width / canvasWidth;
             const scaleY = context.canvas.height / canvasHeight;
+            let scale = 1;
 
-            let scale = scaleX < scaleY ? scaleX : scaleY;
+            scale = scaleX < scaleY ? scaleX : scaleY;
+
             if (scale > 1) {
                 scale = 1;
             }
 
-            const translation = {
-                dx: Math.abs(min.x) + (canvasWidth * spacingFactor),
-                dy: Math.abs(min.y) + (canvasHeight * spacingFactor)
-            };
+            const translation: { dx: number, dy: number } = { dx: 0, dy: 0 };
+
+            translation.dx = Math.abs(min.x) + (canvasWidth * spacingFactor);
+            translation.dy = Math.abs(min.y) + (canvasHeight * spacingFactor);
 
             context.lineCap = "round";
             this.canvasContext.scale(scale, scale);
@@ -115,33 +143,6 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
             });
         });
 
-    }
-
-    private calculateMinMax(elements: PageElement[]): { min: Point | undefined, max: Point | undefined } {
-        let min: Point | undefined;
-        let max: Point | undefined;
-
-        for (const element of elements) {
-            if (pageElementHelper.elementIsLine(element)) {
-                for (const segment of element.segments) {
-                    const minMax = this.expandMinMax(min, max, segment.start, segment.end);
-                    min = minMax.min;
-                    max = minMax.max;
-                }
-            } else if (pageElementHelper.elementIsText(element)) {
-                const textStart = element.position;
-                const textEnd = {
-                    x: element.position.x + element.measurement.width,
-                    y: element.position.y + element.measurement.height
-                };
-
-                const minMax = this.expandMinMax(min, max, textStart, textEnd);
-                min = minMax.min;
-                max = minMax.max;
-            }
-        }
-
-        return { min, max };
     }
 
     private expandMinMax(min: Point | undefined, max: Point | undefined, elementStart: Point, elementEnd: Point) {
