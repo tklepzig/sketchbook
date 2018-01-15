@@ -2,7 +2,7 @@ import { addElement, addPage, deletePage, loadState } from "actions";
 import * as bodyParser from "body-parser";
 import { dataPath } from "config";
 import * as express from "express";
-import { Request, Response } from "express-serve-static-core";
+import { Application, Request, Response } from "express-serve-static-core";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { applyMiddleware, createStore, Store } from "redux";
@@ -74,10 +74,22 @@ export class Server {
 
     private startServer() {
         const app = express();
-
         app.use(bodyParser.json());
         app.use(express.static(path.resolve(__dirname, "..", "public")));
+        this.defineRoutes(app);
 
+        app.get("/*", (req, res) => {
+            res.sendFile(path.resolve(path.join(__dirname, "..", "public", "index.html")));
+        });
+
+        const port = process.env.PORT || this.config.port || 80;
+        app.listen(port, () => {
+            // tslint:disable-next-line:no-console
+            console.log(`listening on *:${port}`);
+        });
+    }
+
+    private defineRoutes(app: Application) {
         app.post("/api/page", (req: Request, res: Response) => {
             const { pageNumber, name } = req.body;
             this.store.dispatch(addPage(pageNumber, name));
@@ -93,31 +105,11 @@ export class Server {
             this.store.dispatch(addElement(pageNumber, element));
             res.sendStatus(200);
         });
-
-        // this.store.dispatch(addPage("1"));
-        // store.dispatch(addElement("1", {
-        //     kind: "text",
-        //     text: new Date().toISOString(),
-        //     position: { x: 100, y: 100 },
-        //     measurement: { width: 100, height: 20 },
-        //     fontSize: 20
-        // }));
-
         app.get("/api/pages", (req, res) => {
             res.json(this.store.getState().pageList);
         });
         app.get("/api/page/:pageNumber", (req, res) => {
             res.json(this.store.getState().pageDetails[req.params.pageNumber]);
-        });
-
-        app.get("/*", (req, res) => {
-            res.sendFile(path.resolve(path.join(__dirname, "..", "public", "index.html")));
-        });
-
-        const port = process.env.PORT || this.config.port || 80;
-        app.listen(port, () => {
-            // tslint:disable-next-line:no-console
-            console.log(`listening on *:${port}`);
         });
     }
 }
