@@ -121,13 +121,13 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         let min: Point | undefined;
         let max: Point | undefined;
 
-        elements.forEach((element) => {
+        for (const element of elements) {
             if (pageElementHelper.elementIsLine(element)) {
-                element.segments.forEach((segment) => {
+                for (const segment of element.segments) {
                     const minMax = this.expandMinMax(min, max, segment.start, segment.end);
                     min = minMax.min;
                     max = minMax.max;
-                });
+                }
             } else if (pageElementHelper.elementIsText(element)) {
                 const textStart = element.position;
                 const textEnd = {
@@ -139,7 +139,7 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
                 min = minMax.min;
                 max = minMax.max;
             }
-        });
+        }
 
         return { min, max };
     }
