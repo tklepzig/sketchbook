@@ -75,12 +75,53 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
     // TODO: refactoring
     private generateOverview() {
         const spacingFactor = 0.01;
+        const { min, max } = this.calculateMinMax(this.props.elements);
 
+        this.canvasContext.doCanvasAction((context) => {
+            if (!min || !max) {
+                return;
+            }
+
+            this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+            const canvasWidth = (Math.abs(min.x) + Math.abs(max.x)) * spacingFactor * 2;
+            const canvasHeight = (Math.abs(min.y) + Math.abs(max.y)) * spacingFactor * 2;
+
+            const scaleX = context.canvas.width / canvasWidth;
+            const scaleY = context.canvas.height / canvasHeight;
+
+            let scale = scaleX < scaleY ? scaleX : scaleY;
+            if (scale > 1) {
+                scale = 1;
+            }
+
+            const translation = {
+                dx: Math.abs(min.x) + (canvasWidth * spacingFactor),
+                dy: Math.abs(min.y) + (canvasHeight * spacingFactor)
+            };
+
+            context.lineCap = "round";
+            this.canvasContext.scale(scale, scale);
+            this.canvasContext.translate(translation.dx, translation.dy);
+
+            this.setState({ scale, translation }, () => {
+                this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
+
+                // if (min && max) {
+                //     context.strokeStyle = "red";
+                //     context.strokeRect(min.x, min.y, max.x - min.x, max.y - min.y);
+                // }
+            });
+        });
+
+    }
+
+    private calculateMinMax(elements: PageElement[]): { min: Point | undefined, max: Point | undefined } {
         let min: Point | undefined;
         let max: Point | undefined;
 
-        // calc min and max
-        this.props.elements.forEach((element) => {
+        elements.forEach((element) => {
             if (pageElementHelper.elementIsLine(element)) {
                 element.segments.forEach((segment) => {
                     const minMax = this.expandMinMax(min, max, segment.start, segment.end);
@@ -100,49 +141,7 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
             }
         });
 
-        this.canvasContext.doCanvasAction((context) => {
-            if (!min || !max) {
-                return;
-            }
-
-            this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-
-            let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
-            let canvasHeight = Math.abs(min.y) + Math.abs(max.y);
-
-            canvasWidth += canvasWidth * spacingFactor * 2;
-            canvasHeight += canvasHeight * spacingFactor * 2;
-
-            const scaleX = context.canvas.width / canvasWidth;
-            const scaleY = context.canvas.height / canvasHeight;
-            let scale = 1;
-
-            scale = scaleX < scaleY ? scaleX : scaleY;
-
-            if (scale > 1) {
-                scale = 1;
-            }
-
-            const translation: { dx: number, dy: number } = { dx: 0, dy: 0 };
-
-            translation.dx = Math.abs(min.x) + (canvasWidth * spacingFactor);
-            translation.dy = Math.abs(min.y) + (canvasHeight * spacingFactor);
-
-            context.lineCap = "round";
-            this.canvasContext.scale(scale, scale);
-            this.canvasContext.translate(translation.dx, translation.dy);
-
-            this.setState({ scale, translation }, () => {
-                this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
-
-                // if (min && max) {
-                //     context.strokeStyle = "red";
-                //     context.strokeRect(min.x, min.y, max.x - min.x, max.y - min.y);
-                // }
-            });
-        });
-
+        return { min, max };
     }
 
     private expandMinMax(min: Point | undefined, max: Point | undefined, elementStart: Point, elementEnd: Point) {
