@@ -72,33 +72,9 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         this.generateOverview();
     }
 
-    // TODO: refactoring
     private generateOverview() {
         const spacingFactor = 0.01;
-
-        let min: Point | undefined;
-        let max: Point | undefined;
-
-        // calc min and max
-        this.props.elements.forEach((element) => {
-            if (pageElementHelper.elementIsLine(element)) {
-                element.segments.forEach((segment) => {
-                    const minMax = this.expandMinMax(min, max, segment.start, segment.end);
-                    min = minMax.min;
-                    max = minMax.max;
-                });
-            } else if (pageElementHelper.elementIsText(element)) {
-                const textStart = element.position;
-                const textEnd = {
-                    x: element.position.x + element.measurement.width,
-                    y: element.position.y + element.measurement.height
-                };
-
-                const minMax = this.expandMinMax(min, max, textStart, textEnd);
-                min = minMax.min;
-                max = minMax.max;
-            }
-        });
+        const { min, max } = this.calculateMinMax(this.props.elements);
 
         this.canvasContext.doCanvasAction((context) => {
             if (!min || !max) {
@@ -116,18 +92,16 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
 
             const scaleX = context.canvas.width / canvasWidth;
             const scaleY = context.canvas.height / canvasHeight;
-            let scale = 1;
-
-            scale = scaleX < scaleY ? scaleX : scaleY;
+            let scale = scaleX < scaleY ? scaleX : scaleY;
 
             if (scale > 1) {
                 scale = 1;
             }
 
-            const translation: { dx: number, dy: number } = { dx: 0, dy: 0 };
-
-            translation.dx = Math.abs(min.x) + (canvasWidth * spacingFactor);
-            translation.dy = Math.abs(min.y) + (canvasHeight * spacingFactor);
+            const translation = {
+                dx: Math.abs(min.x) + (canvasWidth * spacingFactor),
+                dy: Math.abs(min.y) + (canvasHeight * spacingFactor)
+            };
 
             context.lineCap = "round";
             this.canvasContext.scale(scale, scale);
@@ -143,6 +117,33 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
             });
         });
 
+    }
+
+    private calculateMinMax(elements: PageElement[]) {
+        let min: Point | undefined;
+        let max: Point | undefined;
+
+        for (const element of elements) {
+            if (pageElementHelper.elementIsLine(element)) {
+                for (const segment of element.segments) {
+                    const minMax = this.expandMinMax(min, max, segment.start, segment.end);
+                    min = minMax.min;
+                    max = minMax.max;
+                }
+            } else if (pageElementHelper.elementIsText(element)) {
+                const textStart = element.position;
+                const textEnd = {
+                    x: element.position.x + element.measurement.width,
+                    y: element.position.y + element.measurement.height
+                };
+
+                const minMax = this.expandMinMax(min, max, textStart, textEnd);
+                min = minMax.min;
+                max = minMax.max;
+            }
+        }
+
+        return { min, max };
     }
 
     private expandMinMax(min: Point | undefined, max: Point | undefined, elementStart: Point, elementEnd: Point) {
