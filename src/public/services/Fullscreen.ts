@@ -18,33 +18,31 @@ class Fullscreen {
     }
 
     public request(element: any) {
-        if (this.isFullscreenSupported) {
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            }
+        if (!this.isFullscreenSupported) {
+            return;
         }
+
+        element.requestFullscreen = element.requestFullscreen
+            || element.webkitRequestFullscreen
+            || element.msRequestFullscreen
+            || element.mozRequestFullScreen;
+
+        element.requestFullscreen();
     }
 
     public exit() {
-        if (this.isFullscreenSupported) {
-            const document: any = window.document;
-
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            }
+        if (!this.isFullscreenSupported) {
+            return;
         }
+
+        const document: any = window.document;
+
+        document.exitFullscreen = document.exitFullscreen
+            || document.webkitExitFullscreen
+            || document.msExitFullscreen
+            || document.mozCancelFullScreen;
+
+        document.exitFullscreen();
     }
 
     public toggle(element: any) {
