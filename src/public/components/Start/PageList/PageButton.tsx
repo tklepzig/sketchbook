@@ -1,3 +1,4 @@
+import { Button } from "@components/Button";
 import * as React from "react";
 
 export interface PageButtonProps {
@@ -11,7 +12,7 @@ export const PageButton: React.SFC<PageButtonProps> = (props) => {
     const onDeleteClick = () => props.onDeletePage(props.pageNumber);
     return (
         <div className="tile-page">
-            <button className="open" onClick={onClick}>{`Page ${props.pageNumber}`}</button>
-            <button title="Delete Page" className="delete" onClick={onDeleteClick} />
+            <Button className="open" onClick={onClick}>{`Page ${props.pageNumber}`}</Button>
+            <Button title="Delete Page" className="delete" onClick={onDeleteClick} />
         </div>);
 };

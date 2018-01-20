@@ -1,3 +1,4 @@
+import { Button } from "@components/Button";
 import { ColorButton } from "@components/Page/Sketch/Menu/ColorButton";
 import { StrokeWidthButton } from "@components/Page/Sketch/Menu/StrokeWidthButton";
 import { Popup } from "@components/Popup";
@@ -30,7 +31,7 @@ export class PenChooser extends React.Component<PenChooserProps, PenChooserState
     public render() {
         return (
             <>
-                <button
+                <Button
                     onClick={this.openPopup}
                     className={`btn-pen ${this.props.color} ${this.props.strokeWidth}`}
                 />

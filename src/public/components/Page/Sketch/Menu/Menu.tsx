@@ -4,6 +4,7 @@ import { PenChooser } from "@components/Page/Sketch/Menu/PenChooser";
 import { RootState } from "@models/RootState";
 import { FontSize, InputMode } from "@shared/models";
 
+import { Button } from "@components/Button";
 import {
     setColor,
     SetColorAction,
@@ -56,7 +57,7 @@ const Menu: React.SFC<MenuProps & MenuOwnProps & MenuDispatchProps> = (props) =>
 
     return (
         <div className="menu">
-            <button className="btn-back" onClick={props.onNavigateBack} />
+            <Button className="btn-back" onClick={props.onNavigateBack} />
             <div style={{ flex: 1 }} />
             {content}
             <div style={{ flex: "0 0 20px" }} />

@@ -1,3 +1,4 @@
+import { Button } from "@components/Button";
 import Page from "@components/Page/Page";
 import Splash from "@components/Splash";
 import Start from "@components/Start/Start";
@@ -21,7 +22,7 @@ const App: React.SFC<AppProps & AppDispatchProps> = (props) => {
     const errorToast = (
         <div className="error-toast">
             <header>{props.error}</header>
-            <button onClick={props.onDismissError}>Dismiss</button>
+            <Button onClick={props.onDismissError}>Dismiss</Button>
         </div>);
 
     return (

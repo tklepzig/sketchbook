@@ -1,3 +1,4 @@
+import { Button } from "@components/Button";
 import { FontSizeButton } from "@components/Page/Sketch/Menu/FontSizeButton";
 import { Popup } from "@components/Popup";
 import { RootState } from "@models/RootState";
@@ -28,7 +29,7 @@ export class FontSizeChooser
     public render() {
         return (
             <>
-                <button className={`btn-font-size ${this.props.fontSize}`} onClick={this.openPopup}>a</button>
+                <Button className={`btn-font-size ${this.props.fontSize}`} onClick={this.openPopup}>a</Button>
                 <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup}>
                     <header>Font Size</header>
                     <FontSizeButton fontSize="small" onClick={this.fontSizeSelected} />

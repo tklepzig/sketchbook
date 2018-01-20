@@ -1,3 +1,4 @@
+import { Button } from "@components/Button";
 import * as React from "react";
 
 export interface StrokeWidthButtonProps {
@@ -8,5 +9,5 @@ export interface StrokeWidthButtonProps {
 
 export const StrokeWidthButton: React.SFC<StrokeWidthButtonProps> = (props) => {
     const onClick = () => props.onClick(props.strokeWidth);
-    return <button className={`btn-pen ${props.color} ${props.strokeWidth}`} onClick={onClick} />;
+    return <Button className={`btn-pen ${props.color} ${props.strokeWidth}`} onClick={onClick} />;
 };

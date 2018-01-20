@@ -1,3 +1,4 @@
+import { Button } from "@components/Button";
 import { InputMode } from "@shared/models";
 import * as React from "react";
 
@@ -19,11 +20,11 @@ export class InputModeToggle extends React.Component<InputModeToggleProps, Input
 
     public render() {
         return (
-            <button onClick={this.onClick} className={`inputModeToggle ${this.state.inputMode}`} >
+            <Button onClick={this.onClick} className={`inputModeToggle ${this.state.inputMode}`}>
                 <div className="pen">Pen</div>
                 <div className="text">Text</div>
                 <div className="btn" />
-            </button >);
+            </Button>);
     }
 
     private onClick() {
