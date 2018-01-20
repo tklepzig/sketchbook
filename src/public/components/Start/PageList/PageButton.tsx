@@ -28,7 +28,7 @@ export class PageButton extends React.Component<PageButtonProps, PageButtonState
             <>
                 <div className="tile-page">
                     <Button className="open" onClick={this.onClick}>{`Page ${this.props.pageNumber}`}</Button>
-                    <Button title="Delete Page" className="delete" onClick={this.openPopup} />
+                    <Button className="more" onClick={this.openPopup} />
                 </div>
                 <Popup
                     position={this.state.popupPosition}
@@ -36,11 +36,10 @@ export class PageButton extends React.Component<PageButtonProps, PageButtonState
                     visible={this.state.popupVisible}
                     onOutsideClick={this.closePopup}
                 >
-                    <ul>
-                        <li>Menu Entry</li>
-                        <li>Menu Entry</li>
-                        <li>Menu Entry</li>
-                    </ul>
+                    <div className="list">
+                        <Button>Edit Name</Button>
+                        <Button onClick={this.onDeleteClick}>Delete</Button>
+                    </div>
                 </Popup>
             </>);
     }
@@ -51,7 +50,7 @@ export class PageButton extends React.Component<PageButtonProps, PageButtonState
 
     private onDeleteClick() {
         this.props.onDeletePage(this.props.pageNumber);
-
+        this.setState({ popupVisible: false });
     }
 
     private openPopup(e: React.MouseEvent<HTMLButtonElement>) {
