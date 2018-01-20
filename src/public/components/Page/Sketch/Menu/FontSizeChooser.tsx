@@ -32,9 +32,11 @@ export class FontSizeChooser
                 <Button className={`btn-font-size ${this.props.fontSize}`} onClick={this.openPopup}>a</Button>
                 <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup}>
                     <header>Font Size</header>
-                    <FontSizeButton fontSize="small" onClick={this.fontSizeSelected} />
-                    <FontSizeButton fontSize="medium" onClick={this.fontSizeSelected} />
-                    <FontSizeButton fontSize="large" onClick={this.fontSizeSelected} />
+                    <div>
+                        <FontSizeButton fontSize="small" onClick={this.fontSizeSelected} />
+                        <FontSizeButton fontSize="medium" onClick={this.fontSizeSelected} />
+                        <FontSizeButton fontSize="large" onClick={this.fontSizeSelected} />
+                    </div>
                 </Popup>
             </>
         );

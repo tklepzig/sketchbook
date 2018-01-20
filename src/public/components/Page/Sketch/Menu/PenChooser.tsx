@@ -29,6 +29,7 @@ export class PenChooser extends React.Component<PenChooserProps, PenChooserState
         this.state = { popupVisible: false };
     }
     public render() {
+        // tslint:disable:max-line-length
         return (
             <>
                 <Button
@@ -37,21 +38,28 @@ export class PenChooser extends React.Component<PenChooserProps, PenChooserState
                 />
                 <Popup visible={this.state.popupVisible} onOutsideClick={this.closePopup}>
                     <header>Color</header>
-                    <ColorButton onClick={this.colorSelected} color="black" />
-                    <ColorButton onClick={this.colorSelected} color="grey" />
-                    <ColorButton onClick={this.colorSelected} color="blue" />
-                    <ColorButton onClick={this.colorSelected} color="orange" />
-                    <br />
-                    <ColorButton onClick={this.colorSelected} color="red" />
-                    <ColorButton onClick={this.colorSelected} color="green" />
-                    <ColorButton onClick={this.colorSelected} color="yellow" />
+                    <div>
+                        <ColorButton onClick={this.colorSelected} color="black" />
+                        <ColorButton onClick={this.colorSelected} color="grey" />
+                        <ColorButton onClick={this.colorSelected} color="blue" />
+                        <ColorButton onClick={this.colorSelected} color="orange" />
+                    </div>
+                    <div>
+                        <ColorButton onClick={this.colorSelected} color="red" />
+                        <ColorButton onClick={this.colorSelected} color="green" />
+                        <ColorButton onClick={this.colorSelected} color="yellow" />
+                    </div>
                     <header>Stroke Width</header>
-                    <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="s" />
-                    <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="m" />
-                    <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="l" />
+                    <div>
+                        <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="s" />
+                        <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="m" />
+                        <StrokeWidthButton color={this.props.color} onClick={this.strokeWidthSelected} strokeWidth="l" />
+                    </div>
+
                 </Popup>
             </>
         );
+        // tslint:enable:object-literal-sort-keys
     }
 
     private colorSelected(color: string) {

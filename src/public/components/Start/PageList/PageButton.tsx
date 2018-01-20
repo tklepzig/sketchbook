@@ -1,5 +1,7 @@
 import { Button } from "@components/Button";
+import { Popup } from "@components/Popup";
 import * as React from "react";
+import { Point } from "../../../../shared/models";
 
 export interface PageButtonProps {
     pageNumber: number;
@@ -7,12 +9,57 @@ export interface PageButtonProps {
     onDeletePage: (pageNumber: number) => void;
 }
 
-export const PageButton: React.SFC<PageButtonProps> = (props) => {
-    const onClick = () => props.onClick(props.pageNumber);
-    const onDeleteClick = () => props.onDeletePage(props.pageNumber);
-    return (
-        <div className="tile-page">
-            <Button className="open" onClick={onClick}>{`Page ${props.pageNumber}`}</Button>
-            <Button title="Delete Page" className="delete" onClick={onDeleteClick} />
-        </div>);
-};
+interface PageButtonState {
+    popupVisible: boolean;
+    popupPosition: Point;
+}
+export class PageButton extends React.Component<PageButtonProps, PageButtonState> {
+    constructor(props: PageButtonProps) {
+        super(props);
+        this.onClick = this.onClick.bind(this);
+        this.onDeleteClick = this.onDeleteClick.bind(this);
+        this.openPopup = this.openPopup.bind(this);
+        this.closePopup = this.closePopup.bind(this);
+
+        this.state = { popupVisible: false, popupPosition: { x: 0, y: 0 } };
+    }
+    public render() {
+        return (
+            <>
+                <div className="tile-page">
+                    <Button className="open" onClick={this.onClick}>{`Page ${this.props.pageNumber}`}</Button>
+                    <Button title="Delete Page" className="delete" onClick={this.openPopup} />
+                </div>
+                <Popup
+                    position={this.state.popupPosition}
+                    noDark
+                    visible={this.state.popupVisible}
+                    onOutsideClick={this.closePopup}
+                >
+                    <ul>
+                        <li>Menu Entry</li>
+                        <li>Menu Entry</li>
+                        <li>Menu Entry</li>
+                    </ul>
+                </Popup>
+            </>);
+    }
+
+    private onClick() {
+        this.props.onClick(this.props.pageNumber);
+    }
+
+    private onDeleteClick() {
+        this.props.onDeletePage(this.props.pageNumber);
+
+    }
+
+    private openPopup(e: React.MouseEvent<HTMLButtonElement>) {
+        const { left: x, top: y } = (e.target as HTMLElement).getBoundingClientRect();
+        this.setState({ popupVisible: true, popupPosition: { x, y } });
+    }
+
+    private closePopup() {
+        this.setState({ popupVisible: false });
+    }
+}

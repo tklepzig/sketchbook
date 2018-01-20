@@ -1,16 +1,21 @@
 import vibration from "@services/Vibration";
 import * as React from "react";
 
-export interface ButtonProps {
-    onClick: (color: string) => void;
-    title?: string;
-    className?: string;
+export interface ButtonProps
+    extends React.AllHTMLAttributes<HTMLButtonElement>,
+    React.ClassAttributes<HTMLButtonElement> {
 }
 
 export const Button: React.SFC<ButtonProps> = (props) => {
-    const onClick = (e: any) => {
+    const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.persist();
         vibration.vibrate(20);
-        setTimeout(() => props.onClick(e), 0);
+
+        setTimeout(() => {
+            if (props.onClick) {
+                props.onClick(e);
+            }
+        }, 0);
     };
-    return <button title={props.title} className={props.className} onClick={onClick}>{props.children}</button>;
+    return <button {...props} onClick={onClick}>{props.children}</button>;
 };
