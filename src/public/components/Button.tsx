@@ -8,14 +8,10 @@ export interface ButtonProps
 
 export const Button: React.SFC<ButtonProps> = (props) => {
     const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.persist();
         vibration.vibrate(20);
-
-        setTimeout(() => {
-            if (props.onClick) {
-                props.onClick(e);
-            }
-        }, 0);
+        if (props.onClick) {
+            props.onClick(e);
+        }
     };
     return <button {...props} onClick={onClick}>{props.children}</button>;
 };

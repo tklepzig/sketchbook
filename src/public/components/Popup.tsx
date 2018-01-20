@@ -1,34 +1,66 @@
 import * as React from "react";
 import { Point } from "../../shared/models";
 
-export interface PopupProps {
+interface PopupProps {
     visible: boolean;
     noDark?: boolean;
     position?: Point;
     onOutsideClick: () => void;
 }
 
-export const Popup: React.SFC<PopupProps> = (props) => {
-    const onClick = (e: any) => {
+interface PopupState {
+    leftOffset: number;
+    topOffset: number;
+}
+
+export class Popup extends React.Component<PopupProps, PopupState> {
+
+    private section: HTMLElement | null = null;
+
+    constructor(props: PopupProps) {
+        super(props);
+        this.onClick = this.onClick.bind(this);
+
+        this.state = { leftOffset: 0, topOffset: 0 };
+    }
+    public componentDidUpdate() {
+        if (!this.section) {
+            return;
+        }
+
+        const { right, bottom } = this.section.getBoundingClientRect();
+
+        if (right > window.innerWidth) {
+            this.setState({ leftOffset: right - window.innerWidth + 4 });
+        }
+        if (bottom > window.innerHeight) {
+            this.setState({ topOffset: bottom - window.innerHeight + 4 });
+        }
+    }
+
+    public render() {
+        const style: React.CSSProperties | undefined = this.props.position
+            ? {
+                position: "absolute",
+                left: this.props.position.x - this.state.leftOffset,
+                top: this.props.position.y - this.state.topOffset
+            }
+            : undefined;
+
+        return (
+            <div
+                onClick={this.onClick}
+                className={`popup${this.props.visible ? "" : " hidden"}${this.props.noDark ? " no-dark" : ""}`}
+            >
+                <section ref={(s) => this.section = s} style={style}>{this.props.children}</section>
+            </div>);
+    }
+
+    private onClick(e: any) {
         if (!e.target.className.startsWith("popup")) {
             return;
         }
 
-        props.onOutsideClick();
-    };
-    const style: React.CSSProperties | undefined = props.position
-        ? {
-            position: "absolute",
-            left: props.position.x,
-            top: props.position.y
-        }
-        : undefined;
-
-    return (
-        <div
-            onClick={onClick}
-            className={`popup${props.visible ? "" : " hidden"}${props.noDark ? " no-dark" : ""}`}
-        >
-            <section style={style}>{props.children}</section>
-        </div>);
-};
+        this.props.onOutsideClick();
+    }
+}
