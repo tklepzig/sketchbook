@@ -3,7 +3,7 @@ import { PageList } from "@components/Start/PageList/PageList";
 import { RootState } from "@models/RootState";
 import fullscreen from "@services/Fullscreen";
 import { Page } from "@shared/models";
-import { addPage, deletePage, fetchPageList } from "actions";
+import { addPage, fetchPageList } from "actions";
 import * as React from "react";
 import { connect, Dispatch, DispatchProp, ProviderProps } from "react-redux";
 import { RouteComponentProps } from "react-router";
@@ -15,7 +15,6 @@ interface StartProps {
 interface StartDispatchProps {
     dispatch: Dispatch<RootState>;
     onAddPage: (pageNumber: number, name: string) => void;
-    onDeletePage: (pageNumber: number) => void;
 }
 
 export interface StartOwnProps extends RouteComponentProps<any> {
@@ -26,7 +25,6 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
         super(props);
         this.onPageClick = this.onPageClick.bind(this);
         this.onAddPageClick = this.onAddPageClick.bind(this);
-        this.onDeletePageClick = this.onDeletePageClick.bind(this);
     }
 
     public componentWillMount() {
@@ -38,7 +36,6 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
             <>
             <Menu onAddPage={this.onAddPageClick} />
             <PageList
-                onDeletePage={this.onDeletePageClick}
                 onClick={this.onPageClick}
                 pageList={this.props.pageList}
             />
@@ -65,12 +62,6 @@ class Start extends React.Component<StartProps & StartOwnProps & StartDispatchPr
         this.props.onAddPage(nextPageNumber, "");
         this.onPageClick(nextPageNumber);
     }
-
-    private onDeletePageClick(pageNumber: number) {
-        if (confirm("This operation is irreversible, are you sure?")) {
-            this.props.onDeletePage(pageNumber);
-        }
-    }
 }
 
 function mapStateToProps(state: RootState): StartProps {
@@ -82,9 +73,7 @@ function mapDispatchToProps(dispatch: Dispatch<RootState>) {
     return {
         dispatch,
         onAddPage: (pageNumber: number, name: string) =>
-            dispatch(addPage(pageNumber, name)),
-        onDeletePage: (pageNumber: number) =>
-            dispatch(deletePage(pageNumber))
+            dispatch(addPage(pageNumber, name))
     };
 }
 

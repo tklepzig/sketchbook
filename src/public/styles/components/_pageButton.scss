@@ -30,7 +30,7 @@
         margin: 0;
         flex: 1;
     }
-    >.more {
+    .more {
         @extend %button;
         height: auto;
         margin: 0;
