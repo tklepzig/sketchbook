@@ -3,6 +3,7 @@ import { Popup } from "@components/Popup";
 import PageName from "@components/Start/PageList/PageName";
 import { Page, Point } from "@shared/models";
 import * as React from "react";
+import { bind } from "react.ex";
 
 export interface PageButtonProps {
     page: Page;
@@ -18,14 +19,6 @@ interface PageButtonState {
 export class PageButton extends React.Component<PageButtonProps, PageButtonState> {
     constructor(props: PageButtonProps) {
         super(props);
-        this.onClick = this.onClick.bind(this);
-        this.onDeleteClick = this.onDeleteClick.bind(this);
-        this.openPopupMenu = this.openPopupMenu.bind(this);
-        this.closePopupMenu = this.closePopupMenu.bind(this);
-
-        this.openPopupPageName = this.openPopupPageName.bind(this);
-        this.closePopupPageName = this.closePopupPageName.bind(this);
-
         this.state = { popupPageNameVisible: false, popupMenuVisible: false, popupMenuPosition: { x: 0, y: 0 } };
     }
     public render() {
@@ -53,26 +46,32 @@ export class PageButton extends React.Component<PageButtonProps, PageButtonState
             </>);
     }
 
+    @bind
     private onClick() {
         this.props.onClick(this.props.page.pageNumber);
     }
 
+    @bind
     private onDeleteClick() {
         this.props.onDeletePage(this.props.page.pageNumber);
         this.setState({ popupMenuVisible: false });
     }
 
+    @bind
     private openPopupMenu(e: React.MouseEvent<HTMLButtonElement>) {
         const { left: x, top: y } = (e.target as HTMLElement).getBoundingClientRect();
         this.setState({ popupMenuVisible: true, popupMenuPosition: { x, y } });
     }
+    @bind
     private closePopupMenu() {
         this.setState({ popupMenuVisible: false });
     }
 
+    @bind
     private openPopupPageName() {
         this.setState({ popupPageNameVisible: true });
     }
+    @bind
     private closePopupPageName() {
         this.setState({ popupMenuVisible: false, popupPageNameVisible: false });
     }
