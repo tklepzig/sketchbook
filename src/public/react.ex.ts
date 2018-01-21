@@ -10,7 +10,7 @@ export function bind(
     return {
         configurable: true,
         get(this: any) {
-            const bound = descriptor.value!.bind(this);
+            const bound = descriptor.value.bind(this);
             Object.defineProperty(this, propertyKey, {
                 value: bound,
                 configurable: true,
