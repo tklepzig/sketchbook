@@ -11,7 +11,7 @@ interface OverviewProps {
 
 export const Overview: React.SFC<OverviewProps> = (props) => (
     <>
-    <OverviewCanvas elements={props.page.elements} onClick={props.onClick} />
-    <Menu title={`Page ${props.page.pageNumber}`} onNavigateBack={props.onNavigateBack} />
+        <OverviewCanvas elements={props.page.elements} onClick={props.onClick} />
+        <Menu title={props.page.name || `Page ${props.page.pageNumber}`} onNavigateBack={props.onNavigateBack} />
     </>
 );

@@ -1,4 +1,4 @@
-import { addElement, addPage, deletePage, loadState } from "actions";
+import { addElement, addPage, deletePage, loadState, setPageName } from "actions";
 import * as bodyParser from "body-parser";
 import { dataPath } from "config";
 import * as express from "express";
@@ -93,6 +93,11 @@ export class Server {
         app.post("/api/page", (req: Request, res: Response) => {
             const { pageNumber, name } = req.body;
             this.store.dispatch(addPage(pageNumber, name));
+            res.sendStatus(200);
+        });
+        app.put("/api/page", (req: Request, res: Response) => {
+            const { pageNumber, name } = req.body;
+            this.store.dispatch(setPageName(pageNumber, name));
             res.sendStatus(200);
         });
         app.delete("/api/page", (req: Request, res: Response) => {

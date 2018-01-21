@@ -13,6 +13,11 @@ const pageList: AppReducer<Page[]> =
                     const { pageNumber, name } = action;
                     return [...state, { pageNumber, name }];
                 }
+            case "SetPageName":
+                {
+                    const { pageNumber, name } = action;
+                    return state.map((s) => s.pageNumber === pageNumber ? { pageNumber, name } : { ...s });
+                }
             case "DeletePage":
                 {
                     const { pageNumber } = action;
@@ -32,6 +37,12 @@ const pageDetails: AppReducer<{ [pageNumber: number]: PageDetails }> =
                 {
                     const { pageNumber, name } = action;
                     return { ...state, [pageNumber]: { name, pageNumber, elements: [] } };
+                }
+            case "SetPageName":
+                {
+                    const { pageNumber, name } = action;
+                    const page = state[pageNumber];
+                    return { ...state, [pageNumber]: { ...page, name } };
                 }
             case "DeletePage":
                 {

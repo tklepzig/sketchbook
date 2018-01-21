@@ -19,7 +19,8 @@ export const PageList: React.SFC<PageListProps> = (props) => {
         <PageButton
             key={page.pageNumber}
             onDeletePage={props.onDeletePage}
-            pageNumber={page.pageNumber}
+            page={page}
+
             onClick={onClick}
         />));
     return (

@@ -20,7 +20,7 @@ export class Popup extends React.Component<PopupProps, PopupState> {
         super(props);
         this.onClick = this.onClick.bind(this);
 
-        this.state = {};
+        this.state = { position: props.position };
     }
 
     public componentDidUpdate() {

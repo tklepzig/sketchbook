@@ -8,6 +8,7 @@ export type AppAction = SetColorAction
     | SetInputModeAction
     | AddElementAction
     | AddPageAction
+    | SetPageNameAction
     | DeletePageAction
     | ReceivedPageListAction
     | ReceivedPageAction
@@ -82,6 +83,22 @@ export const addPage = (pageNumber: number, name: string) => async (dispatch: Di
     });
 
     await sendRequest(dispatch, "api/page", "post", JSON.stringify({ pageNumber, name }));
+};
+
+export interface SetPageNameAction {
+    type: "SetPageName";
+    pageNumber: number;
+    name: string;
+}
+export const setPageName = (pageNumber: number, name: string) => async (dispatch: Dispatch<RootState>) => {
+
+    dispatch({
+        type: "SetPageName",
+        pageNumber,
+        name
+    });
+
+    await sendRequest(dispatch, "api/page", "put", JSON.stringify({ pageNumber, name }));
 };
 
 export interface DeletePageAction {

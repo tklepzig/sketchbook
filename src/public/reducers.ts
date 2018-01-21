@@ -66,6 +66,11 @@ export const pageList: AppReducer<Page[]> =
                     const { pageNumber } = action;
                     return state.filter((page) => page.pageNumber !== pageNumber);
                 }
+            case "SetPageName":
+                {
+                    const { pageNumber, name } = action;
+                    return state.map((s) => s.pageNumber === pageNumber ? { pageNumber, name } : { ...s });
+                }
             default:
                 return state;
         }

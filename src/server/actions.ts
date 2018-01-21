@@ -7,19 +7,10 @@ import { RootState } from "RootState";
 
 export type AppAction = AddElementAction
     | AddPageAction
+    | SetPageNameAction
     | DeletePageAction
     | PageListLoadedAction
     | PageDetailsLoadedAction;
-
-export enum ActionTypes {
-    AddElement,
-    AddPage,
-    DeletePage,
-    LoadPageList,
-    LoadPageDetails,
-    PageListLoaded,
-    PageDetailsLoaded
-}
 
 export interface AddElementAction {
     type: "AddElement";
@@ -60,6 +51,27 @@ export const addPage = (pageNumber: number, name: string) =>
         await fs.writeFile(path.resolve(pageListFile), JSON.stringify(state.pageList));
         await fs.ensureDir(pageDirectory);
         await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(emptyPage));
+    };
+
+export interface SetPageNameAction {
+    type: "SetPageName";
+    pageNumber: number;
+    name: string;
+}
+export const setPageName = (pageNumber: number, name: string) =>
+    async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
+        const action: SetPageNameAction = {
+            type: "SetPageName",
+            pageNumber,
+            name
+        };
+        dispatch(action);
+
+        const state = getState();
+        await fs.writeFile(path.resolve(pageListFile), JSON.stringify(state.pageList));
+        const page = { ...state.pageDetails[pageNumber], name };
+        await fs.ensureDir(pageDirectory);
+        await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(page));
     };
 
 export interface DeletePageAction {
