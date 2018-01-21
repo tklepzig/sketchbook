@@ -18,6 +18,8 @@ export interface MoreState {
 }
 
 export default class More extends React.Component<MoreProps, MoreState> {
+    private pageNameInput: HTMLInputElement | null = null;
+
     constructor(props: MoreProps) {
         super(props);
 
@@ -48,8 +50,15 @@ export default class More extends React.Component<MoreProps, MoreState> {
                     </div>
                 </Popup>
                 <Popup visible={this.state.popupPageNameVisible} onOutsideClick={this.closePopupPageName}>
-                    <input value={this.state.pageName} onChange={this.updatePageName} />
-                    <button onClick={this.savePageName}>Save</button>
+                    <header>Set Page Name</header>
+                    <form>
+                        <input
+                            ref={(i) => this.pageNameInput = i}
+                            value={this.state.pageName}
+                            onChange={this.updatePageName}
+                        />
+                        <button type="submit" onClick={this.savePageName}>Save</button>
+                    </form>
                 </Popup>
             </>);
     }
@@ -71,7 +80,12 @@ export default class More extends React.Component<MoreProps, MoreState> {
 
     @bind
     private openPopupPageName() {
-        this.setState({ popupPageNameVisible: true });
+        this.setState({ popupMenuVisible: false, popupPageNameVisible: true }, () => {
+            if (this.pageNameInput) {
+                this.pageNameInput.focus();
+                this.pageNameInput.select();
+            }
+        });
     }
     @bind
     private closePopupPageName() {
@@ -84,7 +98,8 @@ export default class More extends React.Component<MoreProps, MoreState> {
     }
 
     @bind
-    private savePageName() {
+    private savePageName(e: React.MouseEvent<HTMLButtonElement>) {
+        e.preventDefault();
         this.props.onSetPageName(this.props.page.pageNumber, this.state.pageName);
         this.closePopupPageName();
     }

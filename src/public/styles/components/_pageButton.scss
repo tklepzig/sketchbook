@@ -30,16 +30,7 @@
         margin: 0;
         flex: 1;
     }
-    .more {
-        @extend %button;
-        height: auto;
-        margin: 0;
-        width: 38px;
-        background-color: transparent;
-        background-image: url(assets/more.svg);
-        background-repeat: no-repeat;
-        background-position: center;
-    } // >.delete {
+     // >.delete {
     //     @extend %button;
     //     height: auto;
     //     margin: 0;

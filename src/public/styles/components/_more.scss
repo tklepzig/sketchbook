@@ -1,0 +1,36 @@
+.more {
+    @extend %button;
+    height: auto;
+    margin: 0;
+    width: 38px;
+    background-color: transparent;
+    background-image: url(assets/more.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    input {
+        padding: 6px 12px;
+        margin: 4px;
+        background: $background;
+        border: 1px solid darken($background, 30%);
+        outline: none;
+        &:focus {
+            outline: none;
+        }
+    }
+    button {
+        @extend %button;
+        align-self: flex-end;
+        height: auto;
+        width: auto;
+        margin: 4px;
+        font-size: 0.9em;
+        box-shadow: 0 0 4px 0 darken($background, 30%);
+        border: 1px solid darken($background, 20%);
+        padding: 6px 12px;
+    }
+}
