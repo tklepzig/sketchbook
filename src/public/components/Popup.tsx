@@ -9,8 +9,7 @@ interface PopupProps {
 }
 
 interface PopupState {
-    leftOffset: number;
-    topOffset: number;
+    position?: Point;
 }
 
 export class Popup extends React.Component<PopupProps, PopupState> {
@@ -21,29 +20,35 @@ export class Popup extends React.Component<PopupProps, PopupState> {
         super(props);
         this.onClick = this.onClick.bind(this);
 
-        this.state = { leftOffset: 0, topOffset: 0 };
+        this.state = {};
     }
+
     public componentDidUpdate() {
-        if (!this.section) {
+        if (!this.state.position || !this.section) {
             return;
         }
 
         const { right, bottom } = this.section.getBoundingClientRect();
-
         if (right > window.innerWidth) {
-            this.setState({ leftOffset: right - window.innerWidth + 4 });
+            const xOffset = right - window.innerWidth + 4;
+            this.setState({ position: { ...this.state.position, x: this.state.position.x - xOffset } });
         }
         if (bottom > window.innerHeight) {
-            this.setState({ topOffset: bottom - window.innerHeight + 4 });
+            const yOffset = bottom - window.innerHeight + 4;
+            this.setState({ position: { ...this.state.position, y: this.state.position.y - yOffset } });
         }
     }
 
+    public componentWillReceiveProps(newProps: PopupProps) {
+        this.setState({ position: newProps.position });
+    }
+
     public render() {
-        const style: React.CSSProperties | undefined = this.props.position
+        const style: React.CSSProperties | undefined = this.state.position
             ? {
                 position: "absolute",
-                left: this.props.position.x - this.state.leftOffset,
-                top: this.props.position.y - this.state.topOffset
+                left: this.state.position.x,
+                top: this.state.position.y
             }
             : undefined;
 
