@@ -29,6 +29,7 @@ interface SketchCanvasState {
 }
 
 export default class SketchCanvas extends React.Component<SketchCanvasProps, SketchCanvasState> {
+    private userAddedElement = false;
     private canvas: HTMLCanvasElement | null = null;
     private textarea: Textarea | null = null;
     private isTranslateMode = false;
@@ -75,6 +76,12 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
             this.setState({ textareaState: { ...this.state.textareaState, isVisible: false, text: "" } });
         }
         this.updateCanvasConfig(newProps);
+        if (!this.userAddedElement) {
+            // only repaint if the change was NOT triggered by the user
+            this.canvasDrawing.repaint(this.canvasContext, newProps.elements);
+        } else {
+            this.userAddedElement = false;
+        }
     }
 
     public render() {
@@ -146,6 +153,7 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
         this.tapIsDown = false;
 
         if (!this.isTranslateMode && this.props.inputMode === "pen") {
+            this.userAddedElement = true;
             this.props.onLineAdded(this.canvasDrawing.endLine());
         }
     }
@@ -181,6 +189,8 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
             this.state.textareaState.text,
             this.canvasContext.getTransformedPoint(this.state.textareaState.position),
             this.props.fontSize);
+
+        this.userAddedElement = true;
         this.props.onTextAdded(text);
         this.setState({ textareaState: { ...this.state.textareaState, text: "", isVisible: false } });
     }

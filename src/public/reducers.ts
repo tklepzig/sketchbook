@@ -1,6 +1,7 @@
 import { FontSize, InputMode, Page, PageDetails, Pen } from "@shared/models";
 import { Reducer } from "@shared/redux";
 import { AppAction } from "actions";
+import undoable from "redux-undo";
 
 type AppReducer<S> = Reducer<S, AppAction>;
 
@@ -76,7 +77,7 @@ export const pageList: AppReducer<Page[]> =
         }
     };
 
-export const currentPage: AppReducer<PageDetails | null> = (state = null, action) => {
+const currentPageInner: AppReducer<PageDetails | null> = (state = null, action) => {
     switch (action.type) {
         case "ReceivedPage":
             return action.page;
@@ -92,6 +93,8 @@ export const currentPage: AppReducer<PageDetails | null> = (state = null, action
             return state;
     }
 };
+
+export const currentPage = undoable(currentPageInner);
 
 export const error: AppReducer<string> = (state = "", action) => {
     switch (action.type) {
