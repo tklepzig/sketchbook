@@ -75,3 +75,23 @@
     background-size: 30px;
     flex: 0 0 40px;
 }
+
+.btn-undo {
+    @extend %button;
+    @extend %round;
+    background-image: url(assets/undo.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30px;
+    flex: 0 0 40px;
+}
+
+.btn-redo {
+    @extend %button;
+    @extend %round;
+    background-image: url(assets/redo.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30px;
+    flex: 0 0 40px;
+}

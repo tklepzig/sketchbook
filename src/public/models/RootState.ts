@@ -1,4 +1,5 @@
 import { FontSize, InputMode, Page, PageDetails, Pen } from "@shared/models";
+import { StateWithHistory } from "redux-undo";
 export interface RootState {
     pen: Pen;
     fontSize: FontSize;
@@ -6,5 +7,5 @@ export interface RootState {
     error: string;
     ready: boolean;
     pageList: Page[];
-    currentPage: PageDetails | null;
+    currentPage: StateWithHistory<PageDetails | null>;
 }
