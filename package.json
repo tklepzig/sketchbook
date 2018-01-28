@@ -48,6 +48,7 @@
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "redux-devtools-extension": "^2.13.2",
+    "redux-undo": "beta",
     "sass-loader": "^6.0.6",
     "ts-jest": "^21.1.4",
     "tsconfig-paths-webpack-plugin": "^1.2.0",

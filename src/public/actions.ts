@@ -1,6 +1,7 @@
 import { RootState } from "@models/RootState";
 import { FontSize, InputMode, Page, PageDetails, PageElement } from "@shared/models";
 import { Action, Dispatch } from "redux";
+import { ActionCreators } from "redux-undo";
 
 export type AppAction = SetColorAction
     | SetStrokeWidthAction
@@ -65,6 +66,31 @@ export const addElement = (pageNumber: number, element: PageElement) => async (d
         element,
         pageNumber
     });
+
+    await sendRequest(dispatch, "api/element", "post", JSON.stringify({ element, pageNumber }));
+};
+
+export const undo = () => async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
+    dispatch(ActionCreators.undo());
+
+    const state = getState();
+    if (!state.currentPage.present) {
+        return;
+    }
+    const { pageNumber } = state.currentPage.present;
+    await sendRequest(dispatch, "api/lastElement", "delete", JSON.stringify({ pageNumber }));
+};
+
+export const redo = () => async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
+    dispatch(ActionCreators.redo());
+
+    const state = getState();
+    const page = state.currentPage.present;
+    if (!page) {
+        return;
+    }
+    const element = page.elements[page.elements.length - 1];
+    const pageNumber = page.pageNumber;
 
     await sendRequest(dispatch, "api/element", "post", JSON.stringify({ element, pageNumber }));
 };
@@ -136,6 +162,7 @@ export const fetchPage = (pageNumber: number) => async (dispatch: Dispatch<RootS
 
     const response = await sendRequest(dispatch, `api/page/${pageNumber}`, "get");
     const page = await response.json();
+    dispatch(ActionCreators.clearHistory());
     dispatch(receivedPage(page));
     dispatch(setReady(true));
 };

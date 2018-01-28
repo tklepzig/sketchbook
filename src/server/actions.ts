@@ -6,6 +6,7 @@ import { Dispatch } from "redux";
 import { RootState } from "RootState";
 
 export type AppAction = AddElementAction
+    | DeleteLastElementAction
     | AddPageAction
     | SetPageNameAction
     | DeletePageAction
@@ -31,6 +32,25 @@ export const addElement = (pageNumber: number, element: PageElement) =>
         const page = state.pageDetails[pageNumber];
         await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(page));
     };
+
+export interface DeleteLastElementAction {
+    type: "DeleteLastElement";
+    pageNumber: number;
+}
+export const deleteLastElement = (pageNumber: number) =>
+    async (dispatch: Dispatch<RootState>, getState: () => RootState) => {
+
+        const action: DeleteLastElementAction = {
+            type: "DeleteLastElement",
+            pageNumber
+        };
+        dispatch(action);
+
+        const state = getState();
+        const page = state.pageDetails[pageNumber];
+        await fs.writeFile(path.resolve(pageDirectory, pageNumber.toString()), JSON.stringify(page));
+    };
+
 
 export interface AddPageAction {
     type: "AddPage";
