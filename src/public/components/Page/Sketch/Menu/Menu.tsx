@@ -6,6 +6,7 @@ import { FontSize, InputMode } from "@shared/models";
 
 import { Button } from "@components/Button";
 import {
+    redo,
     setColor,
     SetColorAction,
     setFontSize,
@@ -13,7 +14,8 @@ import {
     setInputMode,
     SetInputModeAction,
     setStrokeWidth,
-    SetStrokeWidthAction
+    SetStrokeWidthAction,
+    undo
 } from "actions";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
@@ -96,8 +98,8 @@ function mapDispatchToProps(dispatch: Dispatch<RootState>) {
         onFontSizeSelected: (fontSize: FontSize) => dispatch(setFontSize(fontSize)),
         onStrokeWidthSelected: (strokeWidth: string) => dispatch(setStrokeWidth(strokeWidth)),
         onInputModeSelected: (inputMode: InputMode) => dispatch(setInputMode(inputMode)),
-        onUndo: () => dispatch(ActionCreators.undo()),
-        onRedo: () => dispatch(ActionCreators.redo())
+        onUndo: () => dispatch(undo()),
+        onRedo: () => dispatch(redo())
     };
 }
 

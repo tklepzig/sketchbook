@@ -64,6 +64,17 @@ const pageDetails: AppReducer<{ [pageNumber: number]: PageDetails }> =
                     const page = state[pageNumber];
                     return { ...state, [pageNumber]: { ...page, elements: [...page.elements, element] } };
                 }
+            case "DeleteLastElement":
+                {
+                    const { pageNumber } = action;
+                    const page = state[pageNumber];
+                    return {
+                        ...state, [pageNumber]: {
+                            ...page,
+                            elements: page.elements.slice(0, page.elements.length - 1)
+                        }
+                    };
+                }
             case "PageDetailsLoaded":
                 return action.pageDetails;
             default:
