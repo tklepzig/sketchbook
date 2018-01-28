@@ -24,15 +24,11 @@ $error: #ab2201;
     &:focus {
         outline: none;
     }
-    &:not([disabled]):hover {
+    &:hover {
         background-color: rgba(darken($background, 10%), 0.5);
     }
-    &:not([disabled]):active {
+    &:active {
         background-color: rgba(darken($background, 20%), 0.5);
-    }
-    &[disabled] {
-        opacity: 0.5;
-        cursor: default;
     }
 }
 

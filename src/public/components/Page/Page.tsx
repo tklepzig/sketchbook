@@ -89,7 +89,7 @@ class Page extends React.Component<PageProps & PageOwnProps & PageDispatchProps,
 }
 
 function mapStateToProps(state: RootState): PageProps {
-    const page = state.currentPage.present;
+    const page = state.currentPage;
     return { page };
 }
 
