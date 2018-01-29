@@ -64,15 +64,17 @@ const Menu: React.SFC<MenuProps & MenuOwnProps & MenuDispatchProps> = (props) =>
 
     return (
         <div className="menu">
-            <Button className="btn-back" onClick={props.onNavigateBack} />
-            <div style={{ flex: 1 }} />
-            <Button title="Undo" className="btn-undo" disabled={!props.canUndo} onClick={props.onUndo} />
-            <Button title="Redo" className="btn-redo" disabled={!props.canRedo} onClick={props.onRedo} />
-            <div style={{ flex: "0 0 20px" }} />
-            {content}
-            <div style={{ flex: "0 0 20px" }} />
-            {inputModeToggle}
-            <div style={{ flex: 1 }} />
+            <section>
+                <Button className="btn-back" onClick={props.onNavigateBack} />
+            </section>
+            <section>
+                <Button title="Undo" className="btn-undo" disabled={!props.canUndo} onClick={props.onUndo} />
+                <Button title="Redo" className="btn-redo" disabled={!props.canRedo} onClick={props.onRedo} />
+                {content}
+            </section>
+            <section>
+                {inputModeToggle}
+            </section>
         </div>);
 };
 
