@@ -18,9 +18,10 @@ interface PageButtonDispatchProps {
 
 const PageButton: React.SFC<PageButtonOwnProps & PageButtonDispatchProps> = (props) => {
     const onClick = () => props.onClick(props.page.pageNumber);
-    const onDeletePageClick = (pageNumber: number) => {
-        if (confirm("This operation is irreversible, are you sure?")) {
-            props.onDeletePage(pageNumber);
+    const onDeletePageClick = (page: Page) => {
+        const msg = `Deleting ${page.name || `Page ${page.pageNumber}`}, this operation is irreversible, are you sure?`;
+        if (confirm(msg)) {
+            props.onDeletePage(page.pageNumber);
         }
     };
     const name = props.page.name || `Page ${props.page.pageNumber}`;

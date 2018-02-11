@@ -6,7 +6,7 @@ import { bind } from "react.ex";
 
 export interface MoreProps {
     page: Page;
-    onDeletePage: (pageNumber: number) => void;
+    onDeletePage: (page: Page) => void;
     onSetPageName: (pageNumber: number, name: string) => void;
 }
 
@@ -64,7 +64,7 @@ export default class More extends React.Component<MoreProps, MoreState> {
     }
     @bind
     private onDeleteClick() {
-        this.props.onDeletePage(this.props.page.pageNumber);
+        this.props.onDeletePage(this.props.page);
         this.setState({ popupMenuVisible: false });
     }
 
