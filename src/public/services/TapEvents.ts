@@ -6,6 +6,8 @@ class TapEvents {
     public tapUp: string;
     public getTouchCount: (e: any) => number;
     public getTapPosition: (e: any) => Point;
+    public getPinchZoomDistance: (e: any) => number | undefined;
+    public getPinchZoomCenter: (e: any) => Point | undefined;
 
     constructor() {
         this.tapDown = this.deviceSupportsTouchEvents() ? "onTouchStart" : "onMouseDown";
@@ -30,6 +32,20 @@ class TapEvents {
         this.getTouchCount = (e: any) => 1;
     }
 
+    private getTouchPositions(e: any) {
+        const touches = e.targetTouches.length > 0
+            ? e.targetTouches
+            : e.changedTouches;
+
+        const touchPositions = [];
+
+        for (const touch of touches) {
+            touchPositions.push({ x: touch.pageX, y: touch.pageY });
+        }
+
+        return touchPositions;
+    }
+
     private initForTouchDevice() {
         this.getTapPosition = (e: any) => {
             const touches = e.targetTouches.length > 0
@@ -40,6 +56,32 @@ class TapEvents {
             return { x, y };
         };
         this.getTouchCount = (e: any) => e.touches.length;
+
+        this.getPinchZoomDistance = (e: any) => {
+
+            const touchPositions = this.getTouchPositions(e);
+            if (touchPositions.length === 2) {
+                const dx = Math.abs(touchPositions[0].x - touchPositions[1].x);
+                const dy = Math.abs(touchPositions[0].y - touchPositions[1].y);
+
+                // pythagoras...
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+        };
+
+        this.getPinchZoomCenter = (e: any) => {
+
+            const touchPositions = this.getTouchPositions(e);
+            if (touchPositions.length === 2) {
+                const dx = Math.abs(touchPositions[0].x - touchPositions[1].x);
+                const dy = Math.abs(touchPositions[0].y - touchPositions[1].y);
+
+                return {
+                    x: Math.min(touchPositions[0].x, touchPositions[1].x) + dx / 2,
+                    y: Math.min(touchPositions[0].y, touchPositions[1].y) + dy / 2
+                };
+            }
+        };
     }
 }
 
