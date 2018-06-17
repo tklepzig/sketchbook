@@ -30,6 +30,12 @@ class TapEvents {
             x: e.pageX, y: e.pageY
         });
         this.getTouchCount = (e: any) => 1;
+
+        this.getPinchZoomDistance = (e: any) => 0;
+
+        this.getPinchZoomCenter = (e: any) => ({
+            x: e.pageX, y: e.pageY
+        });
     }
 
     private getTouchPositions(e: any) {
