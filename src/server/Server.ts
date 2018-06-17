@@ -1,9 +1,13 @@
 import { addElement, addPage, deleteLastElement, deletePage, loadState, setPageName } from "actions";
 import * as bodyParser from "body-parser";
 import { dataPath } from "config";
+import * as cookieParser from "cookie-parser";
 import * as express from "express";
-import { Application, Request, Response } from "express-serve-static-core";
+import { Application, NextFunction, Request, Response } from "express-serve-static-core";
+import * as session from "express-session";
 import * as fs from "fs-extra";
+import * as passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import * as path from "path";
 import { applyMiddleware, createStore, Store } from "redux";
 import thunkMiddleware from "redux-thunk";
@@ -12,14 +16,22 @@ import { RootState } from "RootState";
 import reducers from "./reducers";
 
 export interface Config {
+    isProd: boolean;
     port: number;
     repoUrl: string;
     repoUser: string;
     repoPassword: string;
+    sessionSecret: string;
+    clientId: string;
+    clientSecret: string;
+    userMail: string;
+    userId: string;
 }
 export class Server {
     private store: Store<RootState>;
     private repoService: RepoService;
+    private readonly authRedirectUri = "/auth/google/callback";
+
     constructor(private config: Config) {
         this.store = createStore(reducers, applyMiddleware(thunkMiddleware));
         this.repoService = new RepoService();
@@ -74,11 +86,145 @@ export class Server {
 
     private startServer() {
         const app = express();
+        app.use(cookieParser());
         app.use(bodyParser.json());
-        app.use(express.static(path.resolve(__dirname, "..", "public")));
-        this.defineRoutes(app);
+        app.use(bodyParser.urlencoded({ extended: true }));
 
-        app.get("/*", (req, res) => {
+        app.use(session({
+            secret: this.config.sessionSecret,
+            name: "sketchbook-auth",
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                secure: this.config.isProd,
+                httpOnly: true
+            }
+        }));
+        app.use(passport.initialize());
+        app.use(passport.session());
+
+        passport.serializeUser((user, done) => done(null, user));
+        passport.deserializeUser((user, done) => done(null, user));
+
+        passport.use(new GoogleStrategy(
+            {
+                clientID: this.config.clientId,
+                clientSecret: this.config.clientSecret,
+                callbackURL: this.authRedirectUri,
+                proxy: true // necessary for https redirect on Azure
+            },
+            (accessToken: any, refreshToken: any, profile: any, done: any) => done(null, profile)
+        ));
+
+        // force https in production
+        app.use((req, res, next) => {
+            if (this.config.isProd && req.protocol === "http") {
+                return res.redirect("https://" + req.headers.host + req.url);
+            }
+            next();
+        });
+
+        /* Azure and secure cookies
+           see http://scottksmith.com/blog/2014/08/22/using-secure-cookies-in-node-on-azure/ */
+        /*---------------------------------------------------------_*/
+        // Tell express that we're running behind a reverse proxy that supplies https for you
+        app.set("trust proxy", 1);
+
+        // Add middleware that will trick express into thinking the request is secure
+        app.use((req, res, next) => {
+            if (req.headers["x-arr-ssl"] && !req.headers["x-forwarded-proto"]) {
+                req.headers["x-forwarded-proto"] = "https";
+            }
+            return next();
+        });
+        /*---------------------------------------------------------_*/
+
+        // not senseful for sketchbook cuase there is no login page and no anonymous content available
+        // app.get('/logout', function (req, res) {
+        //     req.logout();
+        //     res.redirect('/');
+        // });
+
+        app.get("/login", passport.authenticate("google",
+            {
+                scope: [
+                    "https://www.googleapis.com/auth/plus.profile.emails.read",
+                    "https://www.googleapis.com/auth/plus.login"
+                ]
+            }));
+
+        // see https://stackoverflow.com/a/13734798
+        const authenticate = (req: Request, success: () => void, failure: (error: Error) => void) => {
+
+            // Use the Google strategy with passport.js, but with a custom callback.
+            // passport.authenticate returns Connect middleware that we will use below.
+            //
+            // For reference: http://passportjs.org/guide/authenticate/
+            return passport.authenticate("google",
+                // This is the 'custom callback' part
+                (err, user, info) => {
+
+                    if (err) {
+                        failure(err);
+                    } else if (!user) {
+                        failure(new Error("Invalid login data"));
+                    } else {
+                        // Here, you can do what you want to control
+                        // access. For example, you asked to deny users
+                        // with a specific email address:
+
+                        const allowedUserEmails = user.emails.filter((email: any) =>
+                            email.type === "account" && email.value === this.config.userMail);
+
+                        const allowedUserId = user.id === this.config.userId;
+
+                        if (allowedUserEmails.length === 0 || !allowedUserId) {
+                            failure(new Error("User not allowed"));
+                        } else {
+                            // req.login is added by the passport.initialize()
+                            // middleware to manage login state. We need
+                            // to call it directly, as we're overriding
+                            // the default passport behavior.
+                            req.login(user, (ex: Error) => {
+                                if (ex) {
+                                    failure(ex);
+                                }
+                                success();
+                            });
+                        }
+                    }
+                }
+            );
+        };
+
+        const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+
+            const success = () => {
+                res.redirect("/");
+            };
+
+            const failure = (error: Error) => {
+                console.log(error);
+                res.status(401).send("Access Denied");
+
+            };
+
+            const middleware = authenticate(req, success, failure);
+            middleware(req, res, next);
+        };
+
+        app.get(this.authRedirectUri, authMiddleware);
+
+        function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
+            if (req.isAuthenticated()) {
+                return next();
+            }
+            res.redirect("/login");
+        }
+
+        app.use(ensureAuthenticated, express.static(path.resolve(__dirname, "..", "public")));
+        this.defineRoutes(app);
+        app.get("/*", ensureAuthenticated, (req: Request, res: Response) => {
             res.sendFile(path.resolve(path.join(__dirname, "..", "public", "index.html")));
         });
 

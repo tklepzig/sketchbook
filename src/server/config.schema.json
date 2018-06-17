@@ -1,0 +1,59 @@
+{
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "isProd": {
+            "$id": "/properties/isProd",
+            "type": "boolean",
+            "default": false
+        },
+        "PORT": {
+            "$id": "/properties/port",
+            "type": "integer",
+            "default": 80
+        },
+        "sessionSecret": {
+            "$id": "/properties/sessionSecret",
+            "type": "string",
+            "default": ""
+        },
+        "clientId": {
+            "$id": "/properties/clientId",
+            "type": "string",
+            "default": ""
+        },
+        "clientSecret": {
+            "$id": "/properties/clientSecret",
+            "type": "string",
+            "default": ""
+        },
+        "repoUrl": {
+            "$id": "/properties/repoUrl",
+            "type": "string",
+            "default": ""
+        },
+        "repoUser": {
+            "$id": "/properties/repoUser",
+            "type": "string",
+            "default": ""
+        },
+        "repoPassword": {
+            "$id": "/properties/repoPassword",
+            "type": "string",
+            "default": ""
+        },
+        "userMail": {
+            "$id": "/properties/userMail",
+            "type": "string",
+            "default": ""
+        },
+        "userId": {
+            "$id": "/properties/userId",
+            "type": "string",
+            "default": ""
+        }
+    },
+    "required": []
+}
