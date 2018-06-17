@@ -7,9 +7,17 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome",
+            "name": "Debug React",
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Debug Node",
+            "processId": "${command:PickProcess}",
+            "restart": true,
+            "protocol": "inspector",
         }
     ]
 }
