@@ -111,14 +111,7 @@ export class Server {
             (accessToken: any, refreshToken: any, profile: any, done: any) => done(null, profile)
         ));
 
-        // force https in production
-        app.use((req, res, next) => {
-            if (this.config.isProd && req.protocol === "http") {
-                return res.redirect("https://" + req.headers.host + req.url);
-            }
-            next();
-        });
-
+        // --
         // Azure and secure cookies
         // see http://scottksmith.com/blog/2014/08/22/using-secure-cookies-in-node-on-azure/
 
@@ -132,6 +125,7 @@ export class Server {
             }
             return next();
         });
+        // --
 
         app.get("/login", passport.authenticate("google",
             {
@@ -193,9 +187,18 @@ export class Server {
                 return next();
             }
             res.redirect("/login");
-        }
+        };
 
         return ensureAuthenticated;
+    }
+
+    private forceHttps(app: Application) {
+        app.use((req: Request, res: Response, next: NextFunction) => {
+            if (req.protocol === "http") {
+                return res.redirect("https://" + req.headers.host + req.url);
+            }
+            next();
+        });
     }
 
     private startServer() {
@@ -204,7 +207,20 @@ export class Server {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
 
-        const ensureAuthenticated = this.auth(app);
+        if (this.config.isProd) {
+            this.forceHttps(app);
+        }
+
+        const useAuthentication = this.config.clientId
+            && this.config.clientSecret
+            && this.config.sessionSecret
+            && this.config.userId
+            && this.config.userMail;
+
+        const ensureAuthenticated = useAuthentication
+            ? this.auth(app)
+            : (req: Request, res: Response, next: NextFunction) => next();
+
         app.use(ensureAuthenticated, express.static(path.resolve(__dirname, "..", "public")));
         this.defineRoutes(app);
         app.get("/*", ensureAuthenticated, (req: Request, res: Response) => {
