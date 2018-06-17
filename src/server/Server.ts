@@ -84,12 +84,7 @@ export class Server {
         await this.store.dispatch(loadState());
     }
 
-    private startServer() {
-        const app = express();
-        app.use(cookieParser());
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
-
+    private auth(app: Application) {
         app.use(session({
             secret: this.config.sessionSecret,
             name: "sketchbook-auth",
@@ -124,26 +119,19 @@ export class Server {
             next();
         });
 
-        /* Azure and secure cookies
-           see http://scottksmith.com/blog/2014/08/22/using-secure-cookies-in-node-on-azure/ */
-        /*---------------------------------------------------------_*/
-        // Tell express that we're running behind a reverse proxy that supplies https for you
+        // Azure and secure cookies
+        // see http://scottksmith.com/blog/2014/08/22/using-secure-cookies-in-node-on-azure/
+
+        // tell express that we're running behind a reverse proxy that supplies https for you
         app.set("trust proxy", 1);
 
-        // Add middleware that will trick express into thinking the request is secure
-        app.use((req, res, next) => {
+        // add middleware that will trick express into thinking the request is secure
+        app.use((req: Request, res: Response, next: NextFunction) => {
             if (req.headers["x-arr-ssl"] && !req.headers["x-forwarded-proto"]) {
                 req.headers["x-forwarded-proto"] = "https";
             }
             return next();
         });
-        /*---------------------------------------------------------_*/
-
-        // not senseful for sketchbook cuase there is no login page and no anonymous content available
-        // app.get('/logout', function (req, res) {
-        //     req.logout();
-        //     res.redirect('/');
-        // });
 
         app.get("/login", passport.authenticate("google",
             {
@@ -154,46 +142,31 @@ export class Server {
             }));
 
         // see https://stackoverflow.com/a/13734798
+        // for reference: http://passportjs.org/guide/authenticate/
         const authenticate = (req: Request, success: () => void, failure: (error: Error) => void) => {
+            return passport.authenticate("google", (error, user, info) => {
+                if (error) {
+                    failure(error);
+                } else if (!user) {
+                    failure(new Error("Invalid login data"));
+                } else {
+                    const allowedUserEmails = user.emails.filter((email: any) =>
+                        email.type === "account" && email.value === this.config.userMail);
 
-            // Use the Google strategy with passport.js, but with a custom callback.
-            // passport.authenticate returns Connect middleware that we will use below.
-            //
-            // For reference: http://passportjs.org/guide/authenticate/
-            return passport.authenticate("google",
-                // This is the 'custom callback' part
-                (err, user, info) => {
+                    const allowedUserId = user.id === this.config.userId;
 
-                    if (err) {
-                        failure(err);
-                    } else if (!user) {
-                        failure(new Error("Invalid login data"));
+                    if (allowedUserEmails.length === 0 || !allowedUserId) {
+                        failure(new Error(`User ${JSON.stringify(user)} not allowed`));
                     } else {
-                        // Here, you can do what you want to control
-                        // access. For example, you asked to deny users
-                        // with a specific email address:
-
-                        const allowedUserEmails = user.emails.filter((email: any) =>
-                            email.type === "account" && email.value === this.config.userMail);
-
-                        const allowedUserId = user.id === this.config.userId;
-
-                        if (allowedUserEmails.length === 0 || !allowedUserId) {
-                            failure(new Error("User not allowed"));
-                        } else {
-                            // req.login is added by the passport.initialize()
-                            // middleware to manage login state. We need
-                            // to call it directly, as we're overriding
-                            // the default passport behavior.
-                            req.login(user, (ex: Error) => {
-                                if (ex) {
-                                    failure(ex);
-                                }
-                                success();
-                            });
-                        }
+                        req.login(user, (err: Error) => {
+                            if (err) {
+                                failure(err);
+                            }
+                            success();
+                        });
                     }
                 }
+            }
             );
         };
 
@@ -204,9 +177,9 @@ export class Server {
             };
 
             const failure = (error: Error) => {
+                // tslint:disable-next-line:no-console
                 console.log(error);
                 res.status(401).send("Access Denied");
-
             };
 
             const middleware = authenticate(req, success, failure);
@@ -215,13 +188,23 @@ export class Server {
 
         app.get(this.authRedirectUri, authMiddleware);
 
-        function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
+        const ensureAuthenticated = (req: Request, res: Response, next: NextFunction) => {
             if (req.isAuthenticated()) {
                 return next();
             }
             res.redirect("/login");
         }
 
+        return ensureAuthenticated;
+    }
+
+    private startServer() {
+        const app = express();
+        app.use(cookieParser());
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
+
+        const ensureAuthenticated = this.auth(app);
         app.use(ensureAuthenticated, express.static(path.resolve(__dirname, "..", "public")));
         this.defineRoutes(app);
         app.get("/*", ensureAuthenticated, (req: Request, res: Response) => {
