@@ -101,10 +101,19 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         const touchCount = tapEvents.getTouchCount(e);
         this.isTranslateZoomMode = touchCount === 2 || e.ctrlKey;
         const originalTapDownPoint = tapEvents.getTapPosition(e);
-        const tapDownPoint = this.canvasContext.getTransformedPoint(originalTapDownPoint);
 
         if (this.isTranslateZoomMode) {
-            this.canvasTranslate.startTranslate(tapDownPoint);
+            const center = tapEvents.getPinchZoomCenter(e);
+            const distance = tapEvents.getPinchZoomDistance(e);
+            if (distance) {
+                this.lastDistance = distance;
+            } else {
+                this.lastDistance = 0;
+
+            }
+            if (center) {
+                this.canvasTranslate.startTranslate(this.canvasContext.getTransformedPoint(center));
+            }
         }
     }
 
@@ -116,10 +125,11 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         if (this.isTranslateZoomMode) {
 
             const translate = (point: Point) => {
-                // add offset since canvas is not at position 0, 0
-                const { x, y } = this.canvasContext.getPosition();
-                point.x -= x;
-                point.y -= y;
+                // TODO: why is this offset not necessary here?
+                // // add offset since canvas is not at position 0, 0
+                // const { x, y } = this.canvasContext.getPosition();
+                // point.x -= x;
+                // point.y -= y;
                 const pt = this.canvasContext.getTransformedPoint(point);
                 this.canvasTranslate.translate(this.canvasContext, pt);
                 this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
@@ -135,15 +145,15 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
 
                 if (this.lastDistance === 0) {
                     this.lastDistance = distance;
-                } else if (Math.abs(this.lastDistance - distance) > 20) {
+                } else if (Math.abs(this.lastDistance - distance) > 10) {
 
                     const scaleFactor = 1.1;
                     const factor = Math.pow(scaleFactor, -(this.lastDistance - distance) / 20);
-
-                    // add offset since canvas is not at position 0, 0
-                    const { x, y } = this.canvasContext.getPosition();
-                    center.x -= x;
-                    center.y -= y;
+                    // TODO: why is this offset not necessary here?
+                    // // add offset since canvas is not at position 0, 0
+                    // const { x, y } = this.canvasContext.getPosition();
+                    // center.x -= x;
+                    // center.y -= y;
                     const pt = this.canvasContext.getTransformedPoint(center);
                     this.canvasContext.translate(pt.x, pt.y);
                     this.canvasContext.scale(factor, factor);

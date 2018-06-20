@@ -64,6 +64,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     @bind
     private tapDown(e: any) {
+        // TODO: use pinchzoomcenter
         this.tapIsDown = true;
         const touchCount = tapEvents.getTouchCount(e);
         this.isTranslateMode = touchCount === 2 || e.ctrlKey;
