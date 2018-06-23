@@ -21,34 +21,19 @@ interface OverviewCanvasState {
 export class OverviewCanvas2 extends React.Component<OverviewCanvasProps, OverviewCanvasState> {
     private canvas: Canvas | null = null;
     private canvasDrawing: CanvasDrawing;
-    private canvasContext: CanvasContext;
 
     constructor(props: OverviewCanvasProps) {
         super(props);
         this.tapUp = this.tapUp.bind(this);
         this.resize = this.resize.bind(this);
-
-        this.canvasContext = new CanvasContext(() => {
-            if (this.canvas == null) {
-                return null;
-            }
-
-            const rawCanvas = this.canvas.getRawCanvas();
-            if (rawCanvas == null) {
-                return null;
-            }
-
-            return rawCanvas.getContext("2d");
-        });
         this.canvasDrawing = new CanvasDrawing();
     }
 
-    public componentDidMount() {
-        this.resize();
-    }
-
     public componentWillReceiveProps() {
-        this.generateOverview();
+
+        if (this.canvas) {
+            this.generateOverview(this.canvas.getContext());
+        }
     }
 
     public render() {
@@ -62,36 +47,36 @@ export class OverviewCanvas2 extends React.Component<OverviewCanvasProps, Overvi
     }
 
     @bind
-    private repaint() {
-        this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
+    private repaint(canvasContext: CanvasContext) {
+        this.canvasDrawing.repaint(canvasContext, this.props.elements, false);
     }
 
-    private tapUp(e: any) {
+    private tapUp(canvasContext: CanvasContext, e: any) {
         const downPoint = tapEvents.getTapPosition(e);
         // add offset since canvas is not at position 0, 0
-        const { x, y } = this.canvasContext.getPosition();
+        const { x, y } = canvasContext.getPosition();
         downPoint.x -= x;
         downPoint.y -= y;
 
-        const tapDownPoint = this.canvasContext.getTransformedPoint(downPoint);
+        const tapDownPoint = canvasContext.getTransformedPoint(downPoint);
         this.props.onClick(tapDownPoint);
     }
 
-    private resize() {
-        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth - (15 * 2), window.innerHeight - (63 + 15));
-        this.generateOverview();
+    private resize(canvasContext: CanvasContext) {
+        canvasHelper.setCanvasSize(canvasContext, window.innerWidth - (15 * 2), window.innerHeight - (63 + 15));
+        this.generateOverview(canvasContext);
     }
 
-    private generateOverview() {
+    private generateOverview(canvasContext: CanvasContext) {
         const spacingFactor = 0.01;
         const { min, max } = this.calculateMinMax(this.props.elements);
 
-        this.canvasContext.doCanvasAction((context) => {
+        canvasContext.doCanvasAction((context) => {
             if (!min || !max) {
                 return;
             }
 
-            this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+            context.setTransform(1, 0, 0, 1, 0, 0);
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
             let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
@@ -114,11 +99,11 @@ export class OverviewCanvas2 extends React.Component<OverviewCanvasProps, Overvi
             };
 
             context.lineCap = "round";
-            this.canvasContext.scale(scale, scale);
-            this.canvasContext.translate(translation.dx, translation.dy);
+            context.scale(scale, scale);
+            context.translate(translation.dx, translation.dy);
 
             this.setState({ scale, translation }, () => {
-                this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
+                this.canvasDrawing.repaint(canvasContext, this.props.elements, false);
 
                 // if (min && max) {
                 //     context.strokeStyle = "red";

@@ -7,11 +7,11 @@ import * as React from "react";
 import { bind } from "react.ex";
 
 interface CanvasProps {
-    onRepaint?: () => void;
-    onResize?: () => void;
-    onTapDown?: (e: any) => void;
-    onTapMove?: (e: any) => void;
-    onTapUp?: (e: any) => void;
+    onRepaint?: (context: CanvasContext) => void;
+    onResize?: (context: CanvasContext) => void;
+    onTapDown?: (context: CanvasContext, e: any) => void;
+    onTapMove?: (context: CanvasContext, e: any) => void;
+    onTapUp?: (context: CanvasContext, e: any) => void;
 
 }
 
@@ -24,7 +24,6 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
     private tapIsDown: boolean = false;
     private canvasContext: CanvasContext;
     private canvasTranslate: CanvasTranslate;
-    private canvasDrawing: CanvasDrawing;
 
     constructor(props: CanvasProps) {
         super(props);
@@ -33,11 +32,10 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
         // TODO: maybe singletons (so use export default new ...())
         this.canvasTranslate = new CanvasTranslate();
-        this.canvasDrawing = new CanvasDrawing();
     }
 
-    public getRawCanvas() {
-        return this.canvas;
+    public getContext() {
+        return this.canvasContext;
     }
 
     public componentDidMount() {
@@ -74,7 +72,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         if (this.isTranslateMode) {
             this.canvasTranslate.startTranslate(tapDownPoint);
         } else if (this.props.onTapDown) {
-            this.props.onTapDown(e);
+            this.props.onTapDown(this.canvasContext, e);
         }
     }
 
@@ -89,10 +87,10 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         if (this.isTranslateMode) {
             this.canvasTranslate.translate(this.canvasContext, tapDownPoint);
             if (this.props.onRepaint) {
-                this.props.onRepaint();
+                this.props.onRepaint(this.canvasContext);
             }
         } else if (this.props.onTapMove) {
-            this.props.onTapMove(e);
+            this.props.onTapMove(this.canvasContext, e);
         }
     }
 
@@ -108,7 +106,7 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
         }
 
         if (this.props.onTapUp) {
-            this.props.onTapUp(e);
+            this.props.onTapUp(this.canvasContext, e);
         }
     }
 
@@ -116,10 +114,10 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
     private resize() {
         canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
         if (this.props.onResize) {
-            this.props.onResize();
+            this.props.onResize(this.canvasContext);
         }
         if (this.props.onRepaint) {
-            this.props.onRepaint();
+            this.props.onRepaint(this.canvasContext);
         }
     }
 
@@ -129,30 +127,6 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
             return true;
         }
 
-        const delta = e.wheelDelta ? e.wheelDelta / 40 : e.detail ? -e.detail : 0;
-
-        if (delta) {
-            const scaleFactor = 1.1;
-            const factor = Math.pow(scaleFactor, delta);
-
-            const downPoint = tapEvents.getTapPosition(e);
-            console.dir(downPoint);
-            // add offset since canvas is not at position 0, 0
-            const { x, y } = this.canvasContext.getPosition();
-            console.dir(x + ", " + y);
-            downPoint.x -= x;
-            downPoint.y -= y;
-            console.dir(downPoint);
-            const pt = this.canvasContext.getTransformedPoint(downPoint);
-            console.dir(pt);
-            this.canvasContext.translate(pt.x, pt.y);
-            this.canvasContext.scale(factor, factor);
-            this.canvasContext.translate(-pt.x, -pt.y);
-
-            if (this.props.onRepaint) {
-                this.props.onRepaint();
-            }
-        }
 
         e.preventDefault();
         return false;
