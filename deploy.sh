@@ -88,7 +88,7 @@ eval $NPM_CMD install yarn -g
 # 4. Install npm packages
 if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
   cd "$DEPLOYMENT_TARGET"
-  eval yarn install --production
+  eval /d/local/AppData/npm/yarn install --production
   exitWithMessageOnError "npm failed"
   cd - > /dev/null
 fi
