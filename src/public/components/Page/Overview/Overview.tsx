@@ -1,5 +1,6 @@
 import { Menu } from "@components/Page/Overview/Menu";
 import { OverviewCanvas } from "@components/Page/Overview/OverviewCanvas";
+import { OverviewCanvas2 } from "@components/Page/Overview/OverviewCanvas2";
 import { PageDetails, Point } from "@shared/models";
 import * as React from "react";
 

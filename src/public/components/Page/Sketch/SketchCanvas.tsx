@@ -32,7 +32,6 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
     private userAddedElement = false;
     private canvas: HTMLCanvasElement | null = null;
     private textarea: Textarea | null = null;
-    private isTranslateMode = false;
     private tapIsDown: boolean = false;
     private canvasContext: CanvasContext;
     private canvasTranslate: CanvasTranslate;
@@ -112,14 +111,14 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
 
     private tapDown(e: any) {
         this.tapIsDown = true;
-        const touchCount = tapEvents.getTouchCount(e);
-        this.isTranslateMode = touchCount === 2 || e.ctrlKey;
         const originalTapDownPoint = tapEvents.getTapPosition(e);
         const tapDownPoint = this.canvasContext.getTransformedPoint(originalTapDownPoint);
 
-        if (this.isTranslateMode) {
-            this.canvasTranslate.startTranslate(tapDownPoint);
-        } else if (this.props.inputMode === "pen") {
+        if (this.canvasTranslate.tapDown(e, this.canvasContext)) {
+            return;
+        }
+
+        if (this.props.inputMode === "pen") {
             this.canvasDrawing.startLine(this.canvasContext, tapDownPoint);
         } else if (this.props.inputMode === "text") {
 
@@ -138,8 +137,7 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
 
         const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
 
-        if (this.isTranslateMode) {
-            this.canvasTranslate.translate(this.canvasContext, tapDownPoint);
+        if (this.canvasTranslate.tapMove(e, this.canvasContext)) {
             this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
         } else if (this.props.inputMode === "pen") {
             this.canvasDrawing.addSegmentToLine(this.canvasContext, tapDownPoint);
@@ -152,7 +150,11 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
         }
         this.tapIsDown = false;
 
-        if (!this.isTranslateMode && this.props.inputMode === "pen") {
+        if (this.canvasTranslate.tapUp()) {
+            return;
+        }
+
+        if (this.props.inputMode === "pen") {
             this.userAddedElement = true;
             this.props.onLineAdded(this.canvasDrawing.endLine());
         }
