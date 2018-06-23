@@ -76,7 +76,7 @@ export class OverviewCanvas2 extends React.Component<OverviewCanvasProps, Overvi
                 return;
             }
 
-            context.setTransform(1, 0, 0, 1, 0, 0);
+            canvasContext.setTransform(1, 0, 0, 1, 0, 0);
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
             let canvasWidth = Math.abs(min.x) + Math.abs(max.x);
@@ -99,11 +99,11 @@ export class OverviewCanvas2 extends React.Component<OverviewCanvasProps, Overvi
             };
 
             context.lineCap = "round";
-            context.scale(scale, scale);
-            context.translate(translation.dx, translation.dy);
+            canvasContext.scale(scale, scale);
+            canvasContext.translate(translation.dx, translation.dy);
 
             this.setState({ scale, translation }, () => {
-                this.canvasDrawing.repaint(canvasContext, this.props.elements, false);
+                this.repaint(canvasContext);
 
                 // if (min && max) {
                 //     context.strokeStyle = "red";
@@ -111,7 +111,6 @@ export class OverviewCanvas2 extends React.Component<OverviewCanvasProps, Overvi
                 // }
             });
         });
-
     }
 
     private calculateMinMax(elements: PageElement[]) {
