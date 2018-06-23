@@ -1,3 +1,4 @@
+import Canvas from "@components/Canvas";
 import { Textarea } from "@components/Page/Sketch/Textarea";
 import { CanvasContext } from "@services/CanvasContext";
 import { CanvasDrawing } from "@services/CanvasDrawing";
@@ -6,6 +7,7 @@ import { CanvasTranslate } from "@services/CanvasTranslate";
 import { tapEvents } from "@services/TapEvents";
 import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "@shared/models";
 import * as React from "react";
+import { bind } from "react.ex";
 
 interface SketchCanvasProps {
     inputMode: InputMode;
@@ -30,20 +32,13 @@ interface SketchCanvasState {
 
 export default class SketchCanvas extends React.Component<SketchCanvasProps, SketchCanvasState> {
     private userAddedElement = false;
-    private canvas: HTMLCanvasElement | null = null;
+    private canvas: Canvas | null = null;
     private textarea: Textarea | null = null;
     private tapIsDown: boolean = false;
-    private canvasContext: CanvasContext;
-    private canvasTranslate: CanvasTranslate;
     private canvasDrawing: CanvasDrawing;
 
     constructor(props: SketchCanvasProps) {
         super(props);
-        this.tapDown = this.tapDown.bind(this);
-        this.tapUp = this.tapUp.bind(this);
-        this.tapMove = this.tapMove.bind(this);
-        this.resize = this.resize.bind(this);
-        this.textAreaTextChanged = this.textAreaTextChanged.bind(this);
 
         this.state = {
             textareaState: {
@@ -54,30 +49,21 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
             center: { x: 0, y: 0 }
         };
 
-        this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
-
-        // TODO: maybe singletons (so use export default new ...())
-        this.canvasTranslate = new CanvasTranslate();
         this.canvasDrawing = new CanvasDrawing();
-    }
-
-    public componentDidMount() {
-        this.resize();
-        window.addEventListener("resize", this.resize);
-    }
-
-    public componentWillUnmount() {
-        window.removeEventListener("resize", this.resize);
     }
 
     public componentWillReceiveProps(newProps: SketchCanvasProps) {
         if (newProps.inputMode !== "text") {
             this.setState({ textareaState: { ...this.state.textareaState, isVisible: false, text: "" } });
         }
-        this.updateCanvasConfig(newProps);
-        if (!this.userAddedElement) {
+
+        if (this.canvas) {
+            this.updateCanvasConfig(this.canvas.getContext(), newProps);
+        }
+
+        if (!this.userAddedElement && this.canvas) {
             // only repaint if the change was NOT triggered by the user
-            this.canvasDrawing.repaint(this.canvasContext, newProps.elements);
+            this.canvasDrawing.repaint(this.canvas.getContext(), newProps.elements);
         } else {
             this.userAddedElement = false;
         }
@@ -98,61 +84,57 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
 
         return (
             <>
-                <canvas
+                <Canvas
                     className="sketch"
+                    translate={true}
+                    zoom={true}
                     ref={(canvas) => { this.canvas = canvas; }}
-                    {...{ [tapEvents.tapDown]: this.tapDown }}
-                    {...{ [tapEvents.tapUp]: this.tapUp }}
-                    {...{ [tapEvents.tapMove]: this.tapMove }}
+                    onRepaint={this.repaint}
+                    onResize={this.resize}
+                    onTapDown={this.tapDown}
+                    onTapMove={this.tapMove}
+                    onTapUp={this.tapUp}
                 />
                 {textarea}
             </>);
     }
 
-    private tapDown(e: any) {
+    @bind
+    private tapDown(canvasContext: CanvasContext, e: any) {
         this.tapIsDown = true;
         const originalTapDownPoint = tapEvents.getTapPosition(e);
-        const tapDownPoint = this.canvasContext.getTransformedPoint(originalTapDownPoint);
-
-        if (this.canvasTranslate.tapDown(e, this.canvasContext)) {
-            return;
-        }
+        const tapDownPoint = canvasContext.getTransformedPoint(originalTapDownPoint);
 
         if (this.props.inputMode === "pen") {
-            this.canvasDrawing.startLine(this.canvasContext, tapDownPoint);
+            this.canvasDrawing.startLine(canvasContext, tapDownPoint);
         } else if (this.props.inputMode === "text") {
-
             if (this.state.textareaState.text.length > 0) {
-                this.addCurrentTextToCanvas();
+                this.addCurrentTextToCanvas(canvasContext);
             } else {
                 this.showTextarea(originalTapDownPoint);
             }
         }
     }
 
-    private tapMove(e: any) {
+    @bind
+    private tapMove(canvasContext: CanvasContext, e: any) {
         if (!this.tapIsDown) {
             return;
         }
 
-        const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
+        const tapDownPoint = canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
 
-        if (this.canvasTranslate.tapMove(e, this.canvasContext)) {
-            this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
-        } else if (this.props.inputMode === "pen") {
-            this.canvasDrawing.addSegmentToLine(this.canvasContext, tapDownPoint);
+        if (this.props.inputMode === "pen") {
+            this.canvasDrawing.addSegmentToLine(canvasContext, tapDownPoint);
         }
     }
 
-    private tapUp() {
+    @bind
+    private tapUp(canvasContext: CanvasContext, e: any) {
         if (!this.tapIsDown) {
             return;
         }
         this.tapIsDown = false;
-
-        if (this.canvasTranslate.tapUp()) {
-            return;
-        }
 
         if (this.props.inputMode === "pen") {
             this.userAddedElement = true;
@@ -160,18 +142,25 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
         }
     }
 
-    private resize() {
-        canvasHelper.setCanvasSize(this.canvasContext, window.innerWidth, window.innerHeight);
-        this.updateCanvasConfig(this.props);
-        this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
+    @bind
+    private resize(canvasContext: CanvasContext) {
+        canvasHelper.setCanvasSize(canvasContext, window.innerWidth, window.innerHeight);
+        this.updateCanvasConfig(canvasContext, this.props);
+        this.canvasDrawing.repaint(canvasContext, this.props.elements);
     }
 
+    @bind
+    private repaint(canvasContext: CanvasContext) {
+        this.canvasDrawing.repaint(canvasContext, this.props.elements);
+    }
+
+    @bind
     private textAreaTextChanged(text: string) {
         this.setState({ textareaState: { ...this.state.textareaState, text } });
     }
 
-    private updateCanvasConfig(props: SketchCanvasProps) {
-        this.canvasContext.doCanvasAction((context) => {
+    private updateCanvasConfig(canvasContext: CanvasContext, props: SketchCanvasProps) {
+        canvasContext.doCanvasAction((context) => {
             context.lineCap = "round";
             context.lineWidth = props.lineWidth;
             context.strokeStyle = props.color;
@@ -180,16 +169,16 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
 
         if (props.center !== this.state.center) {
             this.setState({ center: props.center }, () => {
-                this.setCenter();
+                this.setCenter(canvasContext);
             });
         }
     }
 
-    private addCurrentTextToCanvas() {
+    private addCurrentTextToCanvas(canvasContext: CanvasContext) {
         const text = this.canvasDrawing.addText(
-            this.canvasContext,
+            canvasContext,
             this.state.textareaState.text,
-            this.canvasContext.getTransformedPoint(this.state.textareaState.position),
+            canvasContext.getTransformedPoint(this.state.textareaState.position),
             this.props.fontSize);
 
         this.userAddedElement = true;
@@ -210,16 +199,16 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
         });
     }
 
-    private setCenter() {
-        this.canvasContext.doCanvasAction((context) => {
+    private setCenter(canvasContext: CanvasContext) {
+        canvasContext.doCanvasAction((context) => {
             let { x, y } = this.state.center;
             x -= context.canvas.width / 2;
             y -= context.canvas.height / 2;
 
-            this.canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+            canvasContext.setTransform(1, 0, 0, 1, 0, 0);
             context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-            this.canvasContext.translate(-x, -y);
-            this.canvasDrawing.repaint(this.canvasContext, this.props.elements);
+            canvasContext.translate(-x, -y);
+            this.canvasDrawing.repaint(canvasContext, this.props.elements);
         });
     }
 }

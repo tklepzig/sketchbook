@@ -15,6 +15,7 @@ interface CanvasProps {
     onTapUp?: (context: CanvasContext, e: any) => void;
     zoom: boolean;
     translate: boolean;
+    className?: string;
 }
 
 export default class Canvas extends React.Component<CanvasProps> {
@@ -51,7 +52,7 @@ export default class Canvas extends React.Component<CanvasProps> {
     public render() {
         return (
             <canvas
-                className="overview"
+                className={this.props.className}
                 ref={(canvas) => { this.canvas = canvas; }}
                 {...{ [tapEvents.tapDown]: this.tapDown }}
                 {...{ [tapEvents.tapUp]: this.tapUp }}

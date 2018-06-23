@@ -60,16 +60,16 @@ export class CanvasDrawing {
             canvasContext.restore();
 
             // limit redrawing area to increase performance
-            let left = -canvasContext.getTranslateX();
-            let top = -canvasContext.getTranslateY();
-            let right = left + context.canvas.width;
-            let bottom = top + context.canvas.height;
+            let left = -(canvasContext.getTranslateX() / canvasContext.getScaleX());
+            let top = -(canvasContext.getTranslateY() / canvasContext.getScaleY());
+            let right = left + (context.canvas.width / canvasContext.getScaleX());
+            let bottom = top + (context.canvas.height / canvasContext.getScaleY());
 
             // offset
-            left -= 40;
-            top -= 40;
-            right += 40;
-            bottom += 40;
+            left -= 40 / canvasContext.getScaleX();
+            top -= 40 / canvasContext.getScaleY();
+            right += 40 / canvasContext.getScaleX();
+            bottom += 40 / canvasContext.getScaleY();
 
             if (limitToVisibleArea) {
                 this.drawPageElements(context, elements, { left, top, right, bottom });
