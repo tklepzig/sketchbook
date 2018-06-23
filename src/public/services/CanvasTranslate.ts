@@ -6,13 +6,13 @@ export class CanvasTranslate {
     private startPoint?: Point;
     private isTranslateMode = false;
 
-    public tapDown(canvasContext: CanvasContext, e: any) {
+    public tapDown(e: any, canvasContext: CanvasContext) {
         const touchCount = tapEvents.getTouchCount(e);
         this.isTranslateMode = touchCount === 2 || e.ctrlKey;
         this.startPoint = canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
     }
 
-    public tapMove(canvasContext: CanvasContext, e: any) {
+    public tapMove(e: any, canvasContext: CanvasContext) {
         if (!this.startPoint) {
             return false;
         }
