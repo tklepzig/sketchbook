@@ -86,23 +86,20 @@ export default class Canvas extends React.Component<CanvasProps> {
 
         if (this.props.translate) {
             if (this.canvasTranslate.tapMove(e, this.canvasContext)) {
-                if (this.props.onRepaint) {
-                    this.props.onRepaint(this.canvasContext);
-                }
                 handled = true;
             }
         }
 
         if (this.props.zoom) {
             if (this.canvasZoom.tapMove(e, this.canvasContext)) {
-                if (this.props.onRepaint) {
-                    this.props.onRepaint(this.canvasContext);
-                }
                 handled = true;
             }
         }
 
         if (handled) {
+            if (this.props.onRepaint) {
+                this.props.onRepaint(this.canvasContext);
+            }
             return;
         }
 
