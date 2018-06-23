@@ -39,6 +39,8 @@ export class OverviewCanvas2 extends React.Component<OverviewCanvasProps, Overvi
     public render() {
         return (
             <Canvas
+                translate={true}
+                zoom={true}
                 ref={(canvas) => { this.canvas = canvas; }}
                 onRepaint={this.repaint}
                 onTapUp={this.tapUp}

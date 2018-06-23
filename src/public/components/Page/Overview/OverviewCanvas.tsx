@@ -1,7 +1,7 @@
 import { CanvasContext } from "@services/CanvasContext";
 import { CanvasDrawing } from "@services/CanvasDrawing";
 import canvasHelper from "@services/CanvasHelper";
-import { CanvasTranslate } from "@services/CanvasTranslate";
+import { CanvasZoom } from "@services/CanvasZoom";
 import pageElementHelper from "@services/PageElementHelper";
 import { tapEvents } from "@services/TapEvents";
 import { Line, PageElement, Point } from "@shared/models";
@@ -24,7 +24,7 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
 
     private canvasContext: CanvasContext;
     private canvasDrawing: CanvasDrawing;
-    private canvasTranslate: CanvasTranslate;
+    private canvasZoom: CanvasZoom;
     private tapIsDown = false;
     private isTranslateZoomMode = false;
     private lastDistance = 0;
@@ -37,7 +37,7 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         this.state = { scale: 1, translation: { dx: 0, dy: 0 } };
         this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
         this.canvasDrawing = new CanvasDrawing();
-        this.canvasTranslate = new CanvasTranslate();
+        this.canvasZoom = new CanvasZoom();
     }
 
     public componentDidMount() {
@@ -69,52 +69,15 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
 
     @bind
     private onMouseWheel(e: any) {
-        if (!e.ctrlKey) {
-            return true;
-        }
-
-        const delta = e.wheelDelta ? e.wheelDelta / 40 : e.detail ? -e.detail : 0;
-
-        if (delta) {
-            const scaleFactor = 1.1;
-            const factor = Math.pow(scaleFactor, delta);
-
-            const downPoint = tapEvents.getTapPosition(e);
-            // add offset since canvas is not at position 0, 0
-            const { x, y } = this.canvasContext.getPosition();
-            downPoint.x -= x;
-            downPoint.y -= y;
-            const pt = this.canvasContext.getTransformedPoint(downPoint);
-            this.canvasContext.translate(pt.x, pt.y);
-            this.canvasContext.scale(factor, factor);
-            this.canvasContext.translate(-pt.x, -pt.y);
+        if (this.canvasZoom.mouseWheel(e, this.canvasContext)) {
             this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
         }
-
-        e.preventDefault();
-        return false;
     }
 
     @bind
     private tapDown(e: any) {
         this.tapIsDown = true;
-        const touchCount = tapEvents.getTouchCount(e);
-        this.isTranslateZoomMode = touchCount === 2 || e.ctrlKey;
-        const originalTapDownPoint = tapEvents.getTapPosition(e);
-
-        if (this.isTranslateZoomMode) {
-            const center = tapEvents.getPinchZoomCenter(e);
-            const distance = tapEvents.getPinchZoomDistance(e);
-            if (distance) {
-                this.lastDistance = distance;
-            } else {
-                this.lastDistance = 0;
-
-            }
-            if (center) {
-                this.canvasTranslate.startTranslate(this.canvasContext.getTransformedPoint(center));
-            }
-        }
+        this.canvasZoom.tapDown(e);
     }
 
     @bind
@@ -122,50 +85,9 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
         if (!this.tapIsDown) {
             return;
         }
-        if (this.isTranslateZoomMode) {
 
-            const translate = (point: Point) => {
-                // TODO: why is this offset not necessary here?
-                // // add offset since canvas is not at position 0, 0
-                // const { x, y } = this.canvasContext.getPosition();
-                // point.x -= x;
-                // point.y -= y;
-                const pt = this.canvasContext.getTransformedPoint(point);
-                this.canvasTranslate.translate(this.canvasContext, pt);
-                this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
-            };
-
-            const center = tapEvents.getPinchZoomCenter(e);
-            if (!center) {
-                return;
-            }
-
-            const distance = tapEvents.getPinchZoomDistance(e);
-            if (distance) {
-
-                if (this.lastDistance === 0) {
-                    this.lastDistance = distance;
-                } else if (Math.abs(this.lastDistance - distance) > 10) {
-
-                    const scaleFactor = 1.1;
-                    const factor = Math.pow(scaleFactor, -(this.lastDistance - distance) / 20);
-                    // TODO: why is this offset not necessary here?
-                    // // add offset since canvas is not at position 0, 0
-                    // const { x, y } = this.canvasContext.getPosition();
-                    // center.x -= x;
-                    // center.y -= y;
-                    const pt = this.canvasContext.getTransformedPoint(center);
-                    this.canvasContext.translate(pt.x, pt.y);
-                    this.canvasContext.scale(factor, factor);
-                    this.canvasContext.translate(-pt.x, -pt.y);
-                    this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
-                    this.lastDistance = distance;
-                } else {
-                    translate(center);
-                }
-            } else {
-                translate(center);
-            }
+        if (this.canvasZoom.tapMove(e, this.canvasContext)) {
+            this.canvasDrawing.repaint(this.canvasContext, this.props.elements, false);
         }
     }
 
@@ -174,11 +96,11 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps, Overvie
             return;
         }
         this.tapIsDown = false;
-        this.lastDistance = 0;
 
-        if (this.isTranslateZoomMode) {
+        if (this.canvasZoom.tapUp()) {
             return;
         }
+
         const downPoint = tapEvents.getTapPosition(e);
         // add offset since canvas is not at position 0, 0
         const { x, y } = this.canvasContext.getPosition();

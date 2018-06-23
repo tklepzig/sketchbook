@@ -12,7 +12,7 @@ export class CanvasZoom {
         this.startDistance = tapEvents.getPinchZoomDistance(e) || 0;
     }
 
-    public tapMove(canvasContext: CanvasContext, e: any) {
+    public tapMove(e: any, canvasContext: CanvasContext) {
         if (!this.startDistance) {
             return false;
         }
@@ -37,11 +37,10 @@ export class CanvasZoom {
             const scaleFactor = 1.1;
             const factor = Math.pow(scaleFactor, -(this.startDistance - distance) / 20);
 
-            // TODO: why is this offset not necessary here?
-            // // add offset since canvas is not at position 0, 0
-            // const { x, y } = this.canvasContext.getPosition();
-            // center.x -= x;
-            // center.y -= y;
+            // add offset since canvas is not at position 0, 0
+            const { x, y } = canvasContext.getPosition();
+            center.x -= x;
+            center.y -= y;
 
             const pt = canvasContext.getTransformedPoint(center);
             canvasContext.translate(pt.x, pt.y);
@@ -60,7 +59,7 @@ export class CanvasZoom {
 
     public mouseWheel(e: MouseWheelEvent, canvasContext: CanvasContext) {
         if (!e.ctrlKey) {
-            return;
+            return false;
         }
 
         e.preventDefault();
@@ -81,7 +80,9 @@ export class CanvasZoom {
             canvasContext.translate(pt.x, pt.y);
             canvasContext.scale(factor, factor);
             canvasContext.translate(-pt.x, -pt.y);
+            return true;
         }
 
+        return false;
     }
 }

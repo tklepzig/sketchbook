@@ -2,6 +2,7 @@ import { CanvasContext } from "@services/CanvasContext";
 import { CanvasDrawing } from "@services/CanvasDrawing";
 import canvasHelper from "@services/CanvasHelper";
 import { CanvasTranslate } from "@services/CanvasTranslate";
+import { CanvasZoom } from "@services/CanvasZoom";
 import { tapEvents } from "@services/TapEvents";
 import * as React from "react";
 import { bind } from "react.ex";
@@ -12,26 +13,24 @@ interface CanvasProps {
     onTapDown?: (context: CanvasContext, e: any) => void;
     onTapMove?: (context: CanvasContext, e: any) => void;
     onTapUp?: (context: CanvasContext, e: any) => void;
-
+    zoom: boolean;
+    translate: boolean;
 }
 
-interface CanvasState {
-}
-
-export default class Canvas extends React.Component<CanvasProps, CanvasState> {
+export default class Canvas extends React.Component<CanvasProps> {
     private canvas: HTMLCanvasElement | null = null;
-    private isTranslateMode = false;
-    private tapIsDown: boolean = false;
     private canvasContext: CanvasContext;
+    private tapIsDown = false;
+
     private canvasTranslate: CanvasTranslate;
+    private canvasZoom: CanvasZoom;
 
     constructor(props: CanvasProps) {
         super(props);
 
         this.canvasContext = new CanvasContext(() => this.canvas == null ? null : this.canvas.getContext("2d"));
-
-        // TODO: maybe singletons (so use export default new ...())
         this.canvasTranslate = new CanvasTranslate();
+        this.canvasZoom = new CanvasZoom();
     }
 
     public getContext() {
@@ -62,16 +61,17 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     @bind
     private tapDown(e: any) {
-        // TODO: use pinchzoomcenter
         this.tapIsDown = true;
-        const touchCount = tapEvents.getTouchCount(e);
-        this.isTranslateMode = touchCount === 2 || e.ctrlKey;
-        const originalTapDownPoint = tapEvents.getTapPosition(e);
-        const tapDownPoint = this.canvasContext.getTransformedPoint(originalTapDownPoint);
 
-        if (this.isTranslateMode) {
-            this.canvasTranslate.startTranslate(tapDownPoint);
-        } else if (this.props.onTapDown) {
+        if (this.props.translate) {
+            this.canvasTranslate.tapDown(e, this.canvasContext);
+        }
+
+        if (this.props.zoom) {
+            this.canvasZoom.tapDown(e);
+        }
+
+        if (this.props.onTapDown) {
             this.props.onTapDown(this.canvasContext, e);
         }
     }
@@ -82,14 +82,31 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
             return;
         }
 
-        const tapDownPoint = this.canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
+        let handled = false;
 
-        if (this.isTranslateMode) {
-            this.canvasTranslate.translate(this.canvasContext, tapDownPoint);
-            if (this.props.onRepaint) {
-                this.props.onRepaint(this.canvasContext);
+        if (this.props.translate) {
+            if (this.canvasTranslate.tapMove(e, this.canvasContext)) {
+                if (this.props.onRepaint) {
+                    this.props.onRepaint(this.canvasContext);
+                }
+                handled = true;
             }
-        } else if (this.props.onTapMove) {
+        }
+
+        if (this.props.zoom) {
+            if (this.canvasZoom.tapMove(e, this.canvasContext)) {
+                if (this.props.onRepaint) {
+                    this.props.onRepaint(this.canvasContext);
+                }
+                handled = true;
+            }
+        }
+
+        if (handled) {
+            return;
+        }
+
+        if (this.props.onTapMove) {
             this.props.onTapMove(this.canvasContext, e);
         }
     }
@@ -100,8 +117,21 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
             return;
         }
         this.tapIsDown = false;
+        let handled = false;
 
-        if (this.isTranslateMode) {
+        if (this.props.translate) {
+            if (this.canvasTranslate.tapUp()) {
+                handled = true;
+            }
+        }
+
+        if (this.props.zoom) {
+            if (this.canvasZoom.tapUp()) {
+                handled = true;
+            }
+        }
+
+        if (handled) {
             return;
         }
 
@@ -123,13 +153,12 @@ export default class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     @bind
     private onMouseWheel(e: any) {
-        if (!e.ctrlKey) {
-            return true;
+        if (this.props.zoom) {
+            if (this.canvasZoom.mouseWheel(e, this.canvasContext)) {
+                if (this.props.onRepaint) {
+                    this.props.onRepaint(this.canvasContext);
+                }
+            }
         }
-
-
-        e.preventDefault();
-        return false;
     }
-
 }

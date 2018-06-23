@@ -9,7 +9,16 @@ export class CanvasTranslate {
     public tapDown(e: any, canvasContext: CanvasContext) {
         const touchCount = tapEvents.getTouchCount(e);
         this.isTranslateMode = touchCount === 2 || e.ctrlKey;
-        this.startPoint = canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
+
+
+        const downPoint = tapEvents.getTapPosition(e);
+
+        // add offset since canvas is not at position 0, 0
+        const { x, y } = canvasContext.getPosition();
+        downPoint.x -= x;
+        downPoint.y -= y;
+
+        this.startPoint = canvasContext.getTransformedPoint(downPoint);
     }
 
     public tapMove(e: any, canvasContext: CanvasContext) {
@@ -21,7 +30,14 @@ export class CanvasTranslate {
             return false;
         }
 
-        const pt = canvasContext.getTransformedPoint(tapEvents.getTapPosition(e));
+        const downPoint = tapEvents.getTapPosition(e);
+
+        // add offset since canvas is not at position 0, 0
+        const { x, y } = canvasContext.getPosition();
+        downPoint.x -= x;
+        downPoint.y -= y;
+
+        const pt = canvasContext.getTransformedPoint(downPoint);
         canvasContext.translate(pt.x - this.startPoint.x, pt.y - this.startPoint.y);
 
         return true;
