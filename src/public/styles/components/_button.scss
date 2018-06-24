@@ -42,8 +42,8 @@
 .btn-font-size {
     @extend %button;
     @extend %round;
-    font-family: Handlee;
-    font-weight: bold;
+    font-family: OpenSans, sans-serif;
+    font-weight: 600;
     line-height: 1;
     &.small {
         font-size: 12pt;

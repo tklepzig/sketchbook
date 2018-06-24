@@ -43,7 +43,10 @@ class Page extends React.Component<PageProps & PageOwnProps & PageDispatchProps,
 
     public async componentWillMount() {
         // make sure the web font has been loaded before the page is fetched from server
-        document.fonts.load("1px Handlee");
+        document.fonts.load("300 1px OpenSans");
+        document.fonts.load("400 1px OpenSans");
+        document.fonts.load("600 1px OpenSans");
+
         await document.fonts.ready;
         this.props.dispatch(fetchPage(this.props.match.params.pageNumber));
     }

@@ -1,7 +1,23 @@
 @import "variables";
 @font-face {
-    font-family: "Handlee";
-    src: url("../assets/Handlee-Regular.ttf") format("truetype");
+    font-family: "OpenSans";
+    src: url("../assets/OpenSans-Light.ttf") format("truetype");
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "OpenSans";
+    src: url("../assets/OpenSans-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "OpenSans";
+    src: url("../assets/OpenSans-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
 }
 
 html,
@@ -15,7 +31,7 @@ body {
 body {
     -webkit-tap-highlight-color: transparent;
     color: $foreground;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: OpenSans, sans-serif;
     overflow: hidden;
     &:fullscreen {
         width: 100%;
@@ -65,7 +81,8 @@ body {
         height: auto;
         border: 1px solid $background;
         color: inherit;
-        font-weight: bold;
+        font-family: inherit;
+        font-weight: 600;
         padding: 4px 8px;
         margin: 0;
     }
