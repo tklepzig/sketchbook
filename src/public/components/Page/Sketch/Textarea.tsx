@@ -54,7 +54,7 @@ export class Textarea extends React.Component<TextareaProps, TextareaState> {
         if (this.canvas !== null) {
             const context = this.canvas.getContext("2d");
             if (context !== null) {
-                context.font = `bold ${this.props.fontSize}pt Handlee`;
+                context.font = `400 ${this.props.fontSize}pt OpenSans`;
                 let height = 0;
                 let longestLineWidth = 0;
                 for (const line of text.split("\n")) {
