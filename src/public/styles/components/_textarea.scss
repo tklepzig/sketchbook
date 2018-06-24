@@ -1,25 +1,37 @@
-textarea {
+.blubb {
     position: absolute;
-    background: transparent;
-    font-family: OpenSans, sans-serif;
-    font-weight: 600;
-    padding: 2px 0;
-    margin: 0;
-    border: 1px solid darken($background, 30%);
-    box-shadow: 0 0 4px 0 darken($background, 20%);
-    background: rgba($background, 0.4);
-    outline: none;
-    line-height: 1.2;
-    overflow: hidden;
-    resize: none;
-    min-width: 20px;
-    &.fs-12 {
-        font-size: 12pt;
-    }
-    &.fs-20 {
-        font-size: 20pt;
-    }
-    &.fs-30 {
-        font-size: 30pt;
+    bottom: 0;
+    right: 0;
+    >textarea {
+        background: rgba($background, 0.6);
+        font-family: OpenSans, sans-serif;
+        font-weight: 600;
+        padding: 2px 0;
+        margin: 0;
+        box-sizing: border-box;
+        border: 1px solid rgba($foreground, 0.4);
+        // box-shadow: 0 0 4px 0 darken($background, 20%);
+        // background: rgba($background, 0.4);
+        outline: none;
+        line-height: 1.2;
+        overflow: hidden;
+        resize: none;
+        min-width: 20px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        &.fs-12 {
+            font-size: 12pt;
+        }
+        &.fs-20 {
+            font-size: 20pt;
+        }
+        &.fs-30 {
+            font-size: 30pt;
+        }
     }
 }
