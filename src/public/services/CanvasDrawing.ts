@@ -165,7 +165,7 @@ export class CanvasDrawing {
 
     private drawText(context: CanvasRenderingContext2D, position: Point, text: string, fontSize: number) {
         context.globalCompositeOperation = "source-over";
-        context.font = `600 ${fontSize}pt OpenSans`;
+        context.font = `400 ${fontSize}pt OpenSans`;
         context.textBaseline = "top";
         let top = position.y;
         let height = 0;
