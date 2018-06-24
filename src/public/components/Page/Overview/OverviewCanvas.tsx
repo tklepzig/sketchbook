@@ -46,7 +46,7 @@ export class OverviewCanvas extends React.Component<OverviewCanvasProps> {
 
     @bind
     private repaint(canvasContext: CanvasContext) {
-        this.canvasDrawing.repaint(canvasContext, this.props.elements, false);
+        this.canvasDrawing.repaint(canvasContext, this.props.elements);
     }
 
     private tapUp(canvasContext: CanvasContext, e: any) {

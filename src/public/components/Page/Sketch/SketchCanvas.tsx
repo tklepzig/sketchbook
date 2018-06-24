@@ -3,9 +3,8 @@ import { Textarea } from "@components/Page/Sketch/Textarea";
 import { CanvasContext } from "@services/CanvasContext";
 import { CanvasDrawing } from "@services/CanvasDrawing";
 import canvasHelper from "@services/CanvasHelper";
-import { CanvasTranslate } from "@services/CanvasTranslate";
 import { tapEvents } from "@services/TapEvents";
-import { CompositeOperation, FontSize, InputMode, Line, PageElement, Point, Text } from "@shared/models";
+import { CompositeOperation, InputMode, Line, PageElement, Point, Text } from "@shared/models";
 import * as React from "react";
 import { bind } from "react.ex";
 
@@ -130,7 +129,7 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
     }
 
     @bind
-    private tapUp(canvasContext: CanvasContext, e: any) {
+    private tapUp() {
         if (!this.tapIsDown) {
             return;
         }
