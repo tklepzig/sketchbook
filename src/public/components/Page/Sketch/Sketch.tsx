@@ -111,10 +111,10 @@ function mapStateToProps(state: RootState): SketchProps {
             fontSizeNumber = 12;
             break;
         case "medium":
-            fontSizeNumber = 20;
+            fontSizeNumber = 18;
             break;
         case "large":
-            fontSizeNumber = 30;
+            fontSizeNumber = 26;
             break;
         default:
             throw new Error(`Unknown font size: ${fontSize}`);
