@@ -73,7 +73,7 @@ const Menu: React.SFC<MenuProps & MenuOwnProps & MenuDispatchProps> = (props) =>
                 {content}
             </section>
             <section>
-                {inputModeToggle}
+                <InputModeToggle inputMode={props.inputMode} inputModeChanged={props.onInputModeSelected} />
             </section>
         </div>);
 };

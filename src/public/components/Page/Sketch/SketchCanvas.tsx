@@ -110,7 +110,15 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
             if (this.state.textareaState.text.length > 0) {
                 this.addCurrentTextToCanvas(canvasContext);
             } else {
-                this.showTextarea(originalTapDownPoint);
+                if ("ontouchstart" in window) {
+                    const origin = { x: 0, y: 48 };
+                    this.showTextarea(origin);
+                    const originTransformed = canvasContext.getTransformedPoint(origin);
+                    canvasContext.translate(originTransformed.x - tapDownPoint.x, originTransformed.y - tapDownPoint.y);
+                    this.repaint(canvasContext);
+                } else {
+                    this.showTextarea(originalTapDownPoint);
+                }
             }
         }
     }
