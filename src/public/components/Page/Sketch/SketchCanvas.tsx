@@ -78,6 +78,7 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
                     fontSize={this.props.fontSize}
                     text={this.state.textareaState.text}
                     onTextChanged={this.textAreaTextChanged}
+                    onRequestClose={this.textAreaRequestClose}
                 />)
             : null;
 
@@ -156,6 +157,19 @@ export default class SketchCanvas extends React.Component<SketchCanvasProps, Ske
     @bind
     private textAreaTextChanged(text: string) {
         this.setState({ textareaState: { ...this.state.textareaState, text } });
+    }
+
+    @bind
+    private textAreaRequestClose() {
+        if (!this.canvas) {
+            return;
+        }
+
+        if (this.state.textareaState.text.length > 0) {
+            this.addCurrentTextToCanvas(this.canvas.getContext());
+        } else {
+            this.setState({ textareaState: { ...this.state.textareaState, text: "", isVisible: false } });
+        }
     }
 
     private updateCanvasConfig(canvasContext: CanvasContext, props: SketchCanvasProps) {

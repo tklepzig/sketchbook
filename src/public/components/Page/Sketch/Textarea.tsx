@@ -7,6 +7,7 @@ interface TextareaProps {
     fontSize: number;
     position: Point;
     onTextChanged: (text: string) => void;
+    onRequestClose: () => void;
 }
 
 
@@ -29,7 +30,7 @@ export class Textarea extends React.Component<TextareaProps> {
         const { x: left, y: top } = this.props.position;
 
         return (
-            <div className="blubb" style={{ top, left }}>
+            <div className="textarea-container" style={{ top, left }}>
                 <textarea
                     ref={(ta) => { this.textarea = ta; }}
                     value={this.props.text}
@@ -46,7 +47,7 @@ export class Textarea extends React.Component<TextareaProps> {
         const keyReturn = 13;
 
         if (e.keyCode === keyEscape || e.keyCode === keyReturn && e.ctrlKey) {
-            console.log("todo: close textarea");
+            this.props.onRequestClose();
         }
     }
 
