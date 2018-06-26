@@ -39,7 +39,7 @@ export class CanvasTranslate {
 
         const pt = canvasContext.getTransformedPoint(downPoint);
         canvasContext.translate(pt.x - this.startPoint.x, pt.y - this.startPoint.y);
-        
+
         return true;
     }
 

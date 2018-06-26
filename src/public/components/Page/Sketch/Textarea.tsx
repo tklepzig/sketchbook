@@ -37,7 +37,6 @@ export class Textarea extends React.Component<TextareaProps> {
                     className={`fs-${this.props.fontSize.toString()}`}
                     onKeyUp={this.onKeyUp}
                 />
-                <button style={{ position: "absolute", right: 0, padding: "2em" }}>Done</button>
             </div>);
     }
 
