@@ -194,10 +194,15 @@ export class Server {
 
     private forceHttps(app: Application) {
         app.use((req: Request, res: Response, next: NextFunction) => {
-            if (req.protocol === "http") {
-                return res.redirect("https://" + req.headers.host + req.url);
+            if (req.secure) {
+                return next();
             }
-            next();
+
+            if (req.method === "GET") {
+                return res.redirect(301, "https://" + req.headers.host + req.originalUrl);
+            }
+
+            return res.status(403).send("Please use HTTPS when submitting data to this server.");
         });
     }
 
