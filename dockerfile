@@ -4,7 +4,7 @@ ARG azure_pwd
 ARG azure_site
 COPY . /app
 WORKDIR /app
-RUN apk add --no-cache nodejs yarn git openssl-dev
+RUN apk add --no-cache nodejs npm yarn git openssl-dev
 RUN yarn && npm run build
 WORKDIR /app
 RUN git init
